@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>{% block title %}Pops Quizz{% endblock %}</title>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	    <link rel="icon" type="image/png" href="{% block icon %}{% static "img/quiz-ico.png" %}{% endblock %}" />
+	    <link rel="shortcut icon" type="image/png" href="{% block icon2 %}{% static "img/quiz-ico.png" %}{% endblock %}" />
+	    {% block bts_css %}
+	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
+	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
+	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-grid.css" %}">
+	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-grid.min.css" %}">
+	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-reboot.css" %}">
+	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-reboot.min.css" %}">
+	    {% endblock %}
+	</head>
+	<body>
+
+
+		{% block content %}
+
+		{% endblock %}
+
+		{% block bts_js %}
+		<script type="text/javascript" src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+		
+		<script type="text/javascript" src="{% static "js/popper.min.js"%}"></script>
+		<script type="text/javascript" src="{% static "js/jquery-ui.js"%}"></script>
+		<script type="text/javascript" src="{% static "js/bootstrap.bundle.js"%}"></script>
+		<script type="text/javascript" src="{% static "js/bootstrap.bundle.min.js"%}"></script>
+		<script type="text/javascript" src="{% static "js/bootstrap.js"%}"></script>
+		<script type="text/javascript" src="{% static "js/bootstrap.min.js"%}"></script>
+		{% endblock %}
+	</body>
+</html>

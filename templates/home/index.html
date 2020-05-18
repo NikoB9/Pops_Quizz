@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+	{% load static %}
+	<style type="text/css">
+		img{
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.card {
+	        margin: 0 auto; /* Added */
+	        float: none; /* Added */
+	        margin-bottom: 10px; /* Added */
+		}
+
+		#menuli{
+		    font-weight: bold;
+		    font-size: 20px;
+		    margin: 15px;
+		}
+		#menuli:hover{
+			cursor: pointer;
+			color: #60dab6;
+		}
+	</style> 
+
+	<div class="card border-info mb-3" style="max-width: 70rem;">
+	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
+	  <div class="card-body" style="text-align: center;">
+	    	<img class="img-fluid" src="{% static "sda/img/800px-Paris_overview_map_with_listings.png" %}" alt="paris intramuros">
+	  </div>
+	  <div class="card-footer">
+  		<p class="card-text">
+	    	<ol> Fonctionnalitées
+				{% for f in functionalities %}
+					<li id="menuli">{{ f.names }}</li>
+				{% endfor %}
+			</ol>
+	    </p>
+	  </div>
+	</div>
+	
+
+	
+
+
+	
+
+{% endblock %}
