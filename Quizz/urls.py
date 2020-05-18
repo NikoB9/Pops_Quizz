@@ -10,6 +10,7 @@ app_name='Quizz'
 urlpatterns = [
 
     path('', views.index, name='home'),
+    path('users/', views.users, name='users'),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),

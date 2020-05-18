@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 #ACCES MODEL
-#from .models import nomTable
+from .models import Users
 
 #regex
 import re
@@ -35,3 +35,12 @@ def index(request):
     {'name':'Amis','desc':''},
     ]
     return render(request, "home/index.html", {'functionalities': functionalities})
+
+
+ 
+def users(request):
+    """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""
+    """Liste pour créer le menu"""
+    users = Users.objects.all()
+    
+    return render(request, "home/users.html", {'users': users})

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+	{% load static %}
+	<style type="text/css">
+		img{
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.card {
+	        margin: auto; /* Added */
+	        float: none; /* Added */
+	        margin-bottom: 10px; /* Added */
+		}
+
+		ol{
+			text-align: center;
+			font-size: 25px;
+			font-weight: bold;
+		}
+	
+		#menuli{
+		    font-weight: bold;
+		    text-align: left;
+		    font-size: 20px;
+		    margin: 15px;
+		}
+		#menuli:hover{
+			cursor: pointer;
+			color: #60dab6;
+		}
+	</style> 
+
+	<div class="card border-info mb-3" style="max-width: 70rem;">
+	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
+	  <div class="card-body" style="text-align: center;">
+
+	  	<p class="card-text">
+	    	<ol> <u>Les utilisateurs</u>
+				{% for u in users %}
+					<li id="menuli">{{ u.first_name }}&nbsp;{{ u.last_name }}</li>
+				{% empty %}
+					<li id="menuli">Pas d'utilisateur</li>
+				{% endfor %}
+			</ol>
+	    </p>
+
+	  </div>
+	  <div class="card-footer">
+  		
+	  </div>
+	</div>
+	
+
+	
+
+
+	
+
+{% endblock %}
