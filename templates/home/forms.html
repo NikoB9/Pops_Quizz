@@ -39,7 +39,7 @@
 	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
 	  <div class="card-body" style="text-align: center;">
 
-	  	<form action="oneform/" method="POST" id="testform">
+	  	<form action="{% url 'Quizz:oneform' %}" method="POST" id="testform">
 
 	  		<input type="hidden" name="idform" id="idform">
 	  		{% csrf_token %}
