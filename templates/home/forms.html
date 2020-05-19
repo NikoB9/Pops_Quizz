@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+	{% load static %}
+	<style type="text/css">
+		img{
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.card {
+	        margin: auto; /* Added */
+	        float: none; /* Added */
+	        margin-bottom: 10px; /* Added */
+		}
+
+		ol{
+			text-align: center;
+			font-size: 25px;
+			font-weight: bold;
+		}
+	
+		.menuli{
+		    font-weight: bold;
+		    text-align: left;
+		    font-size: 20px;
+		    margin: 15px;
+		}
+		.menuli:hover{
+			cursor: pointer;
+			color: #60dab6;
+		}
+	</style> 
+
+	{% if allforms is not None %}
+
+	<div class="card border-info mb-3" style="max-width: 70rem;">
+	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
+	  <div class="card-body" style="text-align: center;">
+
+	  	<form action="oneform/" method="POST" id="testform">
+
+	  		<input type="hidden" name="idform" id="idform">
+	  		{% csrf_token %}
+	  		<p class="card-text">
+		    	<ol> <u>Les formulaires</u>
+					{% for f in allforms %}
+						<li class="menuli" onclick="chooseForm(this)">{{ f.id }}</li>
+					{% empty %}
+						<li class="menuli">Pas de formulaire</li>
+					{% endfor %}
+				</ol>
+		    </p>
+	  	</form>
+	  	
+
+	  </div>
+	  <div class="card-footer">
+  		
+	  </div>
+	</div>
+
+	<script type="text/javascript" src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+	<script type="text/javascript">
+		chooseForm = function (that) {
+			
+			var idform = $(that).text();
+			$('#idform').val(idform);
+			$('#testform').submit();
+
+		}
+	</script>
+
+	{% else %}
+
+	<div class="card border-info mb-3" style="max-width: 70rem;">
+	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
+	  <div class="card-body" style="text-align: center;">
+
+	  	<p class="card-text">
+	    	<ol> <u>{{ form.name }}&nbsp;:&nbsp;{{ form.description }}</u>
+				{% for q in form.questions %}
+					<li class="menuli">{{ q.question.label }}
+
+						<ul>
+							{% for a in q.question.answers %}
+								<li class="menuli">{{ a.value }}</li>
+							{% empty %}
+								<li class="menuli">Pas de réponse</li>
+							{% endfor %}
+
+						</ul>
+					</li>
+				{% empty %}
+					<li class="menuli">Pas de questions</li>
+				{% endfor %}
+			</ol>
+	    </p>
+
+	  </div>
+	  <div class="card-footer">
+  		
+	  </div>
+	</div>
+
+	{% endif %}
+	
+
+	
+
+
+	
+
+{% endblock %}

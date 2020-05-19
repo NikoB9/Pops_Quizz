@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 #ACCES MODEL
-from .models import User
+from .models import User, Form, Question, PossibleAnswer
 
 #regex
 import re
@@ -36,7 +36,27 @@ def index(request):
     ]
     return render(request, "home/index.html", {'functionalities': functionalities})
 
+def getforms(request):
 
+	allforms = Form.objects.all()
+
+	return render(request, "home/forms.html", {'allforms' : allforms})
+
+def openform(request):
+
+	idform = request.POST.get('idform')
+
+	f = Form.objects.get(id=idform)
+	questions = Question.objects.filter(form=f).order_by('order')
+
+	Tquestion = []
+	for q in questions:
+		pa = PossibleAnswer.objects.filter(question=q)
+		Tquestion.append({'question':q, 'answers':pa})
+
+	f.questions = Tquestion
+
+	return render(request, "home/forms.html", {'form' : f})
  
 def users(request):
     """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""

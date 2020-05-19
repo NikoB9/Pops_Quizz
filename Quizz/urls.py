@@ -11,6 +11,8 @@ urlpatterns = [
 
     path('', views.index, name='home'),
     path('users/', views.users, name='users'),
+    path('forms/', views.getforms, name='forms'),
+    path('forms/oneform/', views.openform, name='oneform'),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),
