@@ -40,7 +40,7 @@
 	  	<p class="card-text">
 	    	<ol> <u>Les utilisateurs</u>
 				{% for u in users %}
-					<li id="menuli">{{ u.first_name }}&nbsp;{{ u.last_name }}</li>
+					<li id="menuli">{{ u.login }}</li>
 				{% empty %}
 					<li id="menuli">Pas d'utilisateur</li>
 				{% endfor %}
