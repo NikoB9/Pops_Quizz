@@ -14,7 +14,7 @@ class User(models.Model):
 
 class Form(models.Model):
 	name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	author = models.ForeignKey(User, on_delete=models.PROTECT)
+	author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 	description = models.TextField(unique=False)
 	def __str__(self):
 		return self.name
@@ -29,7 +29,6 @@ class Question(models.Model):
 
 class PossibleAnswer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    label = models.TextField(null=False, blank=False, unique=False)
     correct = models.BooleanField(default=False)
     value = models.CharField(max_length=255, null=False, blank=False, unique=False)
 
