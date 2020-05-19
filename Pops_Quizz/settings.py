@@ -97,10 +97,10 @@ WSGI_APPLICATION = 'Pops_Quizz.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test_pops_quizz',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'NAME': 'teampopsquizz_quizz',
+        'USER': '207171',
+        'PASSWORD': 'Md74V5ez32rfD',
+        'HOST': 'mysql-teampopsquizz.alwaysdata.net',
         'PORT': '3306',
         'OPTIONS': {
         	'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
