@@ -56,6 +56,8 @@ def openform(request):
 
 	f.questions = Tquestion
 
+	print(f)
+
 	return render(request, "home/forms.html", {'form' : f})
  
 def users(request):

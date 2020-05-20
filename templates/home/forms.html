@@ -84,7 +84,7 @@
 					<li class="menuli">{{ q.question.label }}
 
 						<ul>
-							{% for a in q.question.answers %}
+							{% for a in q.answers %}
 								<li class="menuli">{{ a.value }}</li>
 							{% empty %}
 								<li class="menuli">Pas de réponse</li>
