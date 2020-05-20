@@ -26,7 +26,7 @@ class AnswerType(models.Model):
 
 class Question(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
-    answerType = models.ForeignKey(AnswerType, on_delete=models.CASCADE, unique=False)
+    answerType = models.ForeignKey(AnswerType, on_delete=models.CASCADE)
     label = models.TextField(null=False, blank=False, unique=False)
     order = models.IntegerField(null=False, blank=False, unique=False)
     def __str__(self):

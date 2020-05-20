@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 #ACCES MODEL
-from .models import User, Form, Question, PossibleAnswer
+from .models import User, Form, Question, PossibleAnswer, AnswerType
 
 #regex
 import re
