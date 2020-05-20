@@ -1,4 +1,4 @@
-from Quizz.models import Form, Question, PossibleAnswer
+from Quizz.models import Form, Question, PossibleAnswer, AnswerType
 
 
 f = Form()
@@ -6,11 +6,23 @@ f.name = "Premier formulaire"
 f.description = "C'est parti !"
 f.save()
 
+qcmType = AnswerType()
+qcmType.type = "QCM"
+qcmType.save()
+
+inputType = AnswerType()
+inputType.type = "INPUT"
+inputType.save()
+
+uniqueAnswerType = AnswerType()
+uniqueAnswerType.type = "UNIQUE_ANSWER"
+uniqueAnswerType.save()
+
 question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -30,7 +42,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -49,7 +61,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()
@@ -71,7 +83,7 @@ question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -90,7 +102,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -109,7 +121,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()
@@ -129,7 +141,7 @@ question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -148,7 +160,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -167,7 +179,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()
@@ -187,7 +199,7 @@ question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -206,7 +218,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -225,7 +237,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()
@@ -245,7 +257,7 @@ question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -264,7 +276,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -283,7 +295,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()
@@ -303,7 +315,7 @@ question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -322,7 +334,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -341,7 +353,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()
@@ -354,7 +366,7 @@ possAnswer.save()
 
 
 f = Form()
-f.name = "Sixième formulaire"
+f.name = "Septième formulaire"
 f.description = "C'est parti !"
 f.save()
 
@@ -362,7 +374,7 @@ question = Question()
 question.form = f
 question.label = "première question"
 question.order = 1
-question.answerType= "QCM"
+question.answerType= qcmType
 question.save()
 
 pa = PossibleAnswer()
@@ -381,7 +393,7 @@ question = Question()
 question.form = f
 question.label = "deuxième question"
 question.order = 2
-question.answerType= "QCM"
+question.answerType= uniqueAnswerType
 question.save()
 
 pa = PossibleAnswer()
@@ -400,7 +412,7 @@ question = Question()
 question.form = f
 question.label = "troisième question"
 question.order = 3
-question.answerType= "INPUT"
+question.answerType= inputType
 question.save()
 
 possAnswer = PossibleAnswer()

@@ -19,11 +19,16 @@ class Form(models.Model):
 	def __str__(self):
 		return self.name
 
+class AnswerType(models.Model):
+    type = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    def __str__(self):
+        return self.type
+
 class Question(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
+    answerType = models.ForeignKey(AnswerType, on_delete=models.CASCADE, unique=False)
     label = models.TextField(null=False, blank=False, unique=False)
     order = models.IntegerField(null=False, blank=False, unique=False)
-    answerType = models.CharField(max_length=255, null=False, blank=False, unique=False)
     def __str__(self):
         return self.label
 
@@ -31,6 +36,9 @@ class PossibleAnswer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     correct = models.BooleanField(default=False)
     value = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    def __str__(self):
+        return self.value
+
 
 # class Game(models.Model):
 #     form = models.ForeignKey(Form, on_delete=models.CASCADE)
