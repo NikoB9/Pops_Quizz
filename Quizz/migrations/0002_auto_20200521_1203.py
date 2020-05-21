@@ -44,11 +44,6 @@ class Migration(migrations.Migration):
                 ('game', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='Quizz.Game')),
             ],
         ),
-        migrations.AddField(
-            model_name='user',
-            name='friends',
-            field=models.ManyToManyField(related_name='_user_friends_+', to='Quizz.User'),
-        ),
         migrations.CreateModel(
             name='UserAnswers',
             fields=[

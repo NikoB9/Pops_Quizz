@@ -6,26 +6,34 @@ from django.core import validators
 
 # Class qui hérite directement du modele et qui permet de tracer les données
 class TimestampModel(models.Model):
-	created_at = models.DateTimeField(auto_now_add=True)
-	update_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
-	class Meta:
-		abstract = True
+    class Meta:
+        abstract = True
 
 # classe exemple qui herite du timestamp pour un suivi des données
 class Functionnalities(TimestampModel):
-	name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	description = models.TextField(null=True)
-	def __str__(self):
-		return self.name
+    name = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    description = models.TextField(null=True)
+    def __str__(self):
+        return self.name
 
 class User(models.Model):
-	login = models.CharField(max_length=255, null=False, blank=False, unique=True)
-	mail = models.EmailField(max_length=255, null=False, blank=False, unique=True)
-	password = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	friends = models.ManyToManyField("self", unique=False)
-	def __str__(self):
-		return self.login
+    login = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    mail = models.EmailField(max_length=255, null=False, blank=False, unique=True)
+    password = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    friends = models.ManyToManyField("self", through='Friends',symmetrical=False)
+    def __str__(self):
+        return self.login
+
+class Friends(models.Model):
+    source = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'source')
+    target = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'target')
+    accepted = models.BooleanField(default=False)
+    comment = models.TextField(null=True)
+    def __str__(self):
+        return self.source.login+" to "+self.target.login+" is "+self.accepted
 
 class Category(models.Model):
     label = models.CharField(max_length=255, null=False, blank=False, unique=True)
@@ -77,12 +85,12 @@ class PossibleAnswer(models.Model):
         return self.value
 
 class Game(models.Model):
-	form = models.ForeignKey(Form, on_delete=models.CASCADE)
-	name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	createdAt = models.DateTimeField(auto_now_add=True)
-	publicStatus = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	def __str__(self):
-		return "Game "+self.name+" created at "+self.createdAt
+    form = models.ForeignKey(Form, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    publicStatus = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    def __str__(self):
+        return "Game "+self.name+" created at "+self.createdAt
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
