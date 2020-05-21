@@ -7,7 +7,7 @@ def getQuestionsByForm(form):
 
 def getPossibleAnswersByQuestions(questions):
     Tquestion = []
-	for q in questions:
-		pa = PossibleAnswer.objects.filter(question=q)
-		Tquestion.append({'question':q, 'answers':pa})
+    for q in questions:
+        pa = PossibleAnswer.objects.filter(question=q)
+        Tquestion.append({'question':q, 'answers':pa})
     return Tquestion
