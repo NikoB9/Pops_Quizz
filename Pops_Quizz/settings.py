@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['teampopsquizz.alwaysdata.net']
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
