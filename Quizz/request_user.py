@@ -11,5 +11,8 @@ def createUser(login, mail, password):
     user.password = hashers.make_password(password)
     user.save()
 
+def getUserByLogin(login):
+    return User.objects.get(login = login)
+
 def getAllUsers():
     return User.objects.all()
