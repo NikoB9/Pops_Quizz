@@ -6,12 +6,18 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+
 # Create your views here.
 from django.http import HttpResponse
 
 #ACCES MODEL
 from .models import *
 from .forms import *
+
+# Import request
+from .request_user import *
+from .request_form import *
+from .request_question import *
 
 #regex
 import re
@@ -41,24 +47,16 @@ def index(request):
 
 def getforms(request):
 
-	allforms = Form.objects.all()
+	allforms = getAllForms()
 
 	return render(request, "home/forms.html", {'allforms' : allforms})
 
 def openform(request):
 
 	idform = request.POST.get('idform')
-
-	f = Form.objects.get(id=idform)
-	questions = Question.objects.filter(form=f).order_by('order')
-
-	Tquestion = []
-	for q in questions:
-		pa = PossibleAnswer.objects.filter(question=q)
-		Tquestion.append({'question':q, 'answers':pa})
-
-	f.questions = Tquestion
-
+	f = getFormsById(idform)
+	questions = getQuestionsByForm(f)
+	f.questions = getPossibleAnswersByQuestions(questions)
 	print(f)
 
 	return render(request, "home/forms.html", {'form' : f})
@@ -66,8 +64,8 @@ def openform(request):
 def users(request):
     """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""
     """Liste pour créer le menu"""
-    users = User.objects.all()
-    
+    users = getAllUsers()
+
     return render(request, "home/users.html", {'users': users})
 
 def createUser(request):
@@ -77,11 +75,7 @@ def createUser(request):
         form = UserForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            user = User()
-            user.login = form.cleaned_data['login']
-            user.mail = form.cleaned_data['mail']
-            user.password = form.cleaned_data['password']
-            user.save()
+            createUser(form.cleaned_data['login'], form.cleaned_data['mail'], form.cleaned_data['password'])
             return HttpResponseRedirect('/')
 
     # if a GET (or any other method) we'll create a blank form
