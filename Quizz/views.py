@@ -83,3 +83,21 @@ def createUser(request):
         form = UserForm()
 
     return render(request, "home/createUser.html", {"form" : form})
+
+
+
+def creation(request):
+    
+    return render(request, "home/creation.html")
+
+def categories(request):
+    
+    return render(request, "home/categories.html")
+
+def resultats(request):
+    
+    return render(request, "home/resultats.html")
+
+
+
+
