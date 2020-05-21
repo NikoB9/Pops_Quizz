@@ -51,9 +51,8 @@ def getforms(request):
 
 	return render(request, "home/forms.html", {'allforms' : allforms})
 
-def openform(request):
+def openform(request, idform):
 
-	idform = request.POST.get('idform')
 	f = getFormsById(idform)
 	questions = getQuestionsByForm(f)
 	f.questions = getPossibleAnswersByQuestions(questions)

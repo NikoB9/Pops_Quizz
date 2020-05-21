@@ -1,115 +1,129 @@
 {% extends 'base.html' %}
 
 
+
 {% block content %}
 
-	{% load static %}
-	<style type="text/css">
-		img{
-			margin-left: auto;
-			margin-right: auto;
-		}
-		.card {
-	        margin: auto; /* Added */
-	        float: none; /* Added */
-	        margin-bottom: 10px; /* Added */
-		}
+<style type="text/css">
+	.card{
+		border: transparent;
+    	background: transparent;
+	}
+	.row{
+		padding-top: 10px;
+	}
+	#question{
+		padding-top: 10px;
+	}
+	.col{
+		min-width: 300px;
+	}
+	#subbtn{
+		margin-top: 20px
+	}
+	.col {
+	    min-width: 300px;
+	    padding: 10px;
+	    background: #dec1de;
+	    border: 2px solid purple;
+	    border-radius: 5px;
+	    margin: 2px;
+	}
+</style>
 
-		ol{
-			text-align: center;
-			font-size: 25px;
-			font-weight: bold;
-		}
-	
-		.menuli{
-		    font-weight: bold;
-		    text-align: left;
-		    font-size: 20px;
-		    margin: 15px;
-		}
-		.menuli:hover{
-			cursor: pointer;
-			color: #60dab6;
-		}
-	</style> 
+<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">	
 
-	{% if allforms is not None %}
-
-	<div class="card border-info mb-3" style="max-width: 70rem;">
-	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
-	  <div class="card-body" style="text-align: center;">
-
-	  	<form action="{% url 'Quizz:oneform' %}" method="POST" id="testform">
-
-	  		<input type="hidden" name="idform" id="idform">
-	  		{% csrf_token %}
-	  		<p class="card-text">
-		    	<ol> <u>Les formulaires</u>
-					{% for f in allforms %}
-						<li class="menuli" onclick="chooseForm(this)">{{ f.id }}</li>
-					{% empty %}
-						<li class="menuli">Pas de formulaire</li>
-					{% endfor %}
-				</ol>
-		    </p>
-	  	</form>
-	  	
-
+	<div class="card border-info mb-3">
+	  <div class="card-header"><h1>{{ form.name }}</h1>
+	  	<p class="card-text">{{ form.description }}</p>
+	  	{% if form.autheur is not None %}
+	  	<p class="card-text">Créé par {{ form.author }}</p>
+	  	{% else %}
+	  	<p class="card-text">Créé par teampopsquizz</p>
+	  	{% endif %}
 	  </div>
-	  <div class="card-footer">
-  		
-	  </div>
-	</div>
+	  <div class="card-body">
 
-	<script type="text/javascript" src="{% static "js/jquery-3.4.1.min.js" %}"></script>
-	<script type="text/javascript">
-		chooseForm = function (that) {
-			
-			var idform = $(that).text();
-			$('#idform').val(idform);
-			$('#testform').submit();
+	  		<form>
 
-		}
-	</script>
-
-	{% else %}
-
-	<div class="card border-info mb-3" style="max-width: 70rem;">
-	  <div class="card-header"><h1>Bienvenue sur Pops Quizz</h1></div>
-	  <div class="card-body" style="text-align: center;">
-
-	  	<p class="card-text">
-	    	<ol> <u>{{ form.name }}&nbsp;:&nbsp;{{ form.description }}</u>
 				{% for q in form.questions %}
-					<li class="menuli">{{ q.question.label }}
+					
+					  <h3 id="question">{{ q.question.label }}</h1>
+					  <div class="row">
 
-						<ul>
-							{% for a in q.answers %}
-								<li class="menuli">{{ a.value }}</li>
-							{% empty %}
-								<li class="menuli">Pas de réponse</li>
+					  	{% if q.question.answerType.type == "INPUT" %}
+
+						  	{% for a in q.answers %}
+						  	<div class="col">
+						  		
+  								<input type="text" class="form-control" id="answer{{ a.id }}" name="answer{{ a.id }}" placeholder="">
+								
+						  	</div>
+						  	{% empty %}
+								Pas de réponse
 							{% endfor %}
 
-						</ul>
-					</li>
+					  	{% elif q.question.answerType.type == "QCM" %}
+
+					  		{% for a in q.answers %}
+						  	<div class="col">
+
+						  		<div class="form-check">
+						  		
+							  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}">
+							        <label class="form-check-label" for="answer{{ a.id }}">
+							          {{ a.value }}
+							        </label>
+
+						    	</div>
+								
+						  	</div>
+						  	{% empty %}
+								Pas de réponse
+							{% endfor %}
+
+
+					  	{% elif q.question.answerType.type == "UNIQUE_ANSWER" %}
+
+					  		{% for a in q.answers %}
+						  	<div class="col">
+
+						  		<div class="form-check">
+						  		
+									<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" checked>
+					          		<label class="form-check-label" for="answer{{ a.id }}">
+						            {{ a.value }}
+					          		</label>
+
+					          	</div>
+								
+						  	</div>
+						  	{% empty %}
+								Pas de réponse
+							{% endfor %}
+
+
+					  	{% else %}
+
+					  	Type non pris en charge
+					  	
+					  	{% endif %}
+
+					  </div>
+					
+					
 				{% empty %}
-					<li class="menuli">Pas de questions</li>
+					Pas de questions
 				{% endfor %}
-			</ol>
-	    </p>
+
+
+				<button type="submit"  id="subbtn" class="btn btn-success">VALIDER</button>
+				<button type="reset"  id="subbtn" class="btn btn-danger">ANNULER</button>
+
+			</form>
 
 	  </div>
-	  <div class="card-footer">
-  		
-	  </div>
-	</div>
-
-	{% endif %}
+	</div>	
 	
-
-	
-
-
-	
-
+</div>
 {% endblock %}
