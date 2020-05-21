@@ -1,0 +1,43 @@
+html, body {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+
+/*div {
+    border: 2px solid grey;
+	border-radius: 5px;
+	padding:2px;
+}*/
+.head_style {
+	background-color: rgba(223,213,250, 1);
+	/*height: 100%;
+    min-height: 100%;*/
+	box-shadow: 0px 1px 12px #554780;
+	margin-bottom: 15pt;
+	padding: 15pt;
+}
+
+.background {
+	background-color: rgb(177,155,217, 1);
+	height: 100%;
+	position: absolute;
+	overflow: auto;
+}
+
+.background_body {
+	background-color: rgba(223,213,250, 1);
+	/*height: 100%;
+    min-height: 100%;*/
+	box-shadow: 1px 1px 12px #554780;
+}
+
+.body_size {
+	height: 100%;
+    min-height: 100%;
+}
+
+.foot {
+	padding: 15pt 0pt 15pt 0pt;
+	text-align: center;
+}
