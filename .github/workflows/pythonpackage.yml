@@ -33,3 +33,7 @@ jobs:
     - name: Test with Django test
       run: |
         python3 manage.py test
+    - name: Coverage
+      run: |
+        coverage run --source='.' manage.py test
+        coverage report
