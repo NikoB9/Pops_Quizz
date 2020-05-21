@@ -4,21 +4,66 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core import validators
 
+# Class qui hérite directement du modele et qui permet de tracer les données
+class TimestampModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+# classe exemple qui herite du timestamp pour un suivi des données
+class Functionnalities(TimestampModel):
+    name = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    description = models.TextField(null=True)
+    def __str__(self):
+        return self.name
+
 class User(models.Model):
-	login = models.CharField(max_length=255, null=False, blank=False, unique=True)
-	mail = models.EmailField(max_length=255, null=False, blank=False, unique=True)
-	password = models.CharField(max_length=255, null=False, blank=False, unique=False)
-#	friends = models.ManyToManyField("self")
-	def __str__(self):
-		return self.login
+    login = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    mail = models.EmailField(max_length=255, null=False, blank=False, unique=True)
+    password = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    friends = models.ManyToManyField("self", through='Friends',symmetrical=False)
+    def __str__(self):
+        return self.login
+
+class Friends(models.Model):
+    source = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'source')
+    target = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'target')
+    accepted = models.BooleanField(default=False)
+    comment = models.TextField(null=True)
+    def __str__(self):
+        return self.source.login+" to "+self.target.login+" is "+self.accepted
+
+class Category(models.Model):
+    label = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    description = models.CharField(max_length=255, null=True, blank=True, unique=False)
+    def __str__(self):
+        return self.label+" "+self.description
 
 class Form(models.Model):
-	name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-	description = models.TextField(unique=False)
-	def __str__(self):
-		return self.name
+    name = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    description = models.TextField(unique=False)
+    categories = models.ManyToManyField(Category)
+    def __str__(self):
+        return self.name
 
+# AccessType = [PUBLISHER, EDITOR, CREATOR]
+class AccessFormType(models.Model):
+    type = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    def __str__(self):
+        return self.type
+
+class AccessForm(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    form = models.ForeignKey(Form, on_delete=models.CASCADE)
+    accessFormType = models.ForeignKey(AccessFormType, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.user.login+" access to "+self.form.name+" with right "+self.accessFormType.type
+
+
+# Answer_type = [UNIQUE_ANSWER, QCM, INPUT]
 class AnswerType(models.Model):
     type = models.CharField(max_length=255, null=False, blank=False, unique=True)
     def __str__(self):
@@ -39,33 +84,28 @@ class PossibleAnswer(models.Model):
     def __str__(self):
         return self.value
 
+class Game(models.Model):
+    form = models.ForeignKey(Form, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    publicStatus = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    def __str__(self):
+        return "Game "+self.name+" created at "+self.createdAt
 
-# class Game(models.Model):
-#     form = models.ForeignKey(Form, on_delete=models.CASCADE)
+class Player(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.PROTECT)
+    score = models.IntegerField(null=True, blank=False, unique=False)
+    def __str__(self):
+        return "Player "+self.user.login+" of game "+self.game.name
 
-# class Player(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     game = models.ForeignKey(Game, on_delete=models.PROTECT)
-
-# class UserAnswers(models.Model):
-#     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-
-# Class qui hérite directement du modele et qui permet de tracer les données
-# class TimestampModel(models.Model):
-# 	created_at = models.DateTimeField(auto_now_add=True)
-# 	update_at = models.DateTimeField(auto_now=True)
-
-# 	class Meta:
-# 		abstract = True
-
-# # classe exemple qui herite du timestamp pour un suivi des données
-# class Functionnalities(TimestampModel):
-# 	name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-# 	description = models.TextField(null=True)
-
-
-# 	def __str__(self):
-# 		return self.name
+class UserAnswers(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    possibleAnswer = models.ForeignKey(PossibleAnswer, on_delete=models.CASCADE)
+    value = models.CharField(max_length=255, null=False, blank=False, unique=False)
+    def __str__(self):
+        return self.value
 
 # # Droits utilisateur
 # class UserRights(TimestampModel):
@@ -73,39 +113,21 @@ class PossibleAnswer(models.Model):
 # 	libelle = models.CharField(max_length=255, null=False, blank=False, unique=True)
 # 	def __str__(self):
 # 		return self.libelle
-
+#
 # # utilisateur (pas mal d'exemple avec ça)
-# #exemple relation clé étrangère	
-
+# #exemple relation clé étrangère
+#
 # class Users(TimestampModel):
 # 	role = models.ForeignKey(UserRights, on_delete=models.PROTECT)
 # 	first_name = models.CharField(max_length=255, null=False, blank=False, unique=False)
 # 	last_name = models.CharField(max_length=255, null=False, blank=False, unique=False)
 # 	email = models.EmailField(max_length=255, null=True, blank=True, unique=True)
 # 	phone_regex = validators.RegexValidator(regex=r'^\+?1?\d{8,18}$',
-# 	 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.") 
-# 	phone_number = models.CharField(validators=[phone_regex], 
+# 	 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+# 	phone_number = models.CharField(validators=[phone_regex],
 # 		max_length=18, null=True, blank=True, unique=False)
 # 	login = models.CharField(max_length=255, null=False, blank=False, unique=False)
 # 	password = models.CharField(max_length=1000, null=False, blank=False, unique=False)
-
-
+#
 # 	def __str__(self):
 # 		return self.first_name+" "+self.last_name
-
-# Class qui hérite directement du modele et qui permet de tracer les données
-class TimestampModel(models.Model):
-	created_at = models.DateTimeField(auto_now_add=True)
-	update_at = models.DateTimeField(auto_now=True)
-
-	class Meta:
-		abstract = True
-
-# classe exemple qui herite du timestamp pour un suivi des données
-class Functionnalities(TimestampModel):
-	name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-	description = models.TextField(null=True)
-
-
-	def __str__(self):
-		return self.name
