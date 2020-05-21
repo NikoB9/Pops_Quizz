@@ -45,6 +45,7 @@ class Form(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False, unique=False)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     description = models.TextField(unique=False)
+    isPublic = models.BooleanField(default=True)
     categories = models.ManyToManyField(Category)
     def __str__(self):
         return self.name
