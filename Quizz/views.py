@@ -37,19 +37,8 @@ import datetime
 def index(request):
     """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""
     """Liste pour créer le menu"""
-    functionalities = [
-    {'name':'Création de quizz','desc':''},
-    {'name':'Jouer','desc':''},
-    {'name':'Historique','desc':''},
-    {'name':'Amis','desc':''},
-    ]
-    return render(request, "home/index.html", {'functionalities': functionalities})
-
-def getforms(request):
-
-	allforms = getAllForms()
-
-	return render(request, "home/forms.html", {'allforms' : allforms})
+    allforms = getAllForms()
+    return render(request, "home/index.html", {'allforms' : allforms})
 
 def openform(request, idform):
 
