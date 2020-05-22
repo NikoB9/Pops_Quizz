@@ -1,6 +1,6 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
-from .models import *
+from Quizz.models import *
 
 def getAllForms():
     return Form.objects.all()

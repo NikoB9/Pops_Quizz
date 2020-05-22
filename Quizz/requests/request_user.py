@@ -1,6 +1,6 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
-from .models import *
+from Quizz.models import *
 
 from django.contrib.auth import hashers
 
@@ -16,7 +16,6 @@ def getUserByLogin(login):
 
 def getAllUsers():
     return User.objects.all()
-
 
 def loginExist(login):
 	user = User.objects.filter(login=login)

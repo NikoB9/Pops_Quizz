@@ -4,35 +4,24 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.urls import reverse
-
 
 # Create your views here.
-from django.http import HttpResponse
 
 #ACCES MODEL
-from .models import *
 from .forms import *
 
-# Import request
-from .request_user import *
-from .request_form import *
-from .request_question import *
+# Import requests
+from Quizz.requests.request_user import *
+from Quizz.requests.request_form import *
+from Quizz.requests.request_question import *
 
 #regex
-import re
 
 #FOR JSON RESPONSE
-from django.http import JsonResponse
-from django.core import serializers
-import json
 
 #OS lib
-import os
 #settings
-from django.conf import settings
 #date
-import datetime
 
 def index(request):
     """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""
