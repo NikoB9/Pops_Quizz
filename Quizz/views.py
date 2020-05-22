@@ -16,19 +16,20 @@ from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
 
-#regex
+# regex
 import re
-#FOR JSON RESPONSE
+# FOR JSON RESPONSE
 from django.http import JsonResponse
 from django.core import serializers
-#JSON
+# JSON
 import json
-#OS lib
+# OS lib
 import os
-#settings
+# settings
 from django.conf import settings
-#date
+# date
 import datetime
+
 
 def index(request):
     allforms = getAllForms()
@@ -38,10 +39,14 @@ def index(request):
 def openform(request, idform):
     game_name = request.POST.get('game_name', None)
     slot_max = request.POST.get('slot_max', None)
-    is_public = request.POST.get('is_public', None)
+    is_public = True if request.POST.get('is_public', None) == "on" else False
     login = request.session['login']
-
-    game = create_game(idform, login, game_name, is_public, slot_max)
+    print(game_name)
+    print(slot_max)
+    print(is_public)
+    print(login)
+    game = create_gameBD(idform, login, game_name, is_public, slot_max)
+    # game.Game.objects.get(form_id)
 
     user = getUserByLogin(login)
 
@@ -132,19 +137,25 @@ def connectUser(request):
 
     return JsonResponse(data)
 
+
 def create_game(request, id_form):
+    f = getFormsById(id_form)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    print(f)
 
-def disconnect(request) :
+    return render(request, "home/create-game.html", {'form': f})
 
-	del request.session['login']
 
-	data = {
+def disconnect(request):
+    del request.session['login']
+
+    data = {
         'is_valid': True
     }
 
-	return JsonResponse(data)
+    return JsonResponse(data)
 
-    return render(request, "home/create-game.html", {'form': f})
 
 def creation(request):
     return render(request, "home/creation.html")

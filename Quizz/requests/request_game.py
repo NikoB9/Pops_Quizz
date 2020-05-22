@@ -8,7 +8,7 @@ from Quizz.requests.request_form import *
 def get_all_game():
     return Game.objects.all()
 
-def create_game(form_id, user_name, name, is_public, max_player):
+def create_gameBD(form_id, user_name, name, is_public, max_player):
     author = getUserByLogin(user_name)
     form = getFormsById(form_id)
     new_game = Game()
@@ -17,4 +17,5 @@ def create_game(form_id, user_name, name, is_public, max_player):
     new_game.author = author
     new_game.is_public = is_public
     new_game.slot_max = max_player
-    return new_game.save()
+    new_game.save()
+    return new_game

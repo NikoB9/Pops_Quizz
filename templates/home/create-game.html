@@ -50,16 +50,16 @@
 		      	{% csrf_token %}
 				<label for="game_name">Nom de la partie : </label>
 				<br>
-				<input type="text" value="Partie de " id="game_name">
+				<input type="text" value="Partie de " id="game_name" name="game_name">
 				<br>
 				<label for="slot_max">Nombre de joueur </label>
 				<br>
-				<input type="number" id="slot_max" value="1" min="1" >
+				<input type="number" id="slot_max" name="slot_max" value="1" min="1" >
 				<br>
-				<label for="is_public">Mettre la partie en privée </label>
+				<label for="is_public">Mettre la partie en public </label>
 				<br>
 				<!-- TODO forcée la partie à privée s'il n'y a qu'un seul joueur max-->
-				<input type="checkbox" id="is_public" >
+				<input type="checkbox" id="is_public" name="is_public">
 				<br>
 
 				<button type="submit"  id="subbtn" class="btn btn-success">VALIDER</button>
