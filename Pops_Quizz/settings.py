@@ -99,9 +99,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'teampopsquizz_quizz',
-        'USER': '207171',
-        'PASSWORD': 'Md74V5ez32rfD',
-        'HOST': 'mysql-teampopsquizz.alwaysdata.net',
+        # 'USER': '207171',
+        # 'PASSWORD': 'Md74V5ez32rfD',
+        # 'HOST': 'mysql-teampopsquizz.alwaysdata.net',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
         	'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",

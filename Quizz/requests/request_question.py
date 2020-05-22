@@ -1,6 +1,6 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
-from .models import *
+from Quizz.models import *
 
 def getQuestionsByForm(form):
     return Question.objects.filter(form=form).order_by('order')
