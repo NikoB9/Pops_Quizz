@@ -2,6 +2,7 @@ from django.test import TestCase
 from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
+from Quizz.requests.request_game import *
 
 class Test_model(TestCase):
 
@@ -10,49 +11,49 @@ class Test_model(TestCase):
         userWawa = User()
         userWawa.login="Warren"
         userWawa.mail="warren.weber@hotmail.fr"
-        userWawa.password="wawa"
+        userWawa.password=hashers.make_password("wawa")
         userWawa.save()
 
         userTony = User()
         userTony.login="TimFake"
         userTony.mail="tony.lim@u-psud.fr"
-        userTony.password="toto"
+        userTony.password=hashers.make_password("toto")
         userTony.save()
 
         userNico = User()
         userNico.login="NicoFake"
         userNico.mail="nico@wanadoo.com"
-        userNico.password="djangogo"
+        userNico.password=hashers.make_password("djangogo")
         userNico.save()
 
         userSalome = User()
         userSalome.login="SaloméFake"
         userSalome.mail="salomette@yahoo.fr"
-        userSalome.password="jaimelecss"
+        userSalome.password=hashers.make_password("jaimelecss")
         userSalome.save()
 
         userThibaut = User()
         userThibaut.login="WiirioFake"
         userThibaut.mail="thibaut@aol.fr"
-        userThibaut.password="test"
+        userThibaut.password=hashers.make_password("test")
         userThibaut.save()
 
         userAmi = User()
         userAmi.login="copain du 31"
         userAmi.mail="ami@aol.fr"
-        userAmi.password="jaime"
+        userAmi.password=hashers.make_password("jaime")
         userAmi.save()
 
         userAmiAttente = User()
         userAmiAttente.login="ami en demande"
         userAmiAttente.mail="chercheami@gmail.com"
-        userAmiAttente.password="demande"
+        userAmiAttente.password=hashers.make_password("demande")
         userAmiAttente.save()
 
         userGhost = User()
         userGhost.login="ami absent"
         userGhost.mail="amiperdu@gmail.com"
-        userGhost.password="ghost"
+        userGhost.password=hashers.make_password("ghost")
         userGhost.save()
 
         relationAmiTony = Friends()
@@ -209,13 +210,13 @@ class Test_model(TestCase):
         f.name = "Premier formulaire"
         f.description = "C'est parti !"
         f.author = userWawa
-        f.isPublic = True
+        f.is_public = True
         f.save()
 
         AF1 = AccessForm()
         AF1.form = f
         AF1.user = userWawa
-        AF1.accessFormType = accessFormTypeCreator
+        AF1.access_form_type = accessFormTypeCreator
         AF1.save()
 
 
@@ -235,7 +236,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -255,7 +256,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -274,7 +275,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -283,49 +284,56 @@ class Test_model(TestCase):
         possAnswer.correct = True
         possAnswer.save()
 
+        game = Game()
+        game.slot_max = 1
+        game.author = userWawa
+        game.form = f
+        game.is_public = False
+        game.name = "Game of Wawa on form 1"
+        game.save()
         ####################################
 
         f = Form()
         f.name = "Deuxième formulaire"
         f.description = "C'est parti !"
         f.author = userTony
-        f.isPublic = False
+        f.is_public = False
         f.save()
         AF2 = AccessForm()
         AF2.form = f
         AF2.user = f.author
-        AF2.accessFormType = accessFormTypeCreator
+        AF2.access_form_type = accessFormTypeCreator
         AF2.save()
 
         AF2Wawa = AccessForm()
         AF2Wawa.form = f
         AF2Wawa.user = userWawa
-        AF2Wawa.accessFormType = accessFormTypeEditor
+        AF2Wawa.access_form_type = accessFormTypeEditor
         AF2Wawa.save()
 
         AF2Thibaut = AccessForm()
         AF2Thibaut.form = f
         AF2Thibaut.user = userThibaut
-        AF2Thibaut.accessFormType = accessFormTypeEditor
+        AF2Thibaut.access_form_type = accessFormTypeEditor
         AF2Thibaut.save()
 
         AF2Nico = AccessForm()
         AF2Nico.form = f
         AF2Nico.user = userNico
-        AF2Nico.accessFormType = accessFormTypeEditor
+        AF2Nico.access_form_type = accessFormTypeEditor
         AF2Nico.save()
 
         AF2Salome = AccessForm()
         AF2Salome.form = f
         AF2Salome.user = userSalome
-        AF2Salome.accessFormType = accessFormTypeEditor
+        AF2Salome.access_form_type = accessFormTypeEditor
         AF2Salome.save()
 
         question = Question()
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -344,7 +352,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -363,7 +371,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -378,19 +386,19 @@ class Test_model(TestCase):
         f.name = "Troisième formulaire"
         f.description = "C'est parti !"
         f.author = userTony
-        f.isPublic = True
+        f.is_public = True
         f.save()
         AF3 = AccessForm()
         AF3.form = f
         AF3.user = f.author
-        AF3.accessFormType = accessFormTypeCreator
+        AF3.access_form_type = accessFormTypeCreator
         AF3.save()
 
         question = Question()
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -409,7 +417,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -428,7 +436,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -443,19 +451,19 @@ class Test_model(TestCase):
         f.name = "Quatrième formulaire"
         f.description = "C'est parti !"
         f.author = userNico
-        f.isPublic = True
+        f.is_public = True
         f.save()
         AF4 = AccessForm()
         AF4.form = f
         AF4.user = f.author
-        AF4.accessFormType = accessFormTypeCreator
+        AF4.access_form_type = accessFormTypeCreator
         AF4.save()
 
         question = Question()
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -474,7 +482,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -493,7 +501,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -508,19 +516,19 @@ class Test_model(TestCase):
         f.name = "Cinquième formulaire"
         f.description = "C'est parti !"
         f.author = userThibaut
-        f.isPublic = True
+        f.is_public = True
         f.save()
         AF5 = AccessForm()
         AF5.form = f
         AF5.user = f.author
-        AF5.accessFormType = accessFormTypeCreator
+        AF5.access_form_type = accessFormTypeCreator
         AF5.save()
 
         question = Question()
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -539,7 +547,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -558,7 +566,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -573,19 +581,19 @@ class Test_model(TestCase):
         f.name = "Sixième formulaire"
         f.description = "C'est parti !"
         f.author = userSalome
-        f.isPublic = True
+        f.is_public = True
         f.save()
         AF6 = AccessForm()
         AF6.form = f
         AF6.user = f.author
-        AF6.accessFormType = accessFormTypeCreator
+        AF6.access_form_type = accessFormTypeCreator
         AF6.save()
 
         question = Question()
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -604,7 +612,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -623,7 +631,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -638,19 +646,19 @@ class Test_model(TestCase):
         f.name = "Septième formulaire"
         f.description = "C'est parti !"
         f.author = userTony
-        f.isPublic = False
+        f.is_public = False
         f.save()
         AF7 = AccessForm()
         AF7.form = f
         AF7.user = f.author
-        AF7.accessFormType = accessFormTypeCreator
+        AF7.access_form_type = accessFormTypeCreator
         AF7.save()
 
         question = Question()
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answerType= qcmType
+        question.answer_type= qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -669,7 +677,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answerType= uniqueAnswerType
+        question.answer_type= uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -688,7 +696,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answerType= inputType
+        question.answer_type= inputType
         question.save()
 
         possAnswer = PossibleAnswer()
@@ -717,7 +725,7 @@ class Test_model(TestCase):
         self.assertEquals(3, len(questions))
         first_question = questions[0]
         self.assertEquals(form_1, first_question.form)
-        self.assertEquals("QCM", first_question.answerType.type)
+        self.assertEquals("QCM", first_question.answer_type.type)
         self.assertEquals("première question", first_question.label)
         self.assertEquals(1, first_question.order)
 
@@ -766,3 +774,17 @@ class Test_model(TestCase):
         newUser = users[8]
         self.assertEquals("new user", newUser.login)
         self.assertEquals("new.user@mail.com", newUser.mail)
+
+    ## TEST GAME ##
+
+    def test_get_all_Game(self):
+        games = get_all_game()
+        self.assertEquals(1, len(games))
+        self.assertEquals("Game of Wawa on form 1", games[0].name)
+
+    def test_create_game(self):
+        games = get_all_game()
+        self.assertEquals(1, len(games))
+        self.assertEquals("Game of Wawa on form 1", games[0].name)
+
+        #TODO complete test
