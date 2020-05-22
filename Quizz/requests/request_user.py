@@ -4,7 +4,7 @@ from Quizz.models import *
 
 from django.contrib.auth import hashers
 
-def createUser(login, mail, password):
+def createUserBD(login, mail, password):
     user = User()
     user.login = login
     user.mail = mail
@@ -16,3 +16,20 @@ def getUserByLogin(login):
 
 def getAllUsers():
     return User.objects.all()
+
+
+def loginExist(login):
+	user = User.objects.filter(login=login)
+	user_valid = user.count() >= 1
+	return user_valid
+
+def emailExist(mail):
+	user = User.objects.filter(mail=mail)
+	user_valid = user.count() >= 1
+	return user_valid
+
+
+def valideUser(login, pwd):
+	user = User.objects.get(login=login)
+	user_valid = hashers.check_password(pwd, user.password)
+	return user_valid

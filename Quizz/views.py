@@ -46,20 +46,74 @@ def users(request):
     return render(request, "home/users.html", {'users': users})
 
 def createUser(request):
-    # if this is a POST requests we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the requests:
-        form = UserForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            createUser(form.cleaned_data['login'], form.cleaned_data['mail'], form.cleaned_data['password'])
-            return HttpResponseRedirect('/')
+    
+	login = request.POST.get('loginco', None)
+	email = request.POST.get('emailco', None)
+	password = request.POST.get('passwordco', None)
+	password_validation = request.POST.get('passwordco2', None)
 
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = UserForm()
+	if loginExist(login) :
 
-    return render(request, "home/createUser.html", {"form" : form})
+		data = {
+    	'is_valid':  False,
+    	'error_message': "Le pseudo existe déjà."   
+    	}
+
+	elif emailExist(email) :
+
+		data = {
+    	'is_valid':  False,
+    	'error_message': "L'email existe déjà."   
+    	}
+
+	elif password != password_validation :
+
+		data = {
+    	'is_valid':  False,
+    	'error_message': "Le mot de passe de confirmation est différent."   
+    	}
+
+	else :
+        
+		createUserBD(login, email, password)
+        
+		data = {
+    	'is_valid':  True,
+    	}
+
+	return JsonResponse(data)
+
+def connectUser(request):
+    
+	login = request.POST.get('login', None)
+	password = request.POST.get('password', None)
+
+	if loginExist(login) :
+
+		if valideUser(login, password):
+    		
+			data = {
+		    	'is_valid':  True,
+		    	}
+
+			request.session['login'] = login
+
+		else :
+
+			data = {
+	    	'is_valid':  False,
+	    	'error_message': "Le mot de passe est incorrect."   
+	    	}
+
+	else :
+
+		data = {
+    	'is_valid':  False,
+    	'error_message': "Le pseudo n'existe pas."   
+    	}
+
+
+	return JsonResponse(data)
 
 
 

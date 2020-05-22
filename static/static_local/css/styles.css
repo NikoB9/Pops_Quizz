@@ -10,7 +10,7 @@ html, body {
 	padding:2px;
 }*/
 .head_style {
-	background-color: rgba(223,213,250, 1);
+	background-color: rgb(223,213,250);
 	/*height: 100%;
     min-height: 100%;*/
 	box-shadow: 0px 1px 12px #554780;
@@ -19,14 +19,14 @@ html, body {
 }
 
 .background {
-	background-color: rgb(177,155,217, 1);
+	background-color: rgb(177,155,217);
 	height: 100%;
 	position: absolute;
 	overflow: auto;
 }
 
 .background_body {
-	background-color: rgba(223,213,250, 1);
+	background-color: rgba(223,213,250);
 	/*height: 100%;
     min-height: 100%;*/
 	box-shadow: 1px 1px 12px #554780;
@@ -40,4 +40,46 @@ html, body {
 .foot {
 	padding: 15pt 0pt 15pt 0pt;
 	text-align: center;
+}
+
+.textcolor{
+	color: rgb(177,155,217) !important;
+	font-weight: bold;
+}
+
+/******Colonnes verticalement centrées****/
+.colmenu{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+/******Pour la connexion****/
+.connectBtn{
+	color: rgb(177,155,217);
+	border-color: rgb(177,155,217);
+}
+.connectBtn:hover {
+	background-color: rgb(177,155,217);
+	border-color: rgb(177,155,217);
+}
+
+.activefield{
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.fieldconnect{
+	cursor: pointer;
+	color: rgb(177,155,217);
+}
+
+.validBtn{
+	background-color: rgb(177,155,217);
+	border-color: rgb(177,155,217);
+}
+
+.validBtn:hover{
+	background-color: rgb(157, 128, 210);
+	border-color: rgb(157, 128, 210);
 }

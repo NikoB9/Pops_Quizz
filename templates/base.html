@@ -15,17 +15,76 @@
 	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-grid.min.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-reboot.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-reboot.min.css" %}">
+	    <link rel="stylesheet" type="text/css" href="{% static "css/fontAwesome5.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/styles.css"%}">
 	    {% endblock %}
 	</head>
 	<body >
+		<!-- Modal -->
+		<div class="modal fade" id="connectuserModal" tabindex="-1" role="dialog" aria-labelledby="connectuserModal" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="connectuserModalTitle"><span id="btnFieldConnect" class="activefield fieldconnect" onclick="displayConnect()">Connexion</span> / <span onclick="displayAuth()" id="btnFieldAuth" class="fieldconnect">Inscription</span></h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body" id="modalbodyco">
+
+		      	{% csrf_token %}
+		        
+		      	<div id="connectdiv">
+		      		<div class="form-group">
+					    <label for="login" class="textcolor">Pseudo</label>
+					    <input type="text" class="form-control" id="login" placeholder="pseudo">
+				  	</div>
+				  	<div class="form-group">
+					    <label for="password" class="textcolor">Mot de passe</label>
+					    <input type="password" class="form-control" id="password" placeholder="mot de passe">
+				  	</div>
+		      	</div>
+
+		      	<div id="authdiv" style="display: none;">
+				  	<div class="form-group">
+					    <label for="emailco" class="textcolor">Email</label>
+					    <input type="email" class="form-control" id="emailco" aria-describedby="emailHelp" placeholder="nom.prenom@servermail.gtld">
+					    <small id="emailHelp" class="form-text text-muted textcolor">Nous ne partageons pas vos données.</small>
+				  	</div>
+				  	<div class="form-group">
+					    <label for="loginco" class="textcolor">Pseudo</label>
+					    <input type="text" class="form-control" id="loginco" placeholder="pseudo">
+				  	</div>
+				  	<div class="form-group">
+					    <label for="passwordco" class="textcolor">Mot de passe</label>
+					    <input type="password" class="form-control" id="passwordco" placeholder="mot de passe">
+				  	</div>
+				  	<div class="form-group">
+					    <label for="passwordco2" class="textcolor">Confirmation du mot de passe</label>
+					    <input type="password" class="form-control" id="passwordco2" placeholder="mot de passe">
+				  	</div>
+		      	</div>
+
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+		        <button type="button" class="btn btn-primary validBtn" onclick="submitCo()">Valider</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 		<!-- Bloc principale englobant toute la page -->
 	    <div class="container-fluid background">
 
 	    	<!-- HEADER Présent sur toute les pages-->
 	    	<div class="row head_style">
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-12 "><img src="{% static "img/logo.png" %}" width="75%"/></div>
-				<div class="col-lg-10 col-md-10 col-sm-9 col-xs-12"><H1>POPS Quizz</H1></div>
+				<div class="col-md-1"><img src="{% static "img/logo.png" %}" width="70rem" height="75rem" /></div>
+				<div class="col colmenu"><H1 class="textcolor">POPS Quizz</H1></div>
+				{% if request.session.login is None %}
+				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="connectBtn"><i class="fas fa-user-lock"></i>&nbsp;<b>Connexion</b></button></div>
+				{% else %}
+				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="userBtn"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
+				{% endif %}
 	    	</div>
 
 	    	<!-- BODY -->
@@ -47,6 +106,7 @@
 				<script type="text/javascript" src="{% static "js/bootstrap.bundle.min.js"%}"></script>
 				<script type="text/javascript" src="{% static "js/bootstrap.js"%}"></script>
 				<script type="text/javascript" src="{% static "js/bootstrap.min.js"%}"></script>
+				<script type="text/javascript" src="{% static "js/connectuser.js"%}"></script>
 				{% endblock %}
 				<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
 	    			<!-- Doit rester vide -->
