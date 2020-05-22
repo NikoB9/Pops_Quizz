@@ -36,8 +36,8 @@
 	<div class="card border-info mb-3">
 	  <div class="card-header"><h1>{{ form.name }}</h1>
 	  	<p class="card-text">{{ form.description }}</p>
-	  	{% if form.autheur is not None %}
-	  	<p class="card-text">Créé par {{ form.author }}</p>
+	  	{% if form.author is not None %}
+	  	<p class="card-text">Créé par {{ form.author.login }}</p>
 	  	{% else %}
 	  	<p class="card-text">Créé par teampopsquizz</p>
 	  	{% endif %}
@@ -51,7 +51,7 @@
 					  <h3 id="question">{{ q.question.label }}</h1>
 					  <div class="row">
 
-					  	{% if q.question.answerType.type == "INPUT" %}
+					  	{% if q.question.answer_type.type == "INPUT" %}
 
 						  	{% for a in q.answers %}
 						  	<div class="col">
