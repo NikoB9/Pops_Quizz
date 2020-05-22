@@ -63,7 +63,7 @@
 								Pas de réponse
 							{% endfor %}
 
-					  	{% elif q.question.answerType.type == "QCM" %}
+					  	{% elif q.question.answer_type.type == "QCM" %}
 
 					  		{% for a in q.answers %}
 						  	<div class="col">
@@ -83,7 +83,7 @@
 							{% endfor %}
 
 
-					  	{% elif q.question.answerType.type == "UNIQUE_ANSWER" %}
+					  	{% elif q.question.answer_type.type == "UNIQUE_ANSWER" %}
 
 					  		{% for a in q.answers %}
 						  	<div class="col">
