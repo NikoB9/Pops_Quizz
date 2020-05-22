@@ -787,7 +787,7 @@ class Test_model(TestCase):
         self.assertEquals(1, len(games))
         self.assertEquals("Game of Wawa on form 1", games[0].name)
 
-        create_game(1,"Warren", "Partie de Warren", True, 3)
+        create_gameBD(1,"Warren", "Partie de Warren", True, 3)
 
         games = get_all_game()
         self.assertEquals(2, len(games))

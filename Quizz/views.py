@@ -41,12 +41,7 @@ def openform(request, idform):
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
     login = request.session['login']
-    print(game_name)
-    print(slot_max)
-    print(is_public)
-    print(login)
     game = create_gameBD(idform, login, game_name, is_public, slot_max)
-    # game.Game.objects.get(form_id)
 
     user = getUserByLogin(login)
 
