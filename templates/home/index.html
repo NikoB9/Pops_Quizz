@@ -24,23 +24,6 @@
 
 			{% for f in allforms %}
 
-			<!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 ">
-				<div class="card"> style="width: 18rem;" 
-				    <div class="card-body">
-					    <h5 class="card-title">{{f.name}}</h5>
-					    <h6 class="card-subtitle mb-2 text-muted">{{f.description}}</h6>
-					    
-					    {% if f.autheur is not None %}
-					  		<p class="card-text">Créé par {{ f.author }}</p>
-					  	{% else %}
-					  		<p class="card-text">Créé par teampopsquizz</p>
-					  	{% endif %}	
-
-					    <a href="{% url 'Quizz:openform' f.id %}">Jouer</a>
-				    </div>
-				</div>
-			</div> -->
-
 			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
 				<div class="embed-responsive embed-responsive-1by1">
 					<a href="{% url 'Quizz:openform' f.id %}" class="liens_bt_form">
@@ -58,19 +41,6 @@
 					</a>
 				</div>
 			</div>
-
-			<!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 embed-responsive embed-responsive-1by1">
-				<a href="{% url 'Quizz:openform' f.id %}">
-					<div class="embed-responsive-item">{{f.name}}
-					<br>{{f.description}}
-					<br>
-					{% if f.autheur is not None %}
-				  	<p class="card-text">Créé par {{ f.author }}</p>
-				  	{% else %}
-				  	<p class="card-text">Créé par teampopsquizz</p>
-				  	{% endif %}</div>
-				</a>
-			</div> -->
 			{% endfor %}
 		</div>
 	</div>
