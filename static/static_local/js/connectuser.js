@@ -115,3 +115,34 @@ function submitCo() {
 $(document).click(function(){
 	$('.alert').remove();
 });
+
+$('#userBtn').popover();
+
+
+$('#userBtn').click(function(){
+	$('#userBtn').popover('toggle');
+});
+
+$(document).on("click", '#disconnect', function(){
+
+/*Entrer le token csrf dans le header si la route est sécurisé*/
+  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+  /*console.log("csrf token : "+csrftoken);*/
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+  $.ajax({
+  	type: 'POST',
+    url: './disconnect_user',
+    dataType: 'json',
+    success: function (data) {
+      if (data.is_valid)
+        window.location.reload();
+    }
+  });
+
+});

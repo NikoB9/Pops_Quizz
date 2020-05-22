@@ -16,14 +16,19 @@ from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
 
-
-# regex
-
-# FOR JSON RESPONSE
-
-# OS lib
-# settings
-# date
+#regex
+import re
+#FOR JSON RESPONSE
+from django.http import JsonResponse
+from django.core import serializers
+#JSON
+import json
+#OS lib
+import os
+#settings
+from django.conf import settings
+#date
+import datetime
 
 def index(request):
     allforms = getAllForms()
@@ -129,10 +134,15 @@ def connectUser(request):
 
 def create_game(request, id_form):
 
-    f = getFormsById(id_form)
-    questions = getQuestionsByForm(f)
-    f.questions = getPossibleAnswersByQuestions(questions)
-    print(f)
+def disconnect(request) :
+
+	del request.session['login']
+
+	data = {
+        'is_valid': True
+    }
+
+	return JsonResponse(data)
 
     return render(request, "home/create-game.html", {'form': f})
 
