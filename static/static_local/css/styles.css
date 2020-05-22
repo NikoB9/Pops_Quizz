@@ -83,3 +83,10 @@ html, body {
 	background-color: rgb(157, 128, 210);
 	border-color: rgb(157, 128, 210);
 }
+
+.userbtnitem{
+	border-top: 1px solid rgb(177,155,217);;
+	border-bottom: 1px solid rgb(177,155,217);;
+	color: rgb(177,155,217);
+	cursor: pointer;
+}

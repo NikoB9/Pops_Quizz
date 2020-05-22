@@ -19,6 +19,7 @@ urlpatterns = [
 
     re_path(r'create_user$', views.createUser),
     re_path(r'user_connection$', views.connectUser),
+    re_path(r'disconnect_user$', views.disconnect),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),

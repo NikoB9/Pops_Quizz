@@ -83,7 +83,12 @@
 				{% if request.session.login is None %}
 				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="connectBtn"><i class="fas fa-user-lock"></i>&nbsp;<b>Connexion</b></button></div>
 				{% else %}
-				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="userBtn"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
+				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="userBtn"
+					data-html="true" 
+   					data-toggle="popover" 
+   					data-trigger="manual" 
+   					data-placement="bottom"
+   					data-content="<div class='userbtnitem' id='disconnect'><i class='fas fa-sign-out-alt'></i>&nbsp;Déconnexion</div><div class='userbtnitem'><i class='fas fa-tachometer-alt'></i>&nbsp;Tableau de bord</div>"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
 				{% endif %}
 	    	</div>
 
