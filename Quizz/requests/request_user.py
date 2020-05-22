@@ -17,7 +17,6 @@ def getUserByLogin(login):
 def getAllUsers():
     return User.objects.all()
 
-
 def loginExist(login):
 	user = User.objects.filter(login=login)
 	user_valid = user.count() >= 1

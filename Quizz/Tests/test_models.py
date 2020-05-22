@@ -759,7 +759,7 @@ class Test_model(TestCase):
     def test_create_User(self):
         users = getAllUsers()
         self.assertEquals(8, len(users))
-        createUser("new user", "new.user@mail.com", "new password")
+        createUserBD("new user", "new.user@mail.com", "new password")
 
         users = getAllUsers()
         self.assertEquals(9, len(users))
