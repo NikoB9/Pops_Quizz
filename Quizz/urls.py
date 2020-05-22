@@ -14,10 +14,10 @@ urlpatterns = [
     path('creation/', views.creation, name='creation'),
     path('categories/', views.categories, name='categories'),
     path('resultats/', views.resultats, name='resultats'),
-    path('create-game_<int:idform>/', views.resultats, name='create-game'),
     path('form_<int:idform>/', views.openform, name='openform'),
+    path('create-game-<int:id_form>/', views.create_game, name='create-game'),
 
-    re_path(r'create_user$', views.createUser),
+    re_path(r'create_user$', views.create_user),
     re_path(r'user_connection$', views.connectUser),
     re_path(r'disconnect_user$', views.disconnect),
 

@@ -9,12 +9,12 @@
 			</div>
 			{% for f in allforms %}
 			<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 embed-responsive embed-responsive-1by1">
-				<a href="{% url 'Quizz:openform' f.id %}">
+				<a href="{% url 'Quizz:create-game' f.id %}">
 					<div class="embed-responsive-item">{{f.name}}
 					<br>{{f.description}}
 					<br>
-					{% if f.autheur is not None %}
-				  	<p class="card-text">Créé par {{ f.author }}</p>
+					{% if f.author is not None %}
+				  	<p class="card-text">Créé par {{ f.author.login }}</p>
 				  	{% else %}
 				  	<p class="card-text">Créé par teampopsquizz</p>
 				  	{% endif %}</div>
