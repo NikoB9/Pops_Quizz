@@ -1,10 +1,253 @@
 {% extends 'base.html' %}
 {% block content %}
+	<style type="text/css">
+		.hidden {
+			display: none;
+		}
+
+	</style> 
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
-		<div class="row">
-    		<div class="col-12">Titre et descriptif</div>
-    		<div class="col-12">question 1 et réponses</div>
-    	</div>
+		<form method="GET">
+			<div id="form_header">
+				<input type=text name=form_title value="Titre du Quizz">
+				<input type=text name=form_description value="Description du quizz">
+			</div>
+			<div id="questions">
+				
+			</div>
+			<button type=button onclick="addNewQuestion()">Ajouter une question</button>
+			<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
+			<input type="submit" value="Sauvegarder">
+		</form>
     </div>
+
+	<script>
+		class Question {
+			order;
+			title;
+			answerType;
+			answers = [];
+
+			$pnlQuestion = document.createElement("div");
+			$pnlHeader = document.createElement("div");
+			$pnlBody = document.createElement("div");
+			$pnlFooter = document.createElement("div");
+
+			$lblOrder = document.createElement("span");
+			$txtTitle = document.createElement("input");
+			$btnDelete = document.createElement("button");
+			$pnlAnswers = document.createElement("div");
+			$btnAddNewAnswer = document.createElement("button");
+			$selectAnswerType = document.createElement("select");
+
+			$hiddenOrder = document.createElement("input");
+			$hiddenNbAnswer = document.createElement("input");
+
+			constructor(_order, _title, _answerType, _answers) {
+				let self = this;
+				///RENDER HTML AND ATTRIBUTES
+				this.$pnlQuestion.classList.add("card", "border-info");
+				this.$pnlHeader.classList.add("card-header", "header");
+				this.$pnlBody.classList.add("card-body", "body");
+				this.$pnlFooter.classList.add("card-footer", "footer");
+
+				//TXT TITLE
+				this.$txtTitle.type = "text";
+				this.$txtTitle.onclick = function(e){ this.setSelectionRange(0, this.value.length); }
+				//BTN DELETE
+				this.$btnDelete.innerText = "Supprimer";
+				this.$btnDelete.onclick = function(e) { removeQuestion(self); };
+
+				let titleE = document.createElement("h3");
+				titleE.appendChild(this.$lblOrder);
+				titleE.appendChild(this.$txtTitle);
+				this.$pnlHeader.appendChild(titleE);
+				this.$pnlHeader.appendChild(this.$btnDelete);
+
+				//ANSWER TYPE
+				answerTypes.forEach(element => { 
+					let option = document.createElement("option");
+					option.value = element;
+					option.text = element;
+					this.$selectAnswerType.appendChild(option);
+				});
+				this.$selectAnswerType.onchange = function(){self.setAnswerType(self.$selectAnswerType.value)};
+
+				//ADD NEW ANSWER
+				this.$btnAddNewAnswer.type = "button";
+				this.$btnAddNewAnswer.innerText = "+";
+				this.$btnAddNewAnswer.onclick = function(e){
+					let ans = new Answer(self.type, "Nouvelle réponse");
+					self.addAnswer(ans);
+				}
+
+				this.$hiddenOrder.type = "hidden";
+
+				this.$hiddenNbAnswer.type = "hidden";
+				this.$hiddenNbAnswer.value = 0;
+
+				this.$pnlBody.appendChild(this.$pnlAnswers);
+				this.$pnlBody.appendChild(this.$btnAddNewAnswer);
+				this.$pnlFooter.appendChild(this.$selectAnswerType);
+				this.$pnlQuestion.appendChild(this.$pnlHeader);
+				this.$pnlQuestion.appendChild(this.$pnlBody);
+				this.$pnlQuestion.appendChild(this.$pnlFooter);
+				this.$pnlQuestion.appendChild(this.$hiddenOrder);
+				this.$pnlQuestion.appendChild(this.$hiddenNbAnswer);
+
+				//SET DATA
+				this.setOrder(_order);
+				this.setTitle(_title);
+				this.setAnswerType(_answerType);
+				_answers.forEach(element => {this.addAnswer(element)});
+			}
+			setOrder(_order) {
+				this.order = _order;
+				this.$lblOrder.innerText = this.order + ". ";
+				this.$hiddenOrder.value = this.order;
+				this.updateNames();
+			}
+			setTitle(_title) {
+				this.title = _title;
+				this.$txtTitle.value = this.title;
+			}
+			setAnswerType(_type) {
+				this.answerType = _type;
+				this.$selectAnswerType.value = this.answerType;
+				this.answers.forEach(element => { element.setType(this.answerType); });
+			}
+			addAnswer(_answer) {
+				if(_answer.type != this.answerType) _answer.setType(this.answerType);
+				this.answers.push(_answer);
+				this.$hiddenNbAnswer.value = this.answers.length;
+				_answer.setQuestion(this);
+				_answer.setOrder(this.answers.length);
+				this.$pnlAnswers.appendChild(_answer.$pnlAnswer);
+			}
+			removeAnswer(_answer) {
+				let index = this.answers.indexOf(_answer);
+				this.answers.splice(index, 1);
+				this.$hiddenNbAnswer.value = this.answers.length;
+				for(var i = index; i < this.answers.length; i++) {
+					this.answers[i].setOrder(this.answers[i].order-1)
+				}
+				this.$pnlAnswers.removeChild(_answer.$pnlAnswer);
+			}
+			updateNames() {
+				let prefixName = "qst_" + this.order;
+				this.$txtTitle.name = prefixName + "_title";
+				this.$selectAnswerType.name = prefixName + "_answerType";
+				this.answers.forEach(element => { element.updateNames(); });
+				this.$hiddenOrder.name = prefixName + "_order";
+				this.$hiddenNbAnswer.name = prefixName + "_nbAnswers";
+			}
+		}
+
+		class Answer {
+			type;
+			value;
+			correct;
+			order;
+			question;
+
+			$pnlAnswer = document.createElement("div");
+			$inputExample = document.createElement("input");	
+			$txtValue = document.createElement("input");
+			$chkCorrect = document.createElement("input");
+			$btnDelete = document.createElement("button", {type: "button"});
+			$hiddenType = document.createElement("input");
+			$hiddenOrder = document.createElement("input");
+
+			constructor(_type, _value) {
+				let self = this;
+				//RENDER HTML AND ATTRIBUTES
+				this.$inputExample.disabled = true;
+				this.$txtValue.type = "text";
+				this.$chkCorrect.type = "checkbox";
+				this.$btnDelete.type = "button";
+				this.$btnDelete.innerText = "Supprimer";
+				this.$btnDelete.onclick = function(e){ self.question.removeAnswer(self); };
+				this.$hiddenType.type = "hidden";
+				this.$hiddenOrder.type = "hidden";
+				this.$pnlAnswer.appendChild(this.$inputExample);
+				this.$pnlAnswer.appendChild(this.$txtValue);
+				this.$pnlAnswer.appendChild(this.$chkCorrect);
+				this.$pnlAnswer.appendChild(this.$btnDelete);
+				this.$pnlAnswer.appendChild(this.$hiddenType);
+				this.$pnlAnswer.appendChild(this.$hiddenOrder);
+				//SET DATAS
+				this.setType(_type);
+				this.setValue(_value);
+			}
+			setType(_type) {
+				this.type = _type;
+				this.$inputExample.type = this.type;
+				this.$hiddenType.value = this.type;
+				switch(this.type) {
+					case("checkbox"):
+					case("radio"):
+						this.$inputExample.classList.remove("hidden");
+						this.$chkCorrect.classList.remove("hidden");
+					break;
+					case("text"):
+						this.$inputExample.classList.add("hidden");
+						this.$chkCorrect.classList.add("hidden");
+					break;
+				}
+			}
+			setValue(_value) {
+				this.value = _value;
+				this.$txtValue.value = this.value;
+			}
+			setCorrect(_correct) {
+
+			}
+			setOrder(_order) {
+				this.order = _order;
+				this.$hiddenOrder.value = this.order;
+				this.updateNames();
+			}
+			setQuestion(_question) {
+				this.question = _question;
+				this.updateNames();
+			}
+			updateNames() {
+				let namePrefix = "qst_" + this.question.order + "_ans_" + this.order;
+				this.$txtValue.name = namePrefix + "_value";
+				this.$chkCorrect.name = namePrefix + "_correct";
+				this.$hiddenType.name = namePrefix + "_type";
+				this.$hiddenOrder.name = namePrefix + "_order";
+			}
+		}
+
+		function addNewQuestion() {
+			let newQuestion = new Question(questions.length+1, "Nouvelle question "+(questions.length+1) , "radio", []);
+			let newAnswer = new Answer("checkbox", "Nouvelle réponse");
+			newQuestion.addAnswer(newAnswer);
+			addQuestion(newQuestion);
+		}
+
+		function addQuestion(_question) {
+			questions.push(_question);
+			$nbQuestions.value = questions.length;
+			$questions.appendChild(_question.$pnlQuestion);
+		}
+
+		function removeQuestion(_question) {
+			let index = questions.indexOf(_question);
+			this.questions.splice(index, 1);
+			$nbQuestions.value = questions.length;
+			for(var i = index; i < questions.length; i++) {
+				questions[i].setOrder(questions[i].order-1)
+			}
+			$questions.removeChild(_question.$pnlQuestion);
+		}
+
+		questions = [];
+		$questions = document.getElementById("questions");
+		$nbQuestions = document.getElementById("hidden_nb_questions");
+		answerTypes = ["radio", "checkbox", "text"];
+	</script>
+
 
 {% endblock %}
