@@ -55,7 +55,7 @@ def openform(request, idform):
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
 
-    return render(request, "home/forms.html", {'form': f})
+    return render(request, "home/forms.html", {'form': f, 'player': player})
 
 
 def users(request):
@@ -137,7 +137,7 @@ def create_game(request, id_form):
     f = getFormsById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
-    print(f)
+    #print(f)
 
     return render(request, "home/create-game.html", {'form': f})
 
@@ -153,7 +153,27 @@ def disconnect(request):
 
 
 def creation(request):
-    return render(request, "home/creation.html")
+
+	if request.method == 'POST' :
+		print(request.POST)
+		title = request.POST.get('form_title')
+		description = request.POST.get('form_description')
+		author = request.session['login']
+
+		nbQuestion = request.POST.get('nbQuestions')
+
+		for i in range(nbQuestions):
+			numq = i+1
+			q_title = request.POST.get('qst_'+numq+'_title')
+			q_answerType = request.POST.get('qst_'+numq+'_answerType')
+			q_order = request.POST.get('qst_'+numq+'_order')
+
+			q_nbAnswers = request.POST.get('qst_'+numq+'_nbAnswers')
+
+			for j in range(q_nbAnswers):
+				print(j)
+
+	return render(request, "home/creation.html")
 
 
 def categories(request):
@@ -162,3 +182,54 @@ def categories(request):
 
 def resultats(request):
     return render(request, "home/resultats.html")
+
+
+def saveUserAnswers(request):
+	idplayer = request.POST.get('idplayer')
+	player = Player.objects.get(id=idplayer)
+
+	idPA = request.POST.get('idPA')
+	valueUser = request.POST.get('value')
+
+	print(idplayer)
+	print(idPA)
+	print(valueUser)
+
+	pa = PossibleAnswer.objects.get(id=idPA)
+	if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
+		ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
+		if ua.count() >= 1 :
+			ua = UserAnswers.objects.get(player=player, possible_answer=pa)			
+			ua.value = valueUser
+		else :
+			ua = UserAnswers()
+			ua.player = player
+			ua.possible_answer = pa
+			ua.value = valueUser
+
+		ua.save()
+
+
+	elif pa.question.answer_type.type == "UNIQUE_ANSWER":
+
+		answers = PossibleAnswer.objects.filter(question=pa.question)
+
+		for a in answers :
+			ua = UserAnswers.objects.filter(player=player, possible_answer=a)
+			if ua.count() >= 1 :
+				ua = UserAnswers.objects.get(player=player, possible_answer=a)		
+				ua.delete()
+
+
+		ua = UserAnswers()
+		ua.player = player
+		ua.possible_answer = pa
+		ua.value = valueUser
+		ua.save()
+
+
+	data = {
+	'is_valid' : True
+	}
+
+	return JsonResponse(data)

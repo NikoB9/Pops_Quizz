@@ -7,10 +7,11 @@
 
 	</style> 
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
-		<form method="GET">
+		<form method="POST">
+			{% csrf_token %}
 			<div id="form_header">
 				<input type=text name=form_title value="Titre du Quizz">
-				<input type=text name=form_description value="Description du quizz">
+				<textarea name=form_description>Description du quizz</textarea>
 			</div>
 			<div id="questions">
 				

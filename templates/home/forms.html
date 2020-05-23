@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-
+{% load static %}
 
 {% block content %}
 
@@ -44,7 +44,10 @@
 	  </div>
 	  <div class="card-body">
 
-	  		<form>
+	  		<form id="form_answers">
+
+	  			{% csrf_token %}
+	  			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
 
 				{% for q in form.questions %}
 					
@@ -90,7 +93,7 @@
 
 						  		<div class="form-check">
 						  		
-									<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" checked>
+									<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}">
 					          		<label class="form-check-label" for="answer{{ a.id }}">
 						            {{ a.value }}
 					          		</label>
@@ -126,4 +129,8 @@
 	</div>	
 	
 </div>
+{% endblock %}
+
+{% block js_per_page %}
+<script type="text/javascript" src="{% static "js/gamerun.js"%}"></script>
 {% endblock %}
