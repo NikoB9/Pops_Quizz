@@ -17,6 +17,7 @@ from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
 from Quizz.requests.request_possible_answer import *
 from Quizz.requests.request_answer_type import *
+from Quizz.requests.request_player import *
 
 # regex
 import re
@@ -43,7 +44,7 @@ def openform(request, id_form):
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
     login = request.session['login']
-    game = create_gameBD(id_form, login, game_name, is_public, slot_max)
+    game = create_gameBD(id_form, login, game_name, is_public, slot_max, "IN_PROGRESS")
 
     user = getUserByLogin(login)
 
@@ -208,7 +209,11 @@ def categories(request):
 
 
 def resultats(request, game_uuid):
-    return render(request, "home/resultats.html")
+    game = get_game_by_uuid(game_uuid)
+    change_game_status(game, "DONE")
+    players = get_players_by_game_order_by_score_desc(game)
+    print(players)
+    return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
 def saveUserAnswers(request):

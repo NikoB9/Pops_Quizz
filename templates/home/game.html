@@ -24,6 +24,9 @@
 	#resbtn{
 		margin-top: 20px
 	}
+	#resultbtn{
+		margin-top: 20px
+	}
 	.col {
 	    min-width: 300px;
 	    padding: 10px;
@@ -52,6 +55,9 @@
 
 	  			{% csrf_token %}
 	  			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
+				<!-- TODO Calculer le score en Ajax -->
+				<input type="hidden" name="scoreplayer" id="scoreplayer" value="0">
+				<h2 id="score-affichage" hidden>Vous avez eu un score de 0</h2>
 
 				{% for q in form.questions %}
 					
@@ -124,8 +130,9 @@
 				{% endfor %}
 
 
-				<button type="submit"  id="subbtn" class="btn btn-success">VALIDER</button>
-				<button type="reset"  id="resbtn" class="btn btn-danger">ANNULER</button>
+				<button type="button" id="subbtn" class="btn btn-success">VALIDER</button>
+				<button type="reset" id="resbtn" class="btn btn-danger">ANNULER</button>
+				<button type="submit" id="resultbtn" class="btn btn-primary" hidden>VOIR LES RESULTATS</button>
 
 			</form>
 
@@ -136,5 +143,6 @@
 {% endblock %}
 
 {% block js_per_page %}
-<script type="text/javascript" src="{% static "js/gamerun.js"%}"></script>
+<script type="text/javascript" src="{% static "js/gamerun.js"%}">
+</script>
 {% endblock %}

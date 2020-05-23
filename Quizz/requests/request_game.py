@@ -12,6 +12,12 @@ def get_all_game():
 def get_game_by_uuid(uuid):
     return Game.objects.get(uuid=uuid)
 
+def change_game_status(game, status):
+    new_status = get_game_status(status)
+    game.game_status = new_status
+    game.save()
+    return game
+
 def create_gameBD(form_id, user_name, name, is_public, max_player, game_status="WAITING"):
     author = getUserByLogin(user_name)
     form = getFormsById(form_id)
