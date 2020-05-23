@@ -38,12 +38,12 @@ def index(request):
     return render(request, "home/index.html", {'allforms': allforms})
 
 
-def openform(request, idform):
+def openform(request, id_form):
     game_name = request.POST.get('game_name', None)
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
     login = request.session['login']
-    game = create_gameBD(idform, login, game_name, is_public, slot_max)
+    game = create_gameBD(id_form, login, game_name, is_public, slot_max)
 
     user = getUserByLogin(login)
 
@@ -53,11 +53,11 @@ def openform(request, idform):
     player.score = 0
     player.save()
 
-    f = getFormsById(idform)
+    f = getFormsById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
 
-    return render(request, "home/forms.html", {'form': f, 'player': player})
+    return render(request, "home/game.html", {'form': f, 'player': player})
 
 
 def users(request):
@@ -207,7 +207,7 @@ def categories(request):
     return render(request, "home/categories.html")
 
 
-def resultats(request):
+def resultats(request, game_uuid):
     return render(request, "home/resultats.html")
 
 

@@ -21,6 +21,9 @@
 	#subbtn{
 		margin-top: 20px
 	}
+	#resbtn{
+		margin-top: 20px
+	}
 	.col {
 	    min-width: 300px;
 	    padding: 10px;
@@ -34,24 +37,25 @@
 <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">	
 
 	<div class="card border-info mb-3">
-	  <div class="card-header"><h1>{{ form.name }}</h1>
-	  	<p class="card-text">{{ form.description }}</p>
+	  <div class="card-header"><h1>{{ player.game.name }}</h1>
+		  <h3>{{ form.name }}</h3>
 	  	{% if form.author is not None %}
 	  	<p class="card-text">Créé par {{ form.author.login }}</p>
 	  	{% else %}
 	  	<p class="card-text">Créé par teampopsquizz</p>
 	  	{% endif %}
+
 	  </div>
 	  <div class="card-body">
 
-	  		<form id="form_answers">
+	  		<form id="form_answers" action="{% url 'Quizz:resultats' player.game.uuid %}" method="post">
 
 	  			{% csrf_token %}
 	  			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
 
 				{% for q in form.questions %}
 					
-					  <h3 id="question">{{ q.question.label }}</h1>
+					  <h3 id="question">{{ q.question.label }}</h3>
 					  <div class="row">
 
 					  	{% if q.question.answer_type.type == "INPUT" %}
@@ -121,7 +125,7 @@
 
 
 				<button type="submit"  id="subbtn" class="btn btn-success">VALIDER</button>
-				<button type="reset"  id="subbtn" class="btn btn-danger">ANNULER</button>
+				<button type="reset"  id="resbtn" class="btn btn-danger">ANNULER</button>
 
 			</form>
 

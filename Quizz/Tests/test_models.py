@@ -4,9 +4,19 @@ from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
 
+# MODIFIER UUID EN BASE POUR APPLIQUER PK
+
 class Test_model(TestCase):
 
     def setUp(self):
+
+        gameStatusWaiting = GameStatus()
+        gameStatusWaiting.type = "CANCELLED"
+        gameStatusWaiting.save()
+
+        gameStatusWaiting = GameStatus()
+        gameStatusWaiting.type = "WAITING"
+        gameStatusWaiting.save()
 
         userWawa = User()
         userWawa.login="Warren"
@@ -219,7 +229,6 @@ class Test_model(TestCase):
         AF1.access_form_type = accessFormTypeCreator
         AF1.save()
 
-
         qcmType = AnswerType()
         qcmType.type = "QCM"
         qcmType.save()
@@ -290,6 +299,8 @@ class Test_model(TestCase):
         game.form = f
         game.is_public = False
         game.name = "Game of Wawa on form 1"
+        game.uuid = str(uuid.uuid4())[:8]
+        game.game_status = gameStatusWaiting
         game.save()
         ####################################
 
