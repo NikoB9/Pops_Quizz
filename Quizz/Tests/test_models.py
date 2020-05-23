@@ -5,6 +5,8 @@ from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
 from .set_db import set_db
 
+# MODIFIER UUID EN BASE POUR APPLIQUER PK
+
 class Test_model(TestCase):
 
     def setUp(self):
@@ -90,4 +92,12 @@ class Test_model(TestCase):
         self.assertEquals(1, len(games))
         self.assertEquals("Game of Wawa on form 1", games[0].name)
 
-        #TODO complete test
+        create_gameBD(1,"Warren", "Partie de Warren", True, 3)
+
+        games = get_all_game()
+        self.assertEquals(2, len(games))
+        new_game = games[1]
+        self.assertEquals(1, new_game.form.id)
+        self.assertEquals("Partie de Warren", new_game.name)
+        self.assertEquals(True, new_game.is_public)
+        self.assertEquals(3, new_game.slot_max)

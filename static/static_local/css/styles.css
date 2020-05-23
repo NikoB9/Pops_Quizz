@@ -4,11 +4,16 @@ html, body {
 	height: 100%;
 }
 
+.typo_generale {
+	color: rgb(72,59,107);
+}
+
 /*div {
     border: 2px solid grey;
 	border-radius: 5px;
 	padding:2px;
-}*/
+}/**/
+
 .head_style {
 	background-color: rgb(223,213,250);
 	/*height: 100%;
@@ -26,10 +31,11 @@ html, body {
 }
 
 .background_body {
-	background-color: rgba(223,213,250);
+	background-color: rgb(223,213,250);
 	/*height: 100%;
     min-height: 100%;*/
 	box-shadow: 1px 1px 12px #554780;
+
 }
 
 .body_size {
@@ -56,12 +62,20 @@ html, body {
 
 /******Pour la connexion****/
 .connectBtn{
-	color: rgb(177,155,217);
-	border-color: rgb(177,155,217);
+	background-color: rgba(72,59,107, 0.9);
+	color: rgb(223,213,250);
+	border-color: rgba(72,59,107, 0.9);
 }
 .connectBtn:hover {
-	background-color: rgb(177,155,217);
-	border-color: rgb(177,155,217);
+	background-color: rgb(223,213,250);
+	color: rgb(72,59,107);
+	border-color: rgb(72,59,107);
+}
+
+.btnForm {
+	display: block;
+	margin: 0 auto;
+	width: 4em;
 }
 
 .activefield{
@@ -90,3 +104,60 @@ html, body {
 	color: rgb(177,155,217);
 	cursor: pointer;
 }
+
+/**********Accueil*********/
+.boite_form {
+	background-color: rgb(223,213,250);
+	border: 1px solid rgba(72,59,107, 0.9)  !important;
+	border-radius: 5px;
+	padding:10px;
+}
+
+.boite_form:hover {
+	background-color: rgba(72,59,107, 0.9);
+	border: 1px solid rgba(72,59,107, 0.9)  !important;
+	/*color: rgb(223,213,250) !important;*/
+	border-radius: 5px;
+	padding:10px;
+}
+
+.liens_bt_form {
+	color: rgb(72,59,107) !important;
+	text-decoration: none;
+}
+
+.liens_bt_form:hover {
+	color: rgb(223,213,250) !important;
+	text-decoration: none;
+}
+
+.marg {
+	padding: 5px 5px 5px 5px;
+}
+
+.img_form {
+	margin: auto;
+	width: 9em;
+	display: block;
+	padding: 0.6em;
+}
+
+.fdst_border {
+	border: 1px solid rgb(72,59,107);
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.lgd_style {
+	width: auto;
+	padding: 0px 4px;
+}
+
+#game_name {
+	margin-left: 11px;
+}
+
+.droite {
+	float: right;
+}
+

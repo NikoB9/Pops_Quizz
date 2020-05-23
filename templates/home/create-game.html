@@ -1,11 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
-	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
-		<div class="row">
-    		<div class="col-12">Titre et descriptif</div>
-    		<div class="col-12">question 1 et réponses</div>
 
-    	</div>
-    </div>
+<!-- <style type="text/css">
+	.card{
+		border: transparent;
+    	background: transparent;
+	}
+	.row{
+		padding-top: 10px;
+	}
+	#question{
+		padding-top: 10px;
+	}
+	.col{
+		min-width: 300px;
+	}
+	#subbtn{
+		margin-top: 20px
+	}
+	#resbtn{
+		margin-top: 20px
+	}
+	.col {
+	    min-width: 300px;
+	    padding: 10px;
+	    background: #dec1de;
+	    border: 2px solid purple;
+	    border-radius: 5px;
+	    margin: 2px;
+	}
+</style> -->
 
+	
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+		<h1>{{ form.name }}</h1>
+	  	<h5>{{ form.description }}</h5>
+
+	  	{% if form.author is not None %}
+	  		<h6>Créé par {{ form.author.login }}</h6>
+	  	{% else %}
+	  		<h6>Créé par teampopsquizz</h6>
+	  	{% endif %}
+
+	  	<fieldset class="fdst_border"><legend class="lgd_style">Nouvelle partie</legend>
+  			<form action="{% url 'Quizz:openform' form.id %}" method="post">
+		      	{% csrf_token %}
+				<label for="game_name">Nom de la partie : </label>
+				<input type="text" value="Partie de " id="game_name" name="game_name">
+				<br>
+				<label for="slot_max">Nombre de joueur : </label>
+				<input type="number" id="slot_max" name="slot_max" value="1" min="1" >
+				<br>
+				<label for="is_public">Rendre la partie publique : </label>
+				<!-- TODO forcée la partie à privée s'il n'y a qu'un seul joueur max -->
+				<input type="checkbox" id="is_public" unchecked name="is_public">
+				<br>
+				<div class="droite">
+					<button type="submit"  id="subbtn" class="btn btn-success connectBtn">VALIDER</button>
+					<button type="reset"  id="resbtn" class="btn btn-danger connectBtn">ANNULER</button>
+				</div>
+			</form>
+		</fieldset>
+	</div>
 {% endblock %}

@@ -2,6 +2,14 @@ from Quizz.models import *
 from django.contrib.auth import hashers
 
 def set_db():
+    gameStatusWaiting = GameStatus()
+    gameStatusWaiting.type = "CANCELLED"
+    gameStatusWaiting.save()
+
+    gameStatusWaiting = GameStatus()
+    gameStatusWaiting.type = "WAITING"
+    gameStatusWaiting.save()
+
     userWawa = User()
     userWawa.login="Warren"
     userWawa.mail="warren.weber@hotmail.fr"
@@ -213,7 +221,6 @@ def set_db():
     AF1.access_form_type = accessFormTypeCreator
     AF1.save()
 
-
     qcmType = AnswerType()
     qcmType.type = "QCM"
     qcmType.save()
@@ -284,6 +291,8 @@ def set_db():
     game.form = f
     game.is_public = False
     game.name = "Game of Wawa on form 1"
+    game.uuid = str(uuid.uuid4())[:8]
+    game.game_status = gameStatusWaiting
     game.save()
     ####################################
 

@@ -7,143 +7,252 @@ from django.http import HttpResponseRedirect
 
 # Create your views here.
 
-#ACCES MODEL
+# ACCES MODEL
 from .forms import *
 
 # Import requests
 from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
+from Quizz.requests.request_game import *
+from Quizz.requests.request_possible_answer import *
+from Quizz.requests.request_answer_type import *
 
-#regex
+# regex
 import re
-#FOR JSON RESPONSE
+# FOR JSON RESPONSE
 from django.http import JsonResponse
 from django.core import serializers
-#JSON
+# JSON
 import json
-#OS lib
+# OS lib
 import os
-#settings
+# settings
 from django.conf import settings
-#date
+# date
 import datetime
 
+
 def index(request):
-    """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""
-    """Liste pour créer le menu"""
     allforms = getAllForms()
-    return render(request, "home/index.html", {'allforms' : allforms})
+    return render(request, "home/index.html", {'allforms': allforms})
 
-def openform(request, idform):
 
-	f = getFormsById(idform)
-	questions = getQuestionsByForm(f)
-	f.questions = getPossibleAnswersByQuestions(questions)
-	print(f)
+def openform(request, id_form):
+    game_name = request.POST.get('game_name', None)
+    slot_max = request.POST.get('slot_max', None)
+    is_public = True if request.POST.get('is_public', None) == "on" else False
+    login = request.session['login']
+    game = create_gameBD(id_form, login, game_name, is_public, slot_max)
 
-	return render(request, "home/forms.html", {'form' : f})
+    user = getUserByLogin(login)
+
+    player = Player()
+    player.user = user
+    player.game = game
+    player.score = 0
+    player.save()
+
+    f = getFormsById(id_form)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+
+    return render(request, "home/game.html", {'form': f, 'player': player})
+
 
 def users(request):
-    """return HttpResponse("<h1 style="text-align:center">Page principal</h1>")"""
-    """Liste pour créer le menu"""
     users = getAllUsers()
 
     return render(request, "home/users.html", {'users': users})
 
-def createUser(request):
-    
-	login = request.POST.get('loginco', None)
-	email = request.POST.get('emailco', None)
-	password = request.POST.get('passwordco', None)
-	password_validation = request.POST.get('passwordco2', None)
 
-	if loginExist(login) :
+def create_user(request):
+    login = request.POST.get('loginco', None)
+    email = request.POST.get('emailco', None)
+    password = request.POST.get('passwordco', None)
+    password_validation = request.POST.get('passwordco2', None)
 
-		data = {
-    	'is_valid':  False,
-    	'error_message': "Le pseudo existe déjà."   
-    	}
+    if loginExist(login):
 
-	elif emailExist(email) :
+        data = {
+            'is_valid': False,
+            'error_message': "Le pseudo existe déjà."
+        }
 
-		data = {
-    	'is_valid':  False,
-    	'error_message': "L'email existe déjà."   
-    	}
+    elif emailExist(email):
 
-	elif password != password_validation :
+        data = {
+            'is_valid': False,
+            'error_message': "L'email existe déjà."
+        }
 
-		data = {
-    	'is_valid':  False,
-    	'error_message': "Le mot de passe de confirmation est différent."   
-    	}
+    elif password != password_validation:
 
-	else :
-        
-		createUserBD(login, email, password)
-        
-		data = {
-    	'is_valid':  True,
-    	}
+        data = {
+            'is_valid': False,
+            'error_message': "Le mot de passe de confirmation est différent."
+        }
 
-	return JsonResponse(data)
+    else:
+
+        createUserBD(login, email, password)
+
+        data = {
+            'is_valid': True,
+        }
+
+    return JsonResponse(data)
+
 
 def connectUser(request):
-    
-	login = request.POST.get('login', None)
-	password = request.POST.get('password', None)
+    login = request.POST.get('login', None)
+    password = request.POST.get('password', None)
 
-	if loginExist(login) :
+    if loginExist(login):
 
-		if valideUser(login, password):
-    		
-			data = {
-		    	'is_valid':  True,
-		    	}
+        if valideUser(login, password):
 
-			request.session['login'] = login
+            data = {
+                'is_valid': True,
+            }
 
-		else :
+            request.session['login'] = login
 
-			data = {
-	    	'is_valid':  False,
-	    	'error_message': "Le mot de passe est incorrect."   
-	    	}
+        else:
 
-	else :
+            data = {
+                'is_valid': False,
+                'error_message': "Le mot de passe est incorrect."
+            }
 
-		data = {
-    	'is_valid':  False,
-    	'error_message': "Le pseudo n'existe pas."   
-    	}
+    else:
+
+        data = {
+            'is_valid': False,
+            'error_message': "Le pseudo n'existe pas."
+        }
+
+    return JsonResponse(data)
 
 
-	return JsonResponse(data)
+def create_game(request, id_form):
+    f = getFormsById(id_form)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    #print(f)
 
-def disconnect(request) :
+    return render(request, "home/create-game.html", {'form': f})
 
-	del request.session['login']
 
-	data = {
+def disconnect(request):
+    del request.session['login']
+
+    data = {
         'is_valid': True
     }
 
-	return JsonResponse(data)
+    return JsonResponse(data)
 
 
 def creation(request):
-    
+
+    if request.method == 'POST' :
+
+        #print(request.POST)
+        title = request.POST.get('form_title')
+        description = request.POST.get('form_description')
+        author = getUserByLogin(request.session['login'])
+
+        form = addQuizzForm(title, author, description)
+
+        nbQuestions = request.POST.get('nbQuestions')
+
+        for i in range(int(nbQuestions)):
+            numq = i+1
+            numq = str(numq)
+
+            q_title = request.POST.get('qst_'+numq+'_title')
+            q_answerType = request.POST.get('qst_'+numq+'_answerType')
+            if q_answerType == "radio":
+                q_answerType = "UNIQUE_ANSWER"
+            elif q_answerType == "checkbox":
+                q_answerType = "QCM"
+            elif q_answerType == "text":
+                q_answerType = "INPUT"
+            q_order = request.POST.get('qst_'+numq+'_order')
+
+            type = getType(q_answerType)
+            question = addQuestion(form, type, q_title, q_order)
+
+            q_nbAnswers = request.POST.get('qst_'+numq+'_nbAnswers')
+
+            for j in range(int(q_nbAnswers)):
+                numa = str(j+1)
+                numa = str(numa)
+
+                a_value = request.POST.get('qst_'+numq+'_ans_'+numa+'_value')
+                if q_answerType == "INPUT":
+                    a_correct = True
+                else:
+                    a_correct = request.POST.get('qst_' + numq + '_ans_' + numa + '_correct')
+                    a_correct = True if a_correct == 'on' else False
+
+                addPossibleAnswer(question, a_correct, a_value)
+
+
     return render(request, "home/creation.html")
 
+
 def categories(request):
-    
     return render(request, "home/categories.html")
 
-def resultats(request):
-    
+
+def resultats(request, game_uuid):
     return render(request, "home/resultats.html")
 
 
+def saveUserAnswers(request):
+	idplayer = request.POST.get('idplayer')
+	player = Player.objects.get(id=idplayer)
+
+	idPA = request.POST.get('idPA')
+	valueUser = request.POST.get('value')
+
+	pa = PossibleAnswer.objects.get(id=idPA)
+	if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
+		ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
+		if ua.count() >= 1 :
+			ua = UserAnswers.objects.get(player=player, possible_answer=pa)			
+			ua.value = valueUser
+		else :
+			ua = UserAnswers()
+			ua.player = player
+			ua.possible_answer = pa
+			ua.value = valueUser
+
+		ua.save()
 
 
+	elif pa.question.answer_type.type == "UNIQUE_ANSWER":
+
+		answers = PossibleAnswer.objects.filter(question=pa.question)
+
+		for a in answers :
+			ua = UserAnswers.objects.filter(player=player, possible_answer=a)
+			if ua.count() >= 1 :
+				ua = UserAnswers.objects.get(player=player, possible_answer=a)		
+				ua.delete()
+
+
+		ua = UserAnswers()
+		ua.player = player
+		ua.possible_answer = pa
+		ua.value = valueUser
+		ua.save()
+
+
+	data = {
+	'is_valid' : True
+	}
+
+	return JsonResponse(data)

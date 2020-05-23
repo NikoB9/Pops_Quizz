@@ -1,24 +1,38 @@
+
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
-		<div class="row">
-			<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 embed-responsive embed-responsive-1by1">
-				<a href="{% url 'Quizz:creation' %}">
-					<div class="embed-responsive-item">Création</div>
-				</a>
+		<div class="row marg">
+			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
+				<div class="embed-responsive embed-responsive-1by1">
+					<a href="{% url 'Quizz:creation' %}" class="liens_bt_form">
+						<div class="embed-responsive-item boite_form">
+							<H5>Nouveau Quizz</H5>
+							<img src="{% static "img/plus-math.png" %}" class="img_form">
+						</div>
+					</a>
+				</div>
 			</div>
+
 			{% for f in allforms %}
-			<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 embed-responsive embed-responsive-1by1">
-				<a href="{% url 'Quizz:openform' f.id %}">
-					<div class="embed-responsive-item">{{f.name}}
-					<br>{{f.description}}
-					<br>
-					{% if f.autheur is not None %}
-				  	<p class="card-text">Créé par {{ f.author }}</p>
-				  	{% else %}
-				  	<p class="card-text">Créé par teampopsquizz</p>
-				  	{% endif %}</div>
-				</a>
+
+			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
+				<div class="embed-responsive embed-responsive-1by1">
+					<a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
+						<div class="embed-responsive-item boite_form">
+						  		<H5>{{f.name}}</H5>
+								<H6>{{f.description}}</H6>
+
+								{% if f.author is not None %}
+							  		<p class="card-text">Créé par {{ f.author.login }}</p>
+							  	{% else %}
+							  		<p class="card-text">Créé par teampopsquizz</p>
+							  	{% endif %}
+					  	</div>
+
+					</a>
+				</div>
 			</div>
 			{% endfor %}
 		</div>
