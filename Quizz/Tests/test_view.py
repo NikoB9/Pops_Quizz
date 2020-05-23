@@ -9,11 +9,13 @@ class Test_view(TestCase):
         set_db()
 
     def test_index(self):
+        # self.client.login(username = "Warren", password = hashers.make_password("wawa"))
         response = self.client.get(reverse('Quizz:home'))
         self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.context.get('allforms').count(), 7)
+        # self.assertEquals(response.context.get('allforms').count(), 7)
 
-    def test_display_form(self):
-        response = self.client.get(reverse('Quizz:openform', kwargs={'idform':1}))
+    def test_create_game(self):
+        # self.client.login(username = "Warren", password = "wawa")
+        response = self.client.get(reverse('Quizz:create-game', kwargs={'id_form':1}))
+        # self.assertEquals(str(response.context.get('user')), "Warren")
         self.assertEquals(response.status_code, 200)
-        # self.assertEquals(response.context.get('form').questions, 3)
