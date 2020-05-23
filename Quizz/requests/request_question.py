@@ -11,3 +11,12 @@ def getPossibleAnswersByQuestions(questions):
         pa = PossibleAnswer.objects.filter(question=q)
         Tquestion.append({'question':q, 'answers':pa})
     return Tquestion
+
+def addQuestion(form, at, label, order):
+    q = Question()
+    q.form = form
+    q.answer_type = at
+    q.label = label
+    q.order = order
+    q.save()
+    return q

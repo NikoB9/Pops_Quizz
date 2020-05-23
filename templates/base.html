@@ -98,9 +98,18 @@
 	    			<!-- Doit rester vide -->
 	    		</div>
 
-				{% block content %}
+                {% if request.session.login is None %}
 
-				{% endblock %}
+                    <div class="alert alert-warning" role="alert" style="width: 100%">
+                      Vous n'êtes pas connecté
+                    </div>
+
+                {% else %}
+                    {% block content %}
+
+				    {% endblock %}
+                {% endif %}
+
 
 				{% block bts_js %}
 				<script type="text/javascript" src="{% static "js/jquery-3.4.1.min.js" %}"></script>
