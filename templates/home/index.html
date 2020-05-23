@@ -24,8 +24,8 @@
 						  		<H5>{{f.name}}</H5>
 								<H6>{{f.description}}</H6>
 
-								{% if f.autheur is not None %}
-							  		<p class="card-text">Créé par {{ f.author }}</p>
+								{% if f.author is not None %}
+							  		<p class="card-text">Créé par {{ f.author.login }}</p>
 							  	{% else %}
 							  		<p class="card-text">Créé par teampopsquizz</p>
 							  	{% endif %}

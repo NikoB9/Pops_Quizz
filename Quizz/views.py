@@ -15,6 +15,8 @@ from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
+from Quizz.requests.request_possible_answer import *
+from Quizz.requests.request_answer_type import *
 
 # regex
 import re
@@ -154,26 +156,51 @@ def disconnect(request):
 
 def creation(request):
 
-	if request.method == 'POST' :
-		print(request.POST)
-		title = request.POST.get('form_title')
-		description = request.POST.get('form_description')
-		author = request.session['login']
+    if request.method == 'POST' :
 
-		nbQuestion = request.POST.get('nbQuestions')
+        #print(request.POST)
+        title = request.POST.get('form_title')
+        description = request.POST.get('form_description')
+        author = getUserByLogin(request.session['login'])
 
-		for i in range(nbQuestions):
-			numq = i+1
-			q_title = request.POST.get('qst_'+numq+'_title')
-			q_answerType = request.POST.get('qst_'+numq+'_answerType')
-			q_order = request.POST.get('qst_'+numq+'_order')
+        form = addQuizzForm(title, author, description)
 
-			q_nbAnswers = request.POST.get('qst_'+numq+'_nbAnswers')
+        nbQuestions = request.POST.get('nbQuestions')
 
-			for j in range(q_nbAnswers):
-				print(j)
+        for i in range(int(nbQuestions)):
+            numq = i+1
+            numq = str(numq)
 
-	return render(request, "home/creation.html")
+            q_title = request.POST.get('qst_'+numq+'_title')
+            q_answerType = request.POST.get('qst_'+numq+'_answerType')
+            if q_answerType == "radio":
+                q_answerType = "UNIQUE_ANSWER"
+            elif q_answerType == "checkbox":
+                q_answerType = "QCM"
+            elif q_answerType == "text":
+                q_answerType = "INPUT"
+            q_order = request.POST.get('qst_'+numq+'_order')
+
+            type = getType(q_answerType)
+            question = addQuestion(form, type, q_title, q_order)
+
+            q_nbAnswers = request.POST.get('qst_'+numq+'_nbAnswers')
+
+            for j in range(int(q_nbAnswers)):
+                numa = str(j+1)
+                numa = str(numa)
+
+                a_value = request.POST.get('qst_'+numq+'_ans_'+numa+'_value')
+                if q_answerType == "INPUT":
+                    a_correct = True
+                else:
+                    a_correct = request.POST.get('qst_' + numq + '_ans_' + numa + '_correct')
+                    a_correct = True if a_correct == 'on' else False
+
+                addPossibleAnswer(question, a_correct, a_value)
+
+
+    return render(request, "home/creation.html")
 
 
 def categories(request):
@@ -190,10 +217,6 @@ def saveUserAnswers(request):
 
 	idPA = request.POST.get('idPA')
 	valueUser = request.POST.get('value')
-
-	print(idplayer)
-	print(idPA)
-	print(valueUser)
 
 	pa = PossibleAnswer.objects.get(id=idPA)
 	if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
