@@ -13,8 +13,8 @@ urlpatterns = [
     path('users/', views.users, name='users'),
     path('creation/', views.creation, name='creation'),
     path('categories/', views.categories, name='categories'),
-    path('resultats/', views.resultats, name='resultats'),
-    path('form_<int:idform>/', views.openform, name='openform'),
+    path('resultats/<str:game_uuid>/', views.resultats, name='resultats'),
+    path('game/<int:id_form>/', views.openform, name='openform'),
     path('create-game-<int:id_form>/', views.create_game, name='create-game'),
 
     re_path(r'create_user$', views.create_user),

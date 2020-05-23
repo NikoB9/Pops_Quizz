@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import enum
+import uuid as uuid
+
 from django.db import models
 from django.core import validators
 
@@ -106,9 +109,19 @@ class PossibleAnswer(models.Model):
         return self.value
 
 
+# GameStatus = [WAITING, IN_PROGRESS, DONE, CANCELLED]
+class GameStatus(models.Model):
+    type = models.CharField(max_length=255, null=False, blank=False, unique=True)
+
+    def __str__(self):
+        return self.type
+
+
 class Game(models.Model):
+    uuid = models.CharField(max_length=255, default=str(uuid.uuid4())[:8].upper(), editable=False, unique=True)
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    game_status = models.ForeignKey(GameStatus, on_delete=models.SET_DEFAULT, default=1)
     slot_max = models.IntegerField(blank=False, unique=False, default=0)
     name = models.CharField(max_length=255, null=False, blank=False, unique=False)
     created_at = models.DateTimeField(auto_now_add=True)
