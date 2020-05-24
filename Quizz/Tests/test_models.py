@@ -87,6 +87,22 @@ class Test_model(TestCase):
         self.assertEquals(1, len(games))
         self.assertEquals("Game of Wawa on form 1", games[0].name)
 
+
+    def test_get_game_uuid(self):
+        uuid = get_all_game()[0].uuid
+        game = get_game_by_uuid(uuid)
+        self.assertEquals("Game of Wawa on form 1", game.name)
+        self.assertEquals("WAITING", game.game_status.type)
+
+
+    def test_change_game_status(self):
+        game = get_all_game()[0]
+        self.assertEquals("WAITING", game.game_status.type)
+        change_game_status(game, "CANCELLED")
+        games = get_all_game()
+        self.assertEquals(1, len(games))
+        self.assertEquals("CANCELLED", games[0].game_status.type)
+
     def test_create_game(self):
         games = get_all_game()
         self.assertEquals(1, len(games))
