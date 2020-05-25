@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+
+        <style>
+            #resp-menu-dahsboard-large{
+                max-width: 180px;
+                height: 100%;
+                background: rgba(255,255,255,0.2);
+            }
+            #resp-menu-dahsboard-small{
+                max-width: 60px;
+                height: 100%;
+                background: rgba(255,255,255,0.2);
+                text-align: center;
+            }
+            .dashboard-item{
+                background: transparent;
+                cursor: pointer;
+            }
+            @media (max-width: 1000px) {
+              #resp-menu-dahsboard-large {
+                display: none;
+              }
+              #resp-menu-dahsboard-small {
+                display: block;
+              }
+            }
+            @media (min-width: 1000px) {
+              #resp-menu-dahsboard-large {
+                display: block;
+              }
+              #resp-menu-dahsboard-small {
+                display: none;
+              }
+            }
+        </style>
+        <div class="row">
+            <div id="resp-menu-dahsboard-large">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-id-badge"></i>&nbsp;Profil</li>
+                  <li class="list-group-item dashboard-item"><i class="fas fa-history"></i>&nbsp;Historique</li>
+                  <li class="list-group-item dashboard-item"><i class="fas fa-chart-line"></i>&nbsp;Classement</li>
+                  <li class="list-group-item dashboard-item"><i class="fas fa-users"></i>&nbsp;Amis</li>
+                    <li class="list-group-item dashboard-item"><i class="fas fa-gamepad"></i>&nbsp;Parties en cours</li>
+                </ul>
+            </div>
+            <div id="resp-menu-dahsboard-small">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-id-badge"></i></li>
+                  <li class="list-group-item dashboard-item"><i class="fas fa-history"></i></li>
+                  <li class="list-group-item dashboard-item"><i class="fas fa-chart-line"></i></li>
+                  <li class="list-group-item dashboard-item"><i class="fas fa-users"></i></li>
+                    <li class="list-group-item dashboard-item"><i class="fas fa-gamepad"></i></li>
+                </ul>
+            </div>
+            <div class="col">
+                {% block dashboard_content %}
+
+                {% endblock %}
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+{% endblock %}

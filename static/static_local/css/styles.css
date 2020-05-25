@@ -161,3 +161,6 @@ html, body {
 	float: right;
 }
 
+.hidden {
+	visibility: hidden;
+}
