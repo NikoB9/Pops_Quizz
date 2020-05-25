@@ -37,7 +37,8 @@
 <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
 
 	<div class="card border-info mb-3">
-	  <div class="card-header"><h1>{{ game.name }}</h1>
+		{% if game.game_status.type == "DONE" %}
+	  <div class="card-header"><h1>La partie {{ game.name }}  est terminée !</h1>
 		  <h3>{{ game.form.name }}</h3>
 	  	{% if form.author is not None %}
 	  	<p class="card-text">Quizz de {{ game.form.author.login }}</p>
@@ -47,7 +48,6 @@
 
 	  </div>
 	  <div class="card-body">
-
 		  <div class="row">
 			  {% with players|first as winner %}
 			  	{{ winner.user.login }} a le plus haut score !
@@ -63,6 +63,19 @@
 		  <h2>Aucun joueur trouvé</h2>
 		  {% endfor %}
 	  </div>
+		{% elif game.game_status.type == "IN_PROGRESS" %}
+		<div class="card-header">
+			<h1>La partie {{ game.name }} est encore en cours</h1>
+		</div>
+		{% elif game.game_status.type == "CANCELLED" %}
+		<div class="card-header">
+			<h1>La partie {{ game.name }} a été supprimée.</h1>
+		</div>
+		{% elif game.game_status.type == "WAITING" %}
+		<div class="card-header">
+			<h1>La partie {{ game.name }} est encore en création.</h1>
+		</div>
+		{% endif %}
 		<form action="{% url 'Quizz:home' %}">
 			<button id="menubtn" class="btn btn-primary">RETOUR AU MENU</button>
 		</form>
