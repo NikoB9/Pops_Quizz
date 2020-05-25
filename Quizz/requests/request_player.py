@@ -17,6 +17,8 @@ def get_player_by_game_by_login(game, login):
 def get_players_by_game_order_by_score_desc(game):
     return Player.objects.filter(game=game).order_by('-score')
 
+def get_players_by_user_desc_date_game(user):
+    return Player.objects.filter(user=user).order_by('-game__created_at')
 
 def calculate_score(player):
     questions = getPossibleAnswersByQuestions(getQuestionsByForm(player.game.form))

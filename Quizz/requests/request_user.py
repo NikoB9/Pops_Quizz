@@ -11,6 +11,21 @@ def createUserBD(login, mail, password):
     user.password = hashers.make_password(password)
     user.save()
 
+def editUserBD(id, login, mail, password):
+    user = User.objects.get(id=id)
+    user.login = login
+    user.mail = mail
+    user.password = hashers.make_password(password)
+    user.save()
+    return user
+
+def editUserWithoutPwd(id, login, mail):
+    user = User.objects.get(id=id)
+    user.login = login
+    user.mail = mail
+    user.save()
+    return user
+
 def getUserByLogin(login):
     return User.objects.get(login = login)
 

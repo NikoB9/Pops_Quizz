@@ -18,6 +18,10 @@
                 background: transparent;
                 cursor: pointer;
             }
+            .dashboard-item.active{
+                background: rgba(177,155,217,0.5);
+                border: none;
+            }
             @media (max-width: 1000px) {
               #resp-menu-dahsboard-large {
                 display: none;
@@ -35,23 +39,24 @@
               }
             }
         </style>
+        <input type="hidden" id="activeitem" value="{{ active }}">
         <div class="row">
             <div id="resp-menu-dahsboard-large">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-id-badge"></i>&nbsp;Profil</li>
-                  <li class="list-group-item dashboard-item"><i class="fas fa-history"></i>&nbsp;Historique</li>
-                  <li class="list-group-item dashboard-item"><i class="fas fa-chart-line"></i>&nbsp;Classement</li>
-                  <li class="list-group-item dashboard-item"><i class="fas fa-users"></i>&nbsp;Amis</li>
-                    <li class="list-group-item dashboard-item"><i class="fas fa-gamepad"></i>&nbsp;Parties en cours</li>
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_history' %}'"><i class="fas fa-history"></i>&nbsp;Historique</li>
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-chart-line"></i>&nbsp;Classement</li>
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-users"></i>&nbsp;Amis</li>
+                    <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-gamepad"></i>&nbsp;Parties en cours</li>
                 </ul>
             </div>
             <div id="resp-menu-dahsboard-small">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-id-badge"></i></li>
-                  <li class="list-group-item dashboard-item"><i class="fas fa-history"></i></li>
-                  <li class="list-group-item dashboard-item"><i class="fas fa-chart-line"></i></li>
-                  <li class="list-group-item dashboard-item"><i class="fas fa-users"></i></li>
-                    <li class="list-group-item dashboard-item"><i class="fas fa-gamepad"></i></li>
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_history' %}'"><i class="fas fa-history"></i></li>
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-chart-line"></i></li>
+                  <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-users"></i></li>
+                    <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard_profile' %}'"><i class="fas fa-gamepad"></i></li>
                 </ul>
             </div>
             <div class="col">
@@ -66,4 +71,19 @@
 
 
     </div>
+
+
+{% endblock %}
+
+{% block js_per_page %}
+    <script>
+    $( document ).ready(function() {
+      var itemactive = $('#activeitem').val();
+        $( ".list-group" ).each(function( index ) {
+          $( this ).find('li').each(function (index) {
+            if (itemactive == index) $(this).addClass('active');
+          });
+        });
+    });
+    </script>
 {% endblock %}
