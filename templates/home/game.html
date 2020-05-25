@@ -26,13 +26,15 @@
 
 						{% if q.question.answer_type.type == "INPUT" %}
 
-					  	{% for a in q.answers %}
-						  	<div class="col">
-								<input type="text" class="form-control style_form" id="answer{{ a.id }}" name="check{{ a.id }}" placeholder="" required>
-						  	</div>
-					  	{% empty %}
+					  	{% if q.answers.size == 0 %}
 							Pas de réponse
-						{% endfor %}
+					  	{% else %}
+							{% with q.answers|first as answer %}
+						  		<div class="col">
+									<input type="text" class="form-control style_form" id="answer{{ answer.id }}" name="check{{ answer.id }}" placeholder="" required>
+						  		</div>
+							{% endwith %}
+						{% endif %}
 
 						{% elif q.question.answer_type.type == "QCM" %}
 
