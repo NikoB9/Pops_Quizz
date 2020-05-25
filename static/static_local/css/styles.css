@@ -164,3 +164,10 @@ html, body {
 .hidden {
 	visibility: hidden;
 }
+
+.style_form {
+	border-radius: .25rem;
+	border: 1px solid rgb(177,155,217);
+	height: 35px;
+	padding: 5px
+}

@@ -14,17 +14,27 @@
 	  	<fieldset class="fdst_border"><legend class="lgd_style">Nouvelle partie</legend>
   			<form action="{% url 'Quizz:openform' form.id %}" method="post">
 		      	{% csrf_token %}
-				<label for="game_name">Nom de la partie : </label>
-				<input type="text" value="Partie de {{request.session.login}}" id="game_name" name="game_name">
+		      	<!-- <div class="form-group row">
+						<label for="game_name">Nom de la partie : </label>
+					<div class="col-sm-9">
+				    	<input type="text" class="form-control" value="Partie de {{request.session.login}}" id="game_name" name="game_name">
+				    </div>
+				</div> -->
+		      	<label for="game_name">Nom de la partie : </label>
+				<input type="text" class="style_form" value="Partie de {{request.session.login}}" id="game_name" name="game_name">
 				<br>
+
 				<label for="slot_max">Nombre de joueur : </label>
-				<input type="number" id="slot_max" name="slot_max" value="1" min="1" onclick="privee()" >
+				<input type="number" class="style_form" id="slot_max" name="slot_max" value="1" min="1" onclick="privee()" >
 				<br>
-				<label for="is_public">Rendre la partie publique : </label>
-				<input type="checkbox" id="is_public" unchecked disabled name="is_public">
+
+				<div id="public" class="hidden">
+		      		<label for="is_public">Rendre la partie publique : </label>
+					<input type="checkbox" id="is_public" unchecked name="is_public">
+				</div>
 				<br>
-				<label id="info" class="">Attention, il faut plus d'un joueur pour rendre la partie publique.</label>
-				<br>
+				<!-- <label id="info" class="nothidden">Attention, il faut plus d'un joueur pour pouvoir rendre la partie publique.</label>
+				<br> -->
 				<div class="droite">
 					<button type="submit"  id="subbtn" class="btn btn-success connectBtn">VALIDER</button>
 					<button type="reset"  id="resbtn" class="btn btn-danger connectBtn">ANNULER</button>
@@ -37,15 +47,11 @@
 	<script>
 		function privee(){
 			var saisie =document.getElementById("slot_max").value;
-			var ckb_public = document.getElementById("is_public");
-			var info = document.getElementById("info");
+			var info = document.getElementById("public");
 			if (saisie == 1) {
-				ckb_public.disabled = true;
-				ckb_public.checked = false;
-				info.className = '';
-			} else {
-				ckb_public.disabled = false;
 				info.className = 'hidden';
+			} else {
+				info.className = '';
 			}
 		}
 	</script>
