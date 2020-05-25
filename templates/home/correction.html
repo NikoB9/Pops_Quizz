@@ -4,21 +4,25 @@
 
 {% block content %}
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
-		<h1>{{ player.game.name }}</h1>
-	  	<h3>{{ form.name }}</h3>
+		<h1>{{ game.name }}</h1>
+	  	<h3>{{ game.form.name }}</h3>
 
-	  	{% if form.author is not None %}
-	  		<h6>Créé par {{ form.author.login }}</h6>
+	  	{% if game.form.author is not None %}
+	  		<h6>Créé par {{ game.form.author.login }}</h6>
 	  	{% else %}
 	  		<h6>Créé par teampopsquizz</h6>
 	  	{% endif %}
 
 
-  		<form id="form_answers" action="{% url 'Quizz:resultats' player.game.uuid %}" method="post">
+  		<form id="form_answers" action="{% url 'Quizz:resultats' game.uuid %}" method="post">
 
   			{% csrf_token %}
+  			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
+			<!-- TODO Calculer le score en Ajax -->
+			<input type="hidden" name="scoreplayer" id="scoreplayer" value="0">
+			<h2 id="score-affichage" hidden>Vous avez eu un score de 0</h2>
 
-			{% for q in form.questions %}
+			{% for q in game.form.questions %}
 				
 				<fieldset class="fdst_border"><legend class="lgd_style">{{ q.question.label }}</legend>
 					<div class="row">
@@ -83,8 +87,9 @@
 
 			<br>
 			<div class="droite">
-				<button type="submit" id="subbtn" class="btn connectBtn">VALIDER</button>
+				<button type="button" id="subbtn" class="btn connectBtn">VALIDER</button>
 				<button type="reset" id="resbtn" class="btn connectBtn">ANNULER</button>
+				<button type="submit" id="resultbtn" class="btn connectBtn" hidden>VOIR LES RESULTATS</button>
 			</div>
 
 		</form>

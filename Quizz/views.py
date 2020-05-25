@@ -217,54 +217,59 @@ def resultats(request, game_uuid):
 
 
 def saveUserAnswers(request):
-	idplayer = request.POST.get('idplayer')
-	player = Player.objects.get(id=idplayer)
+    idplayer = request.POST.get('idplayer')
+    player = Player.objects.get(id=idplayer)
 
-	idPA = request.POST.get('idPA')
-	valueUser = request.POST.get('value')
+    idPA = request.POST.get('idPA')
+    valueUser = request.POST.get('value')
 
-	pa = PossibleAnswer.objects.get(id=idPA)
-	if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
-		ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
-		if ua.count() >= 1 :
-			ua = UserAnswers.objects.get(player=player, possible_answer=pa)			
-			ua.value = valueUser
-		else :
-			ua = UserAnswers()
-			ua.player = player
-			ua.possible_answer = pa
-			ua.value = valueUser
+    pa = PossibleAnswer.objects.get(id=idPA)
+    if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
+        ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
+        if ua.count() >= 1 :
+            ua = UserAnswers.objects.get(player=player, possible_answer=pa)         
+            ua.value = valueUser
+        else :
+            ua = UserAnswers()
+            ua.player = player
+            ua.possible_answer = pa
+            ua.value = valueUser
 
-		ua.save()
-
-
-	elif pa.question.answer_type.type == "UNIQUE_ANSWER":
-
-		answers = PossibleAnswer.objects.filter(question=pa.question)
-
-		for a in answers :
-			ua = UserAnswers.objects.filter(player=player, possible_answer=a)
-			if ua.count() >= 1 :
-				ua = UserAnswers.objects.get(player=player, possible_answer=a)		
-				ua.delete()
+        ua.save()
 
 
-		ua = UserAnswers()
-		ua.player = player
-		ua.possible_answer = pa
-		ua.value = valueUser
-		ua.save()
+    elif pa.question.answer_type.type == "UNIQUE_ANSWER":
+
+        answers = PossibleAnswer.objects.filter(question=pa.question)
+
+        for a in answers :
+            ua = UserAnswers.objects.filter(player=player, possible_answer=a)
+            if ua.count() >= 1 :
+                ua = UserAnswers.objects.get(player=player, possible_answer=a)      
+                ua.delete()
 
 
-	data = {
-	'is_valid' : True
-	}
+        ua = UserAnswers()
+        ua.player = player
+        ua.possible_answer = pa
+        ua.value = valueUser
+        ua.save()
 
-	return JsonResponse(data)
 
+    data = {
+    'is_valid' : True
+    }
+
+    return JsonResponse(data)
 
 def user_profil(request):
+    return render(request, 'dashboard/profil.html')
 
-    user = getUserByLogin(request.session['login'])
+def correction(request, player_id):
+    player = get_player_by_id(player_id)
+    game = player.game
+    return render(request, 'home/correction.html', {'game':game}, {'player':player})
 
-    return render(request, 'dashboard/profil.html', {'user':user})
+
+
+
