@@ -264,4 +264,7 @@ def saveUserAnswers(request):
 
 
 def user_profil(request):
-    return render(request, 'dashboard/profil.html')
+
+    user = getUserByLogin(request.session['login'])
+
+    return render(request, 'dashboard/profil.html', {'user':user})
