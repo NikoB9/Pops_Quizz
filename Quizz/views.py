@@ -266,13 +266,39 @@ def user_profil(request):
 
     user = getUserByLogin(request.session['login'])
 
-    return render(request, 'dashboard/profil.html', {'user':user})
+    if request.method == "POST":
+
+        if request.POST.get('newpwd') == '':
+
+            user = editUserWithoutPwd(user.id, request.POST.get('loginedit'), request.POST.get('emailedit'))
+
+        elif request.POST.get('newpwd') == request.POST.get('newpwd2'):
+
+            if valideUser(user.login, request.POST.get('oldPwd')):
+
+                user = editUserBD(user.id, request.POST.get('loginedit'), request.POST.get('emailedit'), request.POST.get('newpwd'))
+
+            else :
+
+                return render(request, 'dashboard/profil.html', {'user': user, 'active': 0, 'invalid_old_pwd': True, 'invalid_new_pwd': False})
+
+        else :
+
+            return render(request, 'dashboard/profil.html', {'user': user, 'active': 0, 'invalid_old_pwd': False, 'invalid_new_pwd': True})
+
+    return render(request, 'dashboard/profil.html', {'user':user, 'active': 0, 'invalid_old_pwd': False, 'invalid_new_pwd': False})
+
+def user_history(request):
+
+    user = getUserByLogin(request.session['login'])
+
+    players = get_players_by_user_desc_date_game(user)
+
+    return render(request, 'dashboard/history.html', {'active': 1, 'players': players})
 
 def correction(request, player_id):
     player = get_player_by_id(player_id)
     game = player.game
     return render(request, 'home/correction.html', {'game':game}, {'player':player})
-
-
 
 
