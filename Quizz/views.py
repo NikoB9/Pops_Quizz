@@ -261,3 +261,7 @@ def saveUserAnswers(request):
 	}
 
 	return JsonResponse(data)
+
+
+def user_profil(request):
+    return render(request, 'dashboard/profil.html')

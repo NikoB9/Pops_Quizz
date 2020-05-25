@@ -17,6 +17,10 @@ urlpatterns = [
     path('game/<int:id_form>/', views.openform, name='openform'),
     path('create-game-<int:id_form>/', views.create_game, name='create-game'),
 
+    #DASHBOARD
+    path('dashboard/user', views.user_profil, name="dashboard_profile"),
+
+    #AJAX
     re_path(r'create_user$', views.create_user),
     re_path(r'user_connection$', views.connectUser),
     re_path(r'disconnect_user$', views.disconnect),

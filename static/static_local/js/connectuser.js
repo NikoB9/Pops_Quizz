@@ -123,6 +123,7 @@ $('#userBtn').click(function(){
 	$('#userBtn').popover('toggle');
 });
 
+
 $(document).on("click", '#disconnect', function(){
 
 /*Entrer le token csrf dans le header si la route est sécurisé*/
@@ -145,4 +146,9 @@ $(document).on("click", '#disconnect', function(){
     }
   });
 
+});
+
+
+$(document).on("click", '#dashboard', function(){
+window.location.pathname = $('#dashboard-url').val();
 });
