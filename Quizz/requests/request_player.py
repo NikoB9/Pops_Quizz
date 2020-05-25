@@ -6,7 +6,12 @@ from Quizz.requests.request_possible_answer import *
 
 
 def get_player_by_id(id):
-    return Player.objects.get(id=id)
+    return Player.objects.get(id)
+
+
+def get_player_by_game_by_login(game, login):
+    user = User.objects.get(login=login)
+    return Player.objects.get(game=game, user=user)
 
 
 def get_players_by_game_order_by_score_desc(game):

@@ -16,6 +16,7 @@ urlpatterns = [
     path('resultats/<str:game_uuid>/', views.resultats, name='resultats'),
     path('game/<int:id_form>/', views.openform, name='openform'),
     path('create-game-<int:id_form>/', views.create_game, name='create-game'),
+    path('correction/<int:player_id>/', views.correction, name='correction'),
 
     #DASHBOARD
     path('dashboard/user', views.user_profil, name="dashboard_profile"),
