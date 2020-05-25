@@ -263,7 +263,10 @@ def saveUserAnswers(request):
     return JsonResponse(data)
 
 def user_profil(request):
-    return render(request, 'dashboard/profil.html')
+
+    user = getUserByLogin(request.session['login'])
+
+    return render(request, 'dashboard/profil.html', {'user':user})
 
 def correction(request, player_id):
     player = get_player_by_id(player_id)
