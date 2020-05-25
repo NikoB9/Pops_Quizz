@@ -1,0 +1,30 @@
+{% extends 'dashboard/base.html' %}
+
+{% block dashboard_content %}
+    <h1 class="textcolor">Profil</h1>
+
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="emailco" class="textcolor">Email</label>
+        <input type="email" class="form-control" id="emailco" value="{{ user.mail }}" aria-describedby="emailHelp" placeholder="nom.prenom@servermail.gtld">
+        <small id="emailHelp" class="form-text text-muted textcolor">Nous ne partageons pas vos données.</small>
+    </div>
+    <div class="form-group">
+        <label for="loginco" class="textcolor">Pseudo</label>
+        <input type="text" class="form-control" id="loginco" value="{{ user.login }}" placeholder="pseudo">
+    </div>
+    <div class="form-group">
+        <label for="oldPwd" class="textcolor">Mot de passe actuel</label>
+        <input type="password" class="form-control" id="oldPwd" placeholder="Mot de passe">
+    </div>
+    <div class="form-group">
+        <label for="passwordco" class="textcolor">Nouveau mot de passe</label>
+        <input type="password" class="form-control" id="passwordco" placeholder="Nouveau mot de passe">
+    </div>
+    <div class="form-group">
+        <label for="passwordco2" class="textcolor">Confirmation du nouveau mot de passe</label>
+        <input type="password" class="form-control" id="passwordco2" placeholder="Nouveau mot de passe">
+    </div>
+
+{% endblock %}

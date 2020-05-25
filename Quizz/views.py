@@ -261,3 +261,10 @@ def saveUserAnswers(request):
 	}
 
 	return JsonResponse(data)
+
+
+def user_profil(request):
+
+    user = getUserByLogin(request.session['login'])
+
+    return render(request, 'dashboard/profil.html', {'user':user})

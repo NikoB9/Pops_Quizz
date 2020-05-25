@@ -87,8 +87,9 @@
    					data-toggle="popover" 
    					data-trigger="manual" 
    					data-placement="bottom"
-   					data-content="<div class='userbtnitem' id='disconnect'><i class='fas fa-sign-out-alt'></i>&nbsp;Déconnexion</div><div class='userbtnitem'><i class='fas fa-tachometer-alt'></i>&nbsp;Tableau de bord</div>"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
+   					data-content="<div class='userbtnitem' id='disconnect'><i class='fas fa-sign-out-alt'></i>&nbsp;Déconnexion</div><div class='userbtnitem' id='dashboard'><i class='fas fa-tachometer-alt'></i>&nbsp;Tableau de bord</div>"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
 				{% endif %}
+            <input type="hidden" id="dashboard-url" value="{% url 'Quizz:dashboard_profile' %}">
 	    	</div>
 
 	    	<!-- BODY -->
