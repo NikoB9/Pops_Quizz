@@ -14,31 +14,34 @@
 	  	{% endif %}
 
 
-  		<form id="form_answers" action="{% url 'Quizz:resultats' player.game.uuid %}" method="post">
+  		<form id="form_answers" action="{% url 'Quizz:correction' player.id %}" method="post">
 
+			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
   			{% csrf_token %}
 
 			{% for q in form.questions %}
 				
-				<fieldset class="fdst_border"><legend class="lgd_style">{{ q.question.label }}</legend>
+				<fieldset class="fdst_border"><legend class="lgd_style" id="question">{{ q.question.label }}</legend>
 					<div class="row">
 
 						{% if q.question.answer_type.type == "INPUT" %}
 
-					  	{% for a in q.answers %}
-						  	<div class="col">
-								<input type="text" class="form-control style_form" id="answer{{ a.id }}" name="answer{{ a.id }}" placeholder="">
-						  	</div>
-					  	{% empty %}
+					  	{% if q.answers.size == 0 %}
 							Pas de réponse
-						{% endfor %}
+					  	{% else %}
+							{% with q.answers|first as answer %}
+						  		<div class="col">
+									<input type="text" class="form-control style_form" id="answer{{ answer.id }}" name="check{{ answer.id }}" placeholder="" required>
+						  		</div>
+							{% endwith %}
+						{% endif %}
 
 						{% elif q.question.answer_type.type == "QCM" %}
 
 							{% for a in q.answers %}
 							  	<div class="col">
 							  		<div class="form-check">
-								  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}">
+								  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="qcm{{ q.question.id }}">
 								        <label class="form-check-label" for="answer{{ a.id }}">{{ a.value }}</label>
 							    	</div>
 							  	</div>
@@ -54,7 +57,7 @@
 
 					  		<div class="form-check">
 					  		
-								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}">
+								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" required>
 					      		<label class="form-check-label" for="answer{{ a.id }}">
 					            {{ a.value }}
 					      		</label>

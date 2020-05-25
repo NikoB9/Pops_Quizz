@@ -18,31 +18,31 @@
 
   			{% csrf_token %}
   			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
-			<!-- TODO Calculer le score en Ajax -->
-			<input type="hidden" name="scoreplayer" id="scoreplayer" value="0">
-			<h2 id="score-affichage" hidden>Vous avez eu un score de 0</h2>
+			<h2 id="score-affichage">Vous avez eu un score de {{ player.score }}</h2>
 
-			{% for q in game.form.questions %}
+			{% for q in questions %}
 				
 				<fieldset class="fdst_border"><legend class="lgd_style">{{ q.question.label }}</legend>
 					<div class="row">
 
 						{% if q.question.answer_type.type == "INPUT" %}
 
-					  	{% for a in q.answers %}
-						  	<div class="col">
-								<input type="text" class="form-control style_form" id="answer{{ a.id }}" name="answer{{ a.id }}" placeholder="">
-						  	</div>
-					  	{% empty %}
+					  	{% if q.answers.size == 0 %}
 							Pas de réponse
-						{% endfor %}
+					  	{% else %}
+							{% with q.answers|first as answer %}
+						  		<div class="col">
+									<input type="text" class="form-control style_form" id="answer{{ answer.id }}" name="check{{ answer.id }}" placeholder="" disabled>
+						  		</div>
+							{% endwith %}
+						{% endif %}
 
 						{% elif q.question.answer_type.type == "QCM" %}
 
 							{% for a in q.answers %}
 							  	<div class="col">
 							  		<div class="form-check">
-								  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}">
+								  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}" disabled>
 								        <label class="form-check-label" for="answer{{ a.id }}">{{ a.value }}</label>
 							    	</div>
 							  	</div>
@@ -58,7 +58,7 @@
 
 					  		<div class="form-check">
 					  		
-								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}">
+								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" disabled>
 					      		<label class="form-check-label" for="answer{{ a.id }}">
 					            {{ a.value }}
 					      		</label>
@@ -87,9 +87,7 @@
 
 			<br>
 			<div class="droite">
-				<button type="button" id="subbtn" class="btn connectBtn">VALIDER</button>
-				<button type="reset" id="resbtn" class="btn connectBtn">ANNULER</button>
-				<button type="submit" id="resultbtn" class="btn connectBtn" hidden>VOIR LES RESULTATS</button>
+				<button type="submit" id="resultbtn" class="btn connectBtn">VOIR LES RESULTATS</button>
 			</div>
 
 		</form>
@@ -97,6 +95,4 @@
 {% endblock %}
 
 {% block js_per_page %}
-<script type="text/javascript" src="{% static "js/gamerun.js"%}">
-</script>
 {% endblock %}

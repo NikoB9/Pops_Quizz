@@ -9,7 +9,7 @@ def get_user_answers_of_a_player(player):
 
 
 def user_selected_possible_answer(possible_answer, player):
-    return len(UserAnswers.objects.filter(possible_answer=possible_answer, player=player)) > 0
+    return UserAnswers.objects.filter(possible_answer=possible_answer, player=player)
 
 
 def get_input_response_by_question_by_player(question, player):
