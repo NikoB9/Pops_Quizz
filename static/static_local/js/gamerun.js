@@ -54,12 +54,3 @@ $('input[type=text]').keypress(function(){
 	ajaxSaveForm(this);
 });
 
-$('#subbtn').click(function(){
-    $('#subbtn').hide();
-    $('#resbtn').hide();
-    $('#resultbtn').removeAttr('hidden');
-    $('#score-affichage').removeAttr('hidden');
-    // TODO Calculer le score total, update score dans la table player en BD
-
-
-});

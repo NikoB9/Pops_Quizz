@@ -140,7 +140,7 @@ def create_game(request, id_form):
     f = getFormsById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
-    #print(f)
+    # print(f)
 
     return render(request, "home/create-game.html", {'form': f})
 
@@ -156,10 +156,9 @@ def disconnect(request):
 
 
 def creation(request):
+    if request.method == 'POST':
 
-    if request.method == 'POST' :
-
-        #print(request.POST)
+        # print(request.POST)
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
@@ -169,29 +168,29 @@ def creation(request):
         nbQuestions = request.POST.get('nbQuestions')
 
         for i in range(int(nbQuestions)):
-            numq = i+1
+            numq = i + 1
             numq = str(numq)
 
-            q_title = request.POST.get('qst_'+numq+'_title')
-            q_answerType = request.POST.get('qst_'+numq+'_answerType')
+            q_title = request.POST.get('qst_' + numq + '_title')
+            q_answerType = request.POST.get('qst_' + numq + '_answerType')
             if q_answerType == "radio":
                 q_answerType = "UNIQUE_ANSWER"
             elif q_answerType == "checkbox":
                 q_answerType = "QCM"
             elif q_answerType == "text":
                 q_answerType = "INPUT"
-            q_order = request.POST.get('qst_'+numq+'_order')
+            q_order = request.POST.get('qst_' + numq + '_order')
 
             type = getType(q_answerType)
             question = addQuestion(form, type, q_title, q_order)
 
-            q_nbAnswers = request.POST.get('qst_'+numq+'_nbAnswers')
+            q_nbAnswers = request.POST.get('qst_' + numq + '_nbAnswers')
 
             for j in range(int(q_nbAnswers)):
-                numa = str(j+1)
+                numa = str(j + 1)
                 numa = str(numa)
 
-                a_value = request.POST.get('qst_'+numq+'_ans_'+numa+'_value')
+                a_value = request.POST.get('qst_' + numq + '_ans_' + numa + '_value')
                 if q_answerType == "INPUT":
                     a_correct = True
                 else:
@@ -199,7 +198,6 @@ def creation(request):
                     a_correct = True if a_correct == 'on' else False
 
                 addPossibleAnswer(question, a_correct, a_value)
-
 
     return render(request, "home/creation.html")
 
@@ -224,12 +222,12 @@ def saveUserAnswers(request):
     valueUser = request.POST.get('value')
 
     pa = PossibleAnswer.objects.get(id=idPA)
-    if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
+    if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT":
         ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
-        if ua.count() >= 1 :
-            ua = UserAnswers.objects.get(player=player, possible_answer=pa)         
+        if ua.count() >= 1:
+            ua = UserAnswers.objects.get(player=player, possible_answer=pa)
             ua.value = valueUser
-        else :
+        else:
             ua = UserAnswers()
             ua.player = player
             ua.possible_answer = pa
@@ -242,12 +240,11 @@ def saveUserAnswers(request):
 
         answers = PossibleAnswer.objects.filter(question=pa.question)
 
-        for a in answers :
+        for a in answers:
             ua = UserAnswers.objects.filter(player=player, possible_answer=a)
-            if ua.count() >= 1 :
-                ua = UserAnswers.objects.get(player=player, possible_answer=a)      
+            if ua.count() >= 1:
+                ua = UserAnswers.objects.get(player=player, possible_answer=a)
                 ua.delete()
-
 
         ua = UserAnswers()
         ua.player = player
@@ -255,24 +252,22 @@ def saveUserAnswers(request):
         ua.value = valueUser
         ua.save()
 
-
     data = {
-    'is_valid' : True
+        'is_valid': True
     }
 
     return JsonResponse(data)
 
-def user_profil(request):
 
+def user_profil(request):
     user = getUserByLogin(request.session['login'])
 
-    return render(request, 'dashboard/profil.html', {'user':user})
+    return render(request, 'dashboard/profil.html', {'user': user})
+
 
 def correction(request, player_id):
     player = get_player_by_id(player_id)
+    calculate_score(player)
     game = player.game
-    return render(request, 'home/correction.html', {'game':game}, {'player':player})
-
-
-
-
+    questions = getPossibleAnswersByQuestions(getQuestionsByForm(game.form))
+    return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})
