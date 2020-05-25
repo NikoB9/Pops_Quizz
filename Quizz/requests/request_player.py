@@ -1,5 +1,7 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
+from Quizz.requests.request_game import change_game_status
+from Quizz.requests.request_game_status import get_game_status
 from Quizz.requests.request_question import *
 from Quizz.requests.request_user_answers import *
 from Quizz.requests.request_possible_answer import *
@@ -17,8 +19,12 @@ def get_player_by_game_by_login(game, login):
 def get_players_by_game_order_by_score_desc(game):
     return Player.objects.filter(game=game).order_by('-score')
 
+
 def get_players_by_user_desc_date_game(user):
-    return Player.objects.filter(user=user).order_by('-game__created_at')
+    return Player.objects.filter(user=user).exclude(game__game_status__type="CANCELLED").order_by('-game__created_at')
+
+def all_player_have_answered_a_game(game):
+    return len(Player.objects.filter(game=game).exclude(has_answered=True)) == 0
 
 def calculate_score(player):
     questions = getPossibleAnswersByQuestions(getQuestionsByForm(player.game.form))
@@ -46,4 +52,8 @@ def calculate_score(player):
             if user_answer_input.value.strip() in possible_input_values:
                 score += 1
     player.score = score
+    player.has_answered = True
     player.save()
+
+    if all_player_have_answered_a_game(player.game):
+        change_game_status(player.game, "DONE")

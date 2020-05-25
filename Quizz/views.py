@@ -208,7 +208,6 @@ def categories(request):
 
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
-    change_game_status(game, "DONE")
     players = get_players_by_game_order_by_score_desc(game)
     print(players)
     return render(request, "home/resultats.html", {'game': game, 'players': players})

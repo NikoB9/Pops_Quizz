@@ -135,6 +135,7 @@ class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.PROTECT)
     score = models.IntegerField(null=True, blank=False, unique=False)
+    has_answered = models.BooleanField(default=False)
 
     def __str__(self):
         return "Player " + self.user.login + " of game " + self.game.name
