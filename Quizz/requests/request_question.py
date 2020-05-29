@@ -3,15 +3,18 @@
 from Quizz.models import *
 from Quizz.requests.request_user_answers import *
 
+
 def getQuestionsByForm(form):
     return Question.objects.filter(form=form).order_by('order')
+
 
 def getPossibleAnswersByQuestions(questions):
     Tquestion = []
     for q in questions:
         pa = PossibleAnswer.objects.filter(question=q)
-        Tquestion.append({'question':q, 'answers':pa})
+        Tquestion.append({'question': q, 'answers': pa})
     return Tquestion
+
 
 def addQuestion(form, at, label, order):
     q = Question()
@@ -23,7 +26,7 @@ def addQuestion(form, at, label, order):
     return q
 
 
-def getUserAnswersByQuestions(questions,player):
+def getUserAnswersByQuestions(questions, player):
     Tquestion = []
     for q in questions:
         pa = PossibleAnswer.objects.filter(question=q)
@@ -39,7 +42,7 @@ def getUserAnswersByQuestions(questions,player):
             user_answer_input = get_input_response_by_question_by_player(q, player)
             if user_answer_input.value.strip() in possible_input_values:
                 q.input_valide = True
-                
-        Tquestion.append({'question':q, 'answers':pa})
+
+        Tquestion.append({'question': q, 'answers': pa})
 
     return Tquestion

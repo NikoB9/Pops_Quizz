@@ -1,69 +1,80 @@
 from django.test import TestCase
+
+from Quizz.requests.request_answer_type import getType
+from Quizz.requests.request_player import *
 from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
+
 
 # MODIFIER UUID EN BASE POUR APPLIQUER PK
 
 class Test_model(TestCase):
 
     def setUp(self):
-
-        gameStatusWaiting = GameStatus()
-        gameStatusWaiting.type = "CANCELLED"
-        gameStatusWaiting.save()
+        gameStatusCancelled = GameStatus()
+        gameStatusCancelled.type = "CANCELLED"
+        gameStatusCancelled.save()
 
         gameStatusWaiting = GameStatus()
         gameStatusWaiting.type = "WAITING"
         gameStatusWaiting.save()
 
+        gameStatusDone = GameStatus()
+        gameStatusDone.type = "DONE"
+        gameStatusDone.save()
+
+        gameStatusInProgress = GameStatus()
+        gameStatusInProgress.type = "IN_PROGRESS"
+        gameStatusInProgress.save()
+
         userWawa = User()
-        userWawa.login="Warren"
-        userWawa.mail="warren.weber@hotmail.fr"
-        userWawa.password=hashers.make_password("wawa")
+        userWawa.login = "Warren"
+        userWawa.mail = "warren.weber@hotmail.fr"
+        userWawa.password = hashers.make_password("wawa")
         userWawa.save()
 
         userTony = User()
-        userTony.login="TimFake"
-        userTony.mail="tony.lim@u-psud.fr"
-        userTony.password=hashers.make_password("toto")
+        userTony.login = "TimFake"
+        userTony.mail = "tony.lim@u-psud.fr"
+        userTony.password = hashers.make_password("toto")
         userTony.save()
 
         userNico = User()
-        userNico.login="NicoFake"
-        userNico.mail="nico@wanadoo.com"
-        userNico.password=hashers.make_password("djangogo")
+        userNico.login = "NicoFake"
+        userNico.mail = "nico@wanadoo.com"
+        userNico.password = hashers.make_password("djangogo")
         userNico.save()
 
         userSalome = User()
-        userSalome.login="SaloméFake"
-        userSalome.mail="salomette@yahoo.fr"
-        userSalome.password=hashers.make_password("jaimelecss")
+        userSalome.login = "SaloméFake"
+        userSalome.mail = "salomette@yahoo.fr"
+        userSalome.password = hashers.make_password("jaimelecss")
         userSalome.save()
 
         userThibaut = User()
-        userThibaut.login="WiirioFake"
-        userThibaut.mail="thibaut@aol.fr"
-        userThibaut.password=hashers.make_password("test")
+        userThibaut.login = "WiirioFake"
+        userThibaut.mail = "thibaut@aol.fr"
+        userThibaut.password = hashers.make_password("test")
         userThibaut.save()
 
         userAmi = User()
-        userAmi.login="copain du 31"
-        userAmi.mail="ami@aol.fr"
-        userAmi.password=hashers.make_password("jaime")
+        userAmi.login = "copain du 31"
+        userAmi.mail = "ami@aol.fr"
+        userAmi.password = hashers.make_password("jaime")
         userAmi.save()
 
         userAmiAttente = User()
-        userAmiAttente.login="ami en demande"
-        userAmiAttente.mail="chercheami@gmail.com"
-        userAmiAttente.password=hashers.make_password("demande")
+        userAmiAttente.login = "ami en demande"
+        userAmiAttente.mail = "chercheami@gmail.com"
+        userAmiAttente.password = hashers.make_password("demande")
         userAmiAttente.save()
 
         userGhost = User()
-        userGhost.login="ami absent"
-        userGhost.mail="amiperdu@gmail.com"
-        userGhost.password=hashers.make_password("ghost")
+        userGhost.login = "ami absent"
+        userGhost.mail = "amiperdu@gmail.com"
+        userGhost.password = hashers.make_password("ghost")
         userGhost.save()
 
         relationAmiTony = Friends()
@@ -207,13 +218,13 @@ class Test_model(TestCase):
         relationGhostThibaut.save()
 
         accessFormTypeCreator = AccessFormType()
-        accessFormTypeCreator.type="CREATOR"
+        accessFormTypeCreator.type = "CREATOR"
         accessFormTypeCreator.save()
         accessFormTypeEditor = AccessFormType()
-        accessFormTypeCreator.type="EDITOR"
+        accessFormTypeCreator.type = "EDITOR"
         accessFormTypeEditor.save()
         accessFormTypePublisher = AccessFormType()
-        accessFormTypeCreator.type="PUBLISHER"
+        accessFormTypeCreator.type = "PUBLISHER"
         accessFormTypePublisher.save()
 
         f = Form()
@@ -228,6 +239,23 @@ class Test_model(TestCase):
         AF1.user = userWawa
         AF1.access_form_type = accessFormTypeCreator
         AF1.save()
+
+        game = Game()
+        game.slot_max = 1
+        game.author = userWawa
+        game.form = f
+        game.is_public = False
+        game.name = "Game of Wawa on form 1"
+        game.uuid = str(uuid.uuid4())[:8]
+        game.game_status = gameStatusWaiting
+        game.save()
+
+        player1 = Player()
+        player1.user = userTony
+        player1.game = game
+        player1.has_answered = 1
+        player1.score = 0
+        player1.save()
 
         qcmType = AnswerType()
         qcmType.type = "QCM"
@@ -245,7 +273,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -260,12 +288,17 @@ class Test_model(TestCase):
         pa.correct = True
         pa.save()
 
+        ua1 = UserAnswers()
+        ua1.player = player1
+        ua1.possible_answer = pa
+        ua1.value = 1
+        ua1.save()
 
         question = Question()
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -280,28 +313,31 @@ class Test_model(TestCase):
         pa.correct = True
         pa.save()
 
+        ua2 = UserAnswers()
+        ua2.player = player1
+        ua2.possible_answer = pa
+        ua2.value = 4
+        ua2.save()
+
         question = Question()
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
-        game = Game()
-        game.slot_max = 1
-        game.author = userWawa
-        game.form = f
-        game.is_public = False
-        game.name = "Game of Wawa on form 1"
-        game.uuid = str(uuid.uuid4())[:8]
-        game.game_status = gameStatusWaiting
-        game.save()
+        ua3 = UserAnswers()
+        ua3.player = player1
+        ua3.possible_answer = possAnswer
+        ua3.value = "texte"
+        ua3.save()
+
         ####################################
 
         f = Form()
@@ -344,7 +380,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -363,7 +399,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -382,12 +418,12 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
@@ -409,7 +445,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -428,7 +464,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -447,12 +483,12 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
@@ -474,7 +510,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -493,7 +529,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -512,12 +548,12 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
@@ -539,7 +575,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -558,7 +594,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -577,12 +613,12 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
@@ -604,7 +640,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -623,7 +659,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -642,12 +678,12 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
@@ -669,7 +705,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "première question"
         question.order = 1
-        question.answer_type= qcmType
+        question.answer_type = qcmType
         question.save()
 
         pa = PossibleAnswer()
@@ -688,7 +724,7 @@ class Test_model(TestCase):
         question.form = f
         question.label = "deuxième question"
         question.order = 2
-        question.answer_type= uniqueAnswerType
+        question.answer_type = uniqueAnswerType
         question.save()
 
         pa = PossibleAnswer()
@@ -707,12 +743,12 @@ class Test_model(TestCase):
         question.form = f
         question.label = "troisième question"
         question.order = 3
-        question.answer_type= inputType
+        question.answer_type = inputType
         question.save()
 
         possAnswer = PossibleAnswer()
         possAnswer.question = question
-        possAnswer.value= "texte"
+        possAnswer.value = "texte"
         possAnswer.correct = True
         possAnswer.save()
 
@@ -721,7 +757,7 @@ class Test_model(TestCase):
     ## TEST FORM ##
 
     def test_get_form(self):
-        form_1 = getFormsById(1)
+        form_1 = getFormById(1)
         self.assertEquals(form_1.name, "Premier formulaire")
 
     def test_get_all_forms(self):
@@ -729,9 +765,70 @@ class Test_model(TestCase):
         self.assertEquals(len(forms), 7)
         self.assertEquals(forms[0].name, "Premier formulaire")
 
+    def test_add_quizz_form(self):
+        forms = getAllForms()
+        self.assertEquals(len(forms), 7)
+        self.assertEquals(forms[0].name, "Premier formulaire")
+
+        user = getUserByLogin("TimFake")
+        addQuizzForm("new form", user, "new description")
+        forms = getAllForms()
+        self.assertEquals(len(forms), 8)
+        self.assertEquals(forms[7].name, "new form")
+
+    ## TEST GAME ##
+
+    def test_get_all_Game(self):
+        games = get_all_game()
+        self.assertEquals(1, len(games))
+        self.assertEquals("Game of Wawa on form 1", games[0].name)
+
+    def test_get_game_uuid(self):
+        uuid = get_all_game()[0].uuid
+        game = get_game_by_uuid(uuid)
+        self.assertEquals("Game of Wawa on form 1", game.name)
+        self.assertEquals("WAITING", game.game_status.type)
+
+    def test_change_game_status(self):
+        game = get_all_game()[0]
+        self.assertEquals("WAITING", game.game_status.type)
+        change_game_status(game, "CANCELLED")
+        games = get_all_game()
+        self.assertEquals(1, len(games))
+        self.assertEquals("CANCELLED", games[0].game_status.type)
+
+    def test_create_game(self):
+        games = get_all_game()
+        self.assertEquals(1, len(games))
+        self.assertEquals("Game of Wawa on form 1", games[0].name)
+
+        create_gameBD(1, "Warren", "Partie de Warren", True, 3)
+
+        games = get_all_game()
+        self.assertEquals(2, len(games))
+        new_game = games[1]
+        self.assertEquals(1, new_game.form.id)
+        self.assertEquals("Partie de Warren", new_game.name)
+        self.assertEquals(True, new_game.is_public)
+        self.assertEquals(3, new_game.slot_max)
+
+    ## TEST PLAYER ##
+
+    def test_get_player_by_id(self):
+        player = get_player_by_id(1)
+        self.assertEquals("TimFake", player.user.login)
+        self.assertEquals(True, player.has_answered)
+        self.assertEquals(0, player.score)
+
+    def test_calculate_score(self):
+        game = get_all_game()[0]
+        player = get_player_by_game_by_login(game, "TimFake")
+        calculate_score(player)
+        self.assertEquals(3, player.score)
+
     ## TEST QUESTION ##
     def test_get_question_by_form_id(self):
-        form_1 = getFormsById(1)
+        form_1 = getFormById(1)
         questions = getQuestionsByForm(form_1)
         self.assertEquals(3, len(questions))
         first_question = questions[0]
@@ -740,8 +837,33 @@ class Test_model(TestCase):
         self.assertEquals("première question", first_question.label)
         self.assertEquals(1, first_question.order)
 
+    def test_add_question(self):
+        form_1 = getFormById(1)
+        questions = getQuestionsByForm(form_1)
+        self.assertEquals(3, len(questions))
+        first_question = questions[0]
+        self.assertEquals(form_1, first_question.form)
+        self.assertEquals("QCM", first_question.answer_type.type)
+        self.assertEquals("première question", first_question.label)
+        self.assertEquals(1, first_question.order)
+
+        addQuestion(form_1, getType("INPUT"), "new question", 4)
+
+        questions = getQuestionsByForm(form_1)
+        self.assertEquals(4, len(questions))
+        first_question = questions[0]
+        self.assertEquals(form_1, first_question.form)
+        self.assertEquals("QCM", first_question.answer_type.type)
+        self.assertEquals("première question", first_question.label)
+        self.assertEquals(1, first_question.order)
+        last_question = questions[3]
+        self.assertEquals(form_1, last_question.form)
+        self.assertEquals("INPUT", last_question.answer_type.type)
+        self.assertEquals("new question", last_question.label)
+        self.assertEquals(4, last_question.order)
+
     def test_possible_answer_by_questions(self):
-        form_1 = getFormsById(1)
+        form_1 = getFormById(1)
         questions = getQuestionsByForm(form_1)
         question_by_possible_answers = getPossibleAnswersByQuestions(questions)
         self.assertEquals(3, len(question_by_possible_answers))
@@ -763,6 +885,48 @@ class Test_model(TestCase):
         self.assertEquals(1, len(possible_answers_of_third_question))
         self.assertEquals(True, possible_answers_of_third_question[0].correct)
         self.assertEquals("texte", possible_answers_of_third_question[0].value)
+
+    def test_user_possible_answer_by_questions(self):
+        form_1 = getFormById(1)
+        player = get_player_by_id(1)
+        questions = getQuestionsByForm(form_1)
+        question_by_possible_answers = getUserAnswersByQuestions(questions, player)
+        self.assertEquals(3, len(question_by_possible_answers))
+        possible_answers_of_first_question = question_by_possible_answers[0]["answers"]
+        self.assertEquals(2, len(possible_answers_of_first_question))
+        self.assertEquals(False, possible_answers_of_first_question[0].correct)
+        self.assertEquals("1", possible_answers_of_first_question[0].value)
+        self.assertEquals(True, possible_answers_of_first_question[1].correct)
+        self.assertEquals("2", possible_answers_of_first_question[1].value)
+        self.assertEquals("1", possible_answers_of_first_question[1].ua.value)
+
+        possible_answers_of_second_question = question_by_possible_answers[1]["answers"]
+        self.assertEquals(2, len(possible_answers_of_second_question))
+        self.assertEquals(False, possible_answers_of_second_question[0].correct)
+        self.assertEquals("1", possible_answers_of_second_question[0].value)
+        self.assertEquals(True, possible_answers_of_second_question[1].correct)
+        self.assertEquals("2", possible_answers_of_second_question[1].value)
+        self.assertEquals("4", possible_answers_of_second_question[1].ua.value)
+
+        possible_answers_of_third_question = question_by_possible_answers[2]["answers"]
+        self.assertEquals(True, question_by_possible_answers[2]["question"].input_valide)
+        self.assertEquals(1, len(possible_answers_of_third_question))
+        self.assertEquals(True, possible_answers_of_third_question[0].correct)
+        self.assertEquals("texte", possible_answers_of_third_question[0].value)
+        self.assertEquals("texte", possible_answers_of_third_question[0].ua.value)
+
+    ## TEST POSSIBLE_ANSWER ##
+
+    def test_create_possible_answer(self):
+        form_1 = getFormById(1)
+        question = getQuestionsByForm(form_1)[0]
+        pa = get_possible_answer_of_a_question(question)
+        self.assertEquals(2, len(pa))
+
+        addPossibleAnswer(question, True, "3")
+
+        pa = get_possible_answer_of_a_question(question)
+        self.assertEquals(3, len(pa))
 
     ## TEST USER ##
 
@@ -786,40 +950,28 @@ class Test_model(TestCase):
         self.assertEquals("new user", newUser.login)
         self.assertEquals("new.user@mail.com", newUser.mail)
 
-    ## TEST GAME ##
+    def test_edit_user(self):
+        user = getUserByLogin("TimFake")
+        self.assertEquals("TimFake", user.login)
+        self.assertEquals("tony.lim@u-psud.fr", user.mail)
 
-    def test_get_all_Game(self):
-        games = get_all_game()
-        self.assertEquals(1, len(games))
-        self.assertEquals("Game of Wawa on form 1", games[0].name)
+        editUserBD(user.id, "new login", "new.mail@mail.com", None)
 
+        new_user = getUserByLogin("new login")
+        self.assertEquals(user.id, new_user.id)
+        self.assertEquals("new login", new_user.login)
+        self.assertEquals("new.mail@mail.com", new_user.mail)
 
-    def test_get_game_uuid(self):
-        uuid = get_all_game()[0].uuid
-        game = get_game_by_uuid(uuid)
-        self.assertEquals("Game of Wawa on form 1", game.name)
-        self.assertEquals("WAITING", game.game_status.type)
+    def test_login_exist(self):
+        self.assertEquals(False, loginExist("new.user@mail.com"))
+        createUserBD("new user", "new.user@mail.com", "new password")
+        self.assertEquals(True, loginExist("new user"))
 
+    def test_mail_exist(self):
+        self.assertEquals(False, emailExist("new.user@mail.com"))
+        createUserBD("new user", "new.user@mail.com", "new password")
+        self.assertEquals(True, emailExist("new.user@mail.com"))
 
-    def test_change_game_status(self):
-        game = get_all_game()[0]
-        self.assertEquals("WAITING", game.game_status.type)
-        change_game_status(game, "CANCELLED")
-        games = get_all_game()
-        self.assertEquals(1, len(games))
-        self.assertEquals("CANCELLED", games[0].game_status.type)
-
-    def test_create_game(self):
-        games = get_all_game()
-        self.assertEquals(1, len(games))
-        self.assertEquals("Game of Wawa on form 1", games[0].name)
-
-        create_gameBD(1,"Warren", "Partie de Warren", True, 3)
-
-        games = get_all_game()
-        self.assertEquals(2, len(games))
-        new_game = games[1]
-        self.assertEquals(1, new_game.form.id)
-        self.assertEquals("Partie de Warren", new_game.name)
-        self.assertEquals(True, new_game.is_public)
-        self.assertEquals(3, new_game.slot_max)
+    def test_user_exist(self):
+        self.assertEquals(False, valideUser("TimFake", "titi"))
+        self.assertEquals(True, valideUser("TimFake", "toto"))
