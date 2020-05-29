@@ -296,5 +296,6 @@ def correction(request, player_id):
     player = get_player_by_id(player_id)
     calculate_score(player)
     game = player.game
-    questions = getPossibleAnswersByQuestions(getQuestionsByForm(game.form))
+    questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
+
     return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})

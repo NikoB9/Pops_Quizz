@@ -171,3 +171,12 @@ html, body {
 	height: 35px;
 	padding: 5px
 }
+
+.bonne_reponse {
+	background-color: lightgreen !important;
+	color:darkgreen !important;
+}
+.mauvaise_reponse {
+	background-color: red !important;
+	color:darkred !important;
+}
