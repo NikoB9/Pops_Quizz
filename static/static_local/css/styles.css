@@ -176,7 +176,12 @@ html, body {
 	background-color: lightgreen !important;
 	color:darkgreen !important;
 }
+
 .mauvaise_reponse {
 	background-color: red !important;
 	color:darkred !important;
+}
+
+.pad {
+	padding-top: 15px
 }

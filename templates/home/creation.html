@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-	<style type="text/css">
-		.hidden {
-			display: none;
-		}
-
-	</style> 
-	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale pad">
 		<form method="POST">
 			{% csrf_token %}
 			<div id="form_header">
-				<input type=text name=form_title value="Titre du Quizz">
-				<textarea name=form_description>Description du quizz</textarea>
+				<input type="text" name="form_title" class="style_form typo_generale" value="Titre du Quizz">
+				<br>
+				<br>
+				<textarea name="form_description" class="form-control style_form typo_generale">Description du quizz</textarea>
 			</div>
+			<br>
 			<div id="questions">
 				
 			</div>
-			<button type=button onclick="addNewQuestion()">Ajouter une question</button>
-			<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
-			<input type="submit" value="Sauvegarder">
+			<br>
+			<div class="droite">
+				<button type=button class="btn connectBtn" onclick="addNewQuestion()">Ajouter une question</button>
+				<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
+				<input type="submit" class="btn connectBtn" value="Sauvegarder">
+			</div>		
 		</form>
     </div>
 
@@ -29,13 +29,15 @@
 			answerType;
 			answers = [];
 
-			$pnlQuestion = document.createElement("div");
+			$pnlQuestion = document.createElement("fieldset");
+			// $pnlQuestion = document.createElement("div");
 			$pnlHeader = document.createElement("div");
 			$pnlBody = document.createElement("div");
 			$pnlFooter = document.createElement("div");
 
 			$lblOrder = document.createElement("span");
 			$txtTitle = document.createElement("input");
+			$divBtnDelete = document.createElement("div");
 			$btnDelete = document.createElement("button");
 			$pnlAnswers = document.createElement("div");
 			$btnAddNewAnswer = document.createElement("button");
@@ -47,10 +49,17 @@
 			constructor(_order, _title, _answerType, _answers) {
 				let self = this;
 				///RENDER HTML AND ATTRIBUTES
-				this.$pnlQuestion.classList.add("card", "border-info");
-				this.$pnlHeader.classList.add("card-header", "header");
+				this.$pnlQuestion.classList.add("fdst_border");
+				// this.$pnlQuestion.classList.add("card", "border-info");
+				// this.$pnlHeader.classList.add("card-header", "header");
+				// this.$pnlHeader.classList.add("row");
 				this.$pnlBody.classList.add("card-body", "body");
 				this.$pnlFooter.classList.add("card-footer", "footer");
+				this.$txtTitle.classList.add("style_form", "typo_generale");
+				this.$btnDelete.classList.add("btn","connectBtn");
+				this.$divBtnDelete.classList.add("droite");
+				this.$btnAddNewAnswer.classList.add("btn","connectBtn");
+				this.$selectAnswerType.classList.add("style_form", "typo_generale");
 
 				//TXT TITLE
 				this.$txtTitle.type = "text";
@@ -63,7 +72,8 @@
 				titleE.appendChild(this.$lblOrder);
 				titleE.appendChild(this.$txtTitle);
 				this.$pnlHeader.appendChild(titleE);
-				this.$pnlHeader.appendChild(this.$btnDelete);
+				this.$pnlHeader.appendChild(this.$divBtnDelete);
+				this.$divBtnDelete.appendChild(this.$btnDelete);
 
 				//ANSWER TYPE
 				answerTypes.forEach(element => { 
@@ -179,6 +189,12 @@
 				//SET DATAS
 				this.setType(_type);
 				this.setValue(_value);
+
+				// SET CSS 
+				// this.$inputExample.classList.add("style_form");
+				this.$txtValue.classList.add("style_form");
+				// this.$chkCorrect.classList.add("style_form");
+				this.$btnDelete.classList.add("btn", "connectBtn");
 			}
 			setType(_type) {
 				this.type = _type;
