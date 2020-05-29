@@ -57,3 +57,12 @@ def calculate_score(player):
 
     if all_player_have_answered_a_game(player.game):
         change_game_status(player.game, "DONE")
+
+
+
+
+
+
+
+
+
