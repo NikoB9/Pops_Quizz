@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+	  	<h3>{{ form.name }}</h3>
+        <h3>{{ form.description }}</h3>
+        <h3>{{ form.is_public }}</h3>
+
+            <h3>{{ form.categories }}</h3>
+
+			{% for q in form.questions %}
+
+						{% if q.question.answer_type.type == "INPUT" %}
+
+                            {% for a in q.answers %}
+						  	{% empty %}
+								Pas de réponse
+							{% endfor %}
+						{% elif q.question.answer_type.type == "QCM" %}
+
+							{% for a in q.answers %}
+						  	{% empty %}
+								Pas de réponse
+							{% endfor %}
+
+
+						{% elif q.question.answer_type.type == "UNIQUE_ANSWER" %}
+
+							{% for a in q.answers %}
+
+                            {% empty %}
+                                Pas de réponse
+                            {% endfor %}
+                        {% endif %}
+			{% empty %}
+				Pas de questions
+			{% endfor %}
+    </div>
+{% endblock %}
+
+{% block js_per_page %}
+{% endblock %}

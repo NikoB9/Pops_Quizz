@@ -180,3 +180,5 @@ $(document).ready(function () {
 });
 
 $('.dropdown-toggle').dropdown();
+
+$('.editbtn').tooltip();
