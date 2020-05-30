@@ -78,7 +78,7 @@
 
 	    	<!-- HEADER Présent sur toute les pages-->
 	    	<div class="row head_style">
-				<div class="col-md-10"><a href="{% url 'Quizz:home' %}"><img src="{% static "img/logo.png" %}" height="65rem" /></a></div>
+				<div class="col-md-10"><a href="{% url 'Quizz:home' %}"><img src="{% static "img/logo.png" %}" height="45rem" /></a></div>
 				{% if request.session.login is None %}
 				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="connectBtn"><i class="fas fa-user-lock"></i>&nbsp;<b>Connexion</b></button></div>
 				{% else %}

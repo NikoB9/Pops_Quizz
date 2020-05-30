@@ -1,14 +1,20 @@
 
 {% extends 'base.html' %}
 {% load static %}
+{% load personnal_tags %}
 {% block content %}
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
 		<div class="row marg">
 			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
 				<div class="embed-responsive embed-responsive-1by1">
 					<a href="{% url 'Quizz:creation' %}" class="liens_bt_form">
-						<div class="embed-responsive-item boite_form">
-							<H5>Nouveau Quizz</H5>
+						<div class="embed-responsive-item boite_form" style="display: flex">
+							<H5 style="position: absolute;
+    top: 45%;
+    text-align: center;
+    width: 100%;
+    left: -1px;
+    color: rgb(223,213,250);">Nouveau</H5>
 							<img src="{% static "img/plus-math.png" %}" class="img_form">
 						</div>
 					</a>
@@ -22,7 +28,7 @@
 					<a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
 						<div class="embed-responsive-item boite_form">
 						  		<H5>{{f.name}}</H5>
-								<H6>{{f.description}}</H6>
+								<H6>{{f.description | cut_to_long_text:70}}</H6>
 
 								{% if f.author is not None %}
 							  		<p class="card-text">Créé par {{ f.author.login }}</p>
