@@ -5,33 +5,90 @@
 {% block content %}
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
 
+        <div class="row">
+            <div class="col" id="quizz_btn" style="border: 1px solid rgba(72,59,107, 0.9);text-align: center; cursor: pointer">
+                <span>CRÉER UNE PARTIE</span>
+            </div>
+            <div class="col connectBtn" id="running_quizz_btn" style="border: 1px solid rgba(72,59,107, 0.9);text-align: center; cursor: pointer">
+                <span>REJOINDRE UNE PARTIE</span>
+            </div>
+        </div>
+
         <h1>{{ cat.label }}</h1>
 	  	<h3>{{ cat.description }}</h3>
 
-        <div class="row marg">
-			{% for f in allforms %}
+        <div id="quizz_div">
+            <div class="row marg">
+                {% for f in allforms %}
 
-			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
-				<div class="embed-responsive embed-responsive-1by1">
-					<a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
-						<div class="embed-responsive-item boite_form">
-						  		<H5>{{f.name}}</H5>
-								<H6>{{f.description | cut_to_long_text:70}}</H6>
+                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
+                    <div class="embed-responsive embed-responsive-1by1">
+                        <a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
+                            <div class="embed-responsive-item boite_form">
+                                    <H5>{{f.name}}</H5>
+                                    <H6>{{f.description | cut_to_long_text:70}}</H6>
 
-								{% if f.author is not None %}
-							  		<p class="card-text">Créé par {{ f.author.login }}</p>
-							  	{% else %}
-							  		<p class="card-text">Créé par teampopsquizz</p>
-							  	{% endif %}
-					  	</div>
+                                    {% if f.author is not None %}
+                                        <p class="card-text">Créé par {{ f.author.login }}</p>
+                                    {% else %}
+                                        <p class="card-text">Créé par teampopsquizz</p>
+                                    {% endif %}
+                            </div>
 
-					</a>
-				</div>
-			</div>
-            {% empty %}
-                Pas encore de Quizz dans cette catégorie
-			{% endfor %}
-		</div>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                    Pas encore de Quizz dans cette catégorie
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="running_quizz_div" style="display: none">
+
+            <div class="row marg">
+                {% for f in allgames %}
+
+                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
+                    <div class="embed-responsive embed-responsive-1by1">
+                        <a href="" class="liens_bt_form">
+                            <div class="embed-responsive-item boite_form">
+                                    <H5>{{f.name}}</H5>
+
+                                    {% if f.author is not None %}
+                                        <p class="card-text">Créé par {{ f.author.login }}</p>
+                                    {% endif %}
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                    Pas de partie en cours dans cette catégorie
+                {% endfor %}
+            </div>
+
+        </div>
+
 	</div>
 
+{% endblock %}
+
+{% block js_per_page %}
+    <script>
+        $('#quizz_btn').click(function () {
+            $('#running_quizz_div').css('display','none');
+            $('#quizz_div').css('display','block');
+
+            $('#quizz_btn').removeClass('connectBtn');
+            $('#running_quizz_btn').addClass('connectBtn');
+        });
+        $('#running_quizz_btn').click(function () {
+            $('#running_quizz_div').css('display','block');
+            $('#quizz_div').css('display','none');
+
+            $('#quizz_btn').addClass('connectBtn');
+            $('#running_quizz_btn').removeClass('connectBtn');
+        });
+    </script>
 {% endblock %}

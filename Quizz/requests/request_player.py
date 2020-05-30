@@ -34,6 +34,8 @@ def get_player_by_game_by_login(game, login):
     user = User.objects.get(login=login)
     return Player.objects.get(game=game, user=user)
 
+def get_nb_player_by_game(game):
+    return len(Player.objects.get(game=game))
 
 def get_players_by_game_order_by_score_desc(game):
     return Player.objects.filter(game=game).order_by('-score')
