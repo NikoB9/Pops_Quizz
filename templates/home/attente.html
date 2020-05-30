@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+	
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+		<h1>{{ game.form.name }}</h1>
+	  	<h5>{{ game.form.description }}</h5>
+
+	  	{% if form.author is not None %}
+	  		<h6>Créé par {{ game.form.author.login }}</h6>
+	  	{% else %}
+	  		<h6>Créé par teampopsquizz</h6>
+	  	{% endif %}
+
+		{{ game.name }} en salle d'attente
+
+		<ol> <u>Inviter des amis :</u>
+			{% for friend in friends %}
+			<li>{{ friend.login }}</li>
+			{% empty %}
+			<li>Aucun ami</li>
+			{% endfor %}
+		</ol>
+
+		<fieldset><legend>Liste des joueurs ({{players|length}}/{{game.slot_max}}):</legend>
+			{% for player in players %}
+				<p>{{ player.user.login }} a joué {{ player.parties }} parties</p>
+			{% empty %}
+				<h6>Aucun joueur trouvé</h6>
+			{% endfor %}
+		</fieldset>
+		{% if is_author %}
+		<form action="{% url 'Quizz:openform' game.uuid %}">
+			<button type="submit">LANCER LA PARTIE</button>
+		</form>
+		{% endif %}
+		<form action="{% url 'Quizz:openform' game.uuid %}">
+			<button type="submit">QUITTER LA PARTIE</button>
+		</form>
+	</div>
+
+{% endblock %}

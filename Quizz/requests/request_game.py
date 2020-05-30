@@ -21,6 +21,16 @@ def change_game_status(game, status):
     return game
 
 
+def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle):
+    game = get_game_by_uuid(game_uuid)
+    game.name = game_name
+    game.slot_max = slot_max
+    game.is_public = is_public
+    game.is_real_time = is_real_time
+    game.save()
+
+    return change_game_status(game, game_status_libelle)
+
 def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, game_status="WAITING"):
     author = getUserByLogin(user_name)
     form = getFormById(form_id)

@@ -42,26 +42,45 @@ def index(request):
     return render(request, "home/index.html", {'allforms': allforms})
 
 
-def openform(request, id_form):
-    game_name = request.POST.get('game_name', None)
-    slot_max = request.POST.get('slot_max', None)
-    is_public = True if request.POST.get('is_public', None) == "on" else False
-    login = request.session['login']
-    game = create_gameBD(id_form, login, game_name, is_public, slot_max, False, "IN_PROGRESS")
-
-    user = getUserByLogin(login)
-
-    player = Player()
-    player.user = user
-    player.game = game
-    player.score = 0
-    player.save()
-
+def create_game(request, id_form):
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
+    user = getUserByLogin(request.session['login'])
+    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, "EDITING")
+    create_player(game, user)
 
-    return render(request, "home/game.html", {'form': f, 'player': player})
+    return render(request, "home/create-game.html", {'form': f, 'game':game})
+
+
+def attente(request, game_uuid):
+    user = getUserByLogin(request.session['login'])
+    game_name = request.POST.get('game_name', None)
+    slot_max = request.POST.get('slot_max', None)
+    is_public = True if request.POST.get('is_public', None) == "on" else False
+    game = get_game_by_uuid(game_uuid)
+    if game.game_status.type=="WAITING":
+        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "IN_PROGRESS")
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+    change_game_status(game, "WAITING")
+
+    return render(request, "home/attente.html", {'game':game, 'is_author':is_author, 'players':players, 'friends':friends})
+
+
+def openform(request, game_uuid):
+    game = get_game_by_uuid(game_uuid)
+    login = request.session['login']
+    player = get_player_by_game_by_login(game, login)
+
+    f = getFormById(game.form.id)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    change_game_status(game, "IN_PROGRESS")
+
+    return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
 
 
 def users(request):
@@ -137,14 +156,6 @@ def connectUser(request):
         }
 
     return JsonResponse(data)
-
-
-def create_game(request, id_form):
-    f = getFormById(id_form)
-    questions = getQuestionsByForm(f)
-    f.questions = getPossibleAnswersByQuestions(questions)
-
-    return render(request, "home/create-game.html", {'form': f})
 
 
 def disconnect(request):
