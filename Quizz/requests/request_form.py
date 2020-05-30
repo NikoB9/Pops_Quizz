@@ -5,7 +5,7 @@ from Quizz.models import *
 def getAllForms():
     return Form.objects.all()
 
-def getFormsById(id):
+def getFormById(id):
     return Form.objects.get(id=id)
 
 def addQuizzForm(name, author, description):

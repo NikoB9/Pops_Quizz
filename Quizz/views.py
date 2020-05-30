@@ -54,7 +54,7 @@ def openform(request, id_form):
     player.score = 0
     player.save()
 
-    f = getFormsById(id_form)
+    f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
 
@@ -137,7 +137,7 @@ def connectUser(request):
 
 
 def create_game(request, id_form):
-    f = getFormsById(id_form)
+    f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
     # print(f)

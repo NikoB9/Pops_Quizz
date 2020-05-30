@@ -23,7 +23,7 @@ def change_game_status(game, status):
 
 def create_gameBD(form_id, user_name, name, is_public, max_player, game_status="WAITING"):
     author = getUserByLogin(user_name)
-    form = getFormsById(form_id)
+    form = getFormById(form_id)
     game_status = get_game_status(game_status)
 
     new_game = Game()

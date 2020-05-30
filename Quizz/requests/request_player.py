@@ -23,8 +23,10 @@ def get_players_by_game_order_by_score_desc(game):
 def get_players_by_user_desc_date_game(user):
     return Player.objects.filter(user=user).exclude(game__game_status__type="CANCELLED").order_by('-game__created_at')
 
+
 def all_player_have_answered_a_game(game):
     return len(Player.objects.filter(game=game).exclude(has_answered=True)) == 0
+
 
 def calculate_score(player):
     questions = getPossibleAnswersByQuestions(getQuestionsByForm(player.game.form))
@@ -57,12 +59,3 @@ def calculate_score(player):
 
     if all_player_have_answered_a_game(player.game):
         change_game_status(player.game, "DONE")
-
-
-
-
-
-
-
-
-
