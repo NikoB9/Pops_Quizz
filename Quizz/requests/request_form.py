@@ -9,10 +9,9 @@ def getAllForms(user=None):
         return Form.objects.filter(is_public=True)
     forms = []
     for form in Form.objects.all():
-        if is_a_user_allowed_to_access_a_form(user, form):
+        if form.author == user or is_user_editor_of_a_form(user, form):
             forms.append(form)
             form.is_author = form.author == user
-            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
 
     return forms
 
@@ -28,15 +27,7 @@ def nbQuizzByCat(cat, user):
 def getQuizzByCat(cat, user):
     if user is None:
         return Form.objects.filter(is_public=True, categories=cat)
-
-    forms = []
-    for form in Form.objects.filter(categories=cat):
-        if is_a_user_allowed_to_access_a_form(user, form):
-            forms.append(form)
-            form.is_author = form.author == user
-            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
-
-    return forms
+    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
 
 
 def addQuizzForm(name, author, description):
