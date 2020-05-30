@@ -43,6 +43,7 @@ def index(request):
 
     return render(request, "home/index.html", {'allforms': allforms})
 
+
 def quizz_by_cat(request, cat_id):
     user = None
     if 'login' in request.session:
@@ -51,6 +52,7 @@ def quizz_by_cat(request, cat_id):
     allforms = getQuizzByCat(cat, user)
 
     return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'cat': cat})
+
 
 def create_game(request, id_form):
     f = getFormById(id_form)
@@ -181,7 +183,6 @@ def disconnect(request):
 def creation(request):
     if request.method == 'POST':
 
-        # print(request.POST)
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
@@ -232,7 +233,6 @@ def categories(request):
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
     players = get_players_by_game_order_by_score_desc(game)
-    print(players)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
@@ -315,6 +315,7 @@ def user_history(request):
 
     return render(request, 'dashboard/history.html', {'active': 1, 'players': players})
 
+
 def correction(request, player_id):
     player = get_player_by_id(player_id)
     calculate_score(player)
@@ -331,7 +332,8 @@ def menuCategories(request):
     cats = []
     categories = get_categories()
     for c in categories:
-        cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c, user)})
+        if nbQuizzByCat(c, user) > 0:
+            cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c, user)})
 
     data = {'cats':cats}
     return JsonResponse(data)

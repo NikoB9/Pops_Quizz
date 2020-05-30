@@ -23,6 +23,7 @@ def create_player(game, user):
 def get_players_by_game(game):
     return Player.objects.filter(game=game)
 
+
 def get_players_number_of_game(players):
     for player in players:
         player.parties = len(Player.objects.filter(user=player.user, has_answered=True))

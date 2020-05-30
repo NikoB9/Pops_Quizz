@@ -20,7 +20,7 @@ def nbQuizzByCat(cat, user):
 
 def getQuizzByCat(cat, user):
     if user is None:
-        return getAllForms.filter(categories=cat)
+        return Form.objects.filter(categories=cat)
     return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
 
 
