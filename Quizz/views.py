@@ -247,6 +247,14 @@ def edit_quizz(request, id_quizz):
 
     return render(request, "home/edit_quizz.html", data)
 
+
+def delete_quizz(request, id_quizz):
+
+    delete_form(id_quizz)
+
+    return index(request)
+
+
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
     players = get_players_by_game_order_by_score_desc(game)

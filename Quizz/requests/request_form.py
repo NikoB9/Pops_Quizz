@@ -16,6 +16,10 @@ def getAllForms(user=None):
     return forms
 
 
+def delete_form(form_id):
+    Form.objects.get(id=form_id).delete()
+
+
 def getFormById(id):
     return Form.objects.get(id=id)
 

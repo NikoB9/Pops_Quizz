@@ -134,7 +134,7 @@ class Game(models.Model):
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.PROTECT)
+    game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     score = models.IntegerField(null=True, blank=False, unique=False)
     has_answered = models.BooleanField(default=False)
 

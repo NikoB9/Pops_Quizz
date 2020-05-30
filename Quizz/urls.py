@@ -19,6 +19,8 @@ urlpatterns = [
     path('resultats/<str:game_uuid>/', views.resultats, name='resultats'),
     path('show_cat_<int:cat_id>/', views.quizz_by_cat, name='show_cat'),
     path('edit_quizz_<int:id_quizz>/', views.edit_quizz, name='edit_quizz'),
+    path('delete_quizz/<int:id_quizz>/', views.delete_quizz, name='delete_quizz'),
+
 
                   #DASHBOARD
     path('dashboard/user', views.user_profil, name="dashboard_profile"),
