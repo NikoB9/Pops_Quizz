@@ -212,9 +212,17 @@ def creation(request):
     return render(request, "home/creation.html")
 
 
-def categories(request):
-    return render(request, "home/categories.html")
+def edit_quizz(request, id_quizz):
 
+    f = getFormById(id_quizz)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+
+    data={
+        'form' : f,
+    }
+
+    return render(request, "home/edit_quizz.html", data)
 
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
