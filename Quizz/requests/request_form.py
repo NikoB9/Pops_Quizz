@@ -12,7 +12,7 @@ def getAllForms(user=None):
         if is_a_user_allowed_to_access_a_form(user, form):
             forms.append(form)
             form.is_author = form.author == user
-            form.allow_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
+            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
 
     return forms
 
