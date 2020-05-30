@@ -51,7 +51,16 @@ def quizz_by_cat(request, cat_id):
     cat = get_category_by_id(cat_id)
     allforms = getQuizzByCat(cat, user)
 
-    return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'cat': cat})
+    allgames = []
+    for f in allforms:
+        games = getGamesToJoinByForm(f)
+        print(games)
+        for g in games:
+            if get_nb_player_by_game(g) < g.slot_max:
+                allgames.append(g)
+    print(allgames)
+
+    return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'allgames': allgames, 'cat': cat})
 
 
 def create_game(request, id_form):
