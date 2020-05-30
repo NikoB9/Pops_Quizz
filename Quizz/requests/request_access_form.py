@@ -10,6 +10,10 @@ def is_a_user_allowed_to_access_a_form(user, form):
     return len(AccessForm.objects.filter(user=user, form=form)) > 0
 
 
+def is_user_editor_of_a_form(user, form):
+    return len(AccessForm.objects.filter(user=user, form=form, access_form_type__type="EDITOR")) > 0
+
+
 def return_highest_user_acces_to_form(user, form):
     return AccessForm.objects.filter(user=user, form=form)[0].access_form_type.type
 

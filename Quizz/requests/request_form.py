@@ -6,8 +6,15 @@ from Quizz.requests.request_access_form import *
 
 def getAllForms(user=None):
     if user is None:
-        return Form.objects.all()
-    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.all()))
+        return Form.objects.filter(is_public=True)
+    forms = []
+    for form in Form.objects.all():
+        if is_a_user_allowed_to_access_a_form(user, form):
+            forms.append(form)
+            form.is_author = form.author == user
+            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
+
+    return forms
 
 
 def getFormById(id):
@@ -20,8 +27,16 @@ def nbQuizzByCat(cat, user):
 
 def getQuizzByCat(cat, user):
     if user is None:
-        return Form.objects.filter(categories=cat)
-    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
+        return Form.objects.filter(is_public=True, categories=cat)
+
+    forms = []
+    for form in Form.objects.filter(categories=cat):
+        if is_a_user_allowed_to_access_a_form(user, form):
+            forms.append(form)
+            form.is_author = form.author == user
+            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
+
+    return forms
 
 
 def addQuizzForm(name, author, description):
