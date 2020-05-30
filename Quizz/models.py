@@ -109,7 +109,7 @@ class PossibleAnswer(models.Model):
         return self.value
 
 
-# GameStatus = [WAITING, IN_PROGRESS, DONE, CANCELLED]
+# GameStatus = [EDITING, WAITING, IN_PROGRESS, DONE, CANCELLED]
 class GameStatus(models.Model):
     type = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
