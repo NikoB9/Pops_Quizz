@@ -126,6 +126,7 @@ class Game(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False, unique=False)
     created_at = models.DateTimeField(auto_now_add=True)
     is_public = models.BooleanField(default=True)
+    is_real_time = models.BooleanField(default=False)
 
     def __str__(self):
         return "Game " + self.name + " created at " + self.createdAt
@@ -149,16 +150,6 @@ class UserAnswers(models.Model):
     def __str__(self):
         return self.value
 
-# # Droits utilisateur
-# class UserRights(TimestampModel):
-# 	rule = models.IntegerField(null=False, blank=False, unique=False)
-# 	libelle = models.CharField(max_length=255, null=False, blank=False, unique=True)
-# 	def __str__(self):
-# 		return self.libelle
-#
-# # utilisateur (pas mal d'exemple avec ça)
-# #exemple relation clé étrangère
-#
 # class Users(TimestampModel):
 # 	role = models.ForeignKey(UserRights, on_delete=models.PROTECT)
 # 	first_name = models.CharField(max_length=255, null=False, blank=False, unique=False)

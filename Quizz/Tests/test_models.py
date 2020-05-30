@@ -754,6 +754,13 @@ class Test_model(TestCase):
 
         ####################################
 
+    ## TEST ACCESS_FORM ##
+
+    def test_get_access_form_from_form_and_user(self):
+        form_1 = getFormById(1)
+        user = getUserByLogin("Warren")
+        self.assertEquals("CREATOR", return_highest_user_acces_to_form(user, form_1))
+
     ## TEST FORM ##
 
     def test_get_form(self):
@@ -775,6 +782,8 @@ class Test_model(TestCase):
         forms = getAllForms()
         self.assertEquals(len(forms), 8)
         self.assertEquals(forms[7].name, "new form")
+
+        self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, forms[7]))
 
     ## TEST GAME ##
 
@@ -802,7 +811,7 @@ class Test_model(TestCase):
         self.assertEquals(1, len(games))
         self.assertEquals("Game of Wawa on form 1", games[0].name)
 
-        create_gameBD(1, "Warren", "Partie de Warren", True, 3)
+        create_gameBD(1, "Warren", "Partie de Warren", True, 3, False)
 
         games = get_all_game()
         self.assertEquals(2, len(games))
