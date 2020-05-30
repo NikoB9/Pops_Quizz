@@ -45,31 +45,54 @@ def index(request):
 
 
 def quizz_by_cat(request, cat_id):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
     cat = get_category_by_id(cat_id)
-    allforms = getQuizzByCat(cat)
+    allforms = getQuizzByCat(cat, user)
 
     return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'cat': cat})
 
-def openform(request, id_form):
-    game_name = request.POST.get('game_name', None)
-    slot_max = request.POST.get('slot_max', None)
-    is_public = True if request.POST.get('is_public', None) == "on" else False
-    login = request.session['login']
-    game = create_gameBD(id_form, login, game_name, is_public, slot_max, False, "IN_PROGRESS")
 
-    user = getUserByLogin(login)
-
-    player = Player()
-    player.user = user
-    player.game = game
-    player.score = 0
-    player.save()
-
+def create_game(request, id_form):
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
+    user = getUserByLogin(request.session['login'])
+    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, "EDITING")
+    create_player(game, user)
 
-    return render(request, "home/game.html", {'form': f, 'player': player})
+    return render(request, "home/create-game.html", {'form': f, 'game':game})
+
+
+def attente(request, game_uuid):
+    user = getUserByLogin(request.session['login'])
+    game_name = request.POST.get('game_name', None)
+    slot_max = request.POST.get('slot_max', None)
+    is_public = True if request.POST.get('is_public', None) == "on" else False
+    game = get_game_by_uuid(game_uuid)
+    if game.game_status.type=="WAITING":
+        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "IN_PROGRESS")
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+    change_game_status(game, "WAITING")
+
+    return render(request, "home/attente.html", {'game':game, 'is_author':is_author, 'players':players, 'friends':friends})
+
+
+def openform(request, game_uuid):
+    game = get_game_by_uuid(game_uuid)
+    login = request.session['login']
+    player = get_player_by_game_by_login(game, login)
+
+    f = getFormById(game.form.id)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    change_game_status(game, "IN_PROGRESS")
+
+    return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
 
 
 def users(request):
@@ -147,14 +170,6 @@ def connectUser(request):
     return JsonResponse(data)
 
 
-def create_game(request, id_form):
-    f = getFormById(id_form)
-    questions = getQuestionsByForm(f)
-    f.questions = getPossibleAnswersByQuestions(questions)
-
-    return render(request, "home/create-game.html", {'form': f})
-
-
 def disconnect(request):
     del request.session['login']
 
@@ -168,7 +183,6 @@ def disconnect(request):
 def creation(request):
     if request.method == 'POST':
 
-        # print(request.POST)
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
@@ -219,7 +233,6 @@ def categories(request):
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
     players = get_players_by_game_order_by_score_desc(game)
-    print(players)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
@@ -302,6 +315,7 @@ def user_history(request):
 
     return render(request, 'dashboard/history.html', {'active': 1, 'players': players})
 
+
 def correction(request, player_id):
     player = get_player_by_id(player_id)
     calculate_score(player)
@@ -312,10 +326,14 @@ def correction(request, player_id):
 
 
 def menuCategories(request):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
     cats = []
     categories = get_categories()
     for c in categories:
-        cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c)})
+        if nbQuizzByCat(c, user) > 0:
+            cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c, user)})
 
     data = {'cats':cats}
     return JsonResponse(data)

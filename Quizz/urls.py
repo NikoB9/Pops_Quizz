@@ -13,10 +13,11 @@ urlpatterns = [
     path('users/', views.users, name='users'),
     path('creation/', views.creation, name='creation'),
     path('categories/', views.categories, name='categories'),
-    path('resultats/<str:game_uuid>/', views.resultats, name='resultats'),
-    path('game/<int:id_form>/', views.openform, name='openform'),
     path('create-game-<int:id_form>/', views.create_game, name='create-game'),
+    path('salle-attente/<str:game_uuid>/', views.attente, name='attente'),
+    path('game/<str:game_uuid>/', views.openform, name='openform'),
     path('correction/<int:player_id>/', views.correction, name='correction'),
+    path('resultats/<str:game_uuid>/', views.resultats, name='resultats'),
     path('show_cat_<int:cat_id>/', views.quizz_by_cat, name='show_cat'),
 
 

@@ -12,7 +12,7 @@
 	  	{% endif %}
 
 	  	<fieldset class="fdst_border"><legend class="lgd_style">Nouvelle partie</legend>
-  			<form action="{% url 'Quizz:openform' form.id %}" method="post">
+  			<form action="{% url 'Quizz:attente' game.uuid %}" method="post">
 		      	{% csrf_token %}
 		      	<!-- <div class="form-group row">
 						<label for="game_name">Nom de la partie : </label>
