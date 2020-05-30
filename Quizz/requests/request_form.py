@@ -7,17 +7,22 @@ from Quizz.requests.request_access_form import *
 def getAllForms(user=None):
     if user is None:
         return Form.objects.all()
-    return filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.all())
+    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.all()))
 
 
 def getFormById(id):
     return Form.objects.get(id=id)
 
-def nbQuizzByCat(cat):
-    return len(Form.objects.filter(categories=cat))
 
-def getQuizzByCat(cat):
-    return Form.objects.filter(categories=cat)
+def nbQuizzByCat(cat, user):
+    return len(getQuizzByCat(cat, user))
+
+
+def getQuizzByCat(cat, user):
+    if user is None:
+        return getAllForms.filter(categories=cat)
+    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
+
 
 def addQuizzForm(name, author, description):
     f = Form()

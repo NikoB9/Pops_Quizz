@@ -44,8 +44,11 @@ def index(request):
     return render(request, "home/index.html", {'allforms': allforms})
 
 def quizz_by_cat(request, cat_id):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
     cat = get_category_by_id(cat_id)
-    allforms = getQuizzByCat(cat)
+    allforms = getQuizzByCat(cat, user)
 
     return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'cat': cat})
 
@@ -322,10 +325,13 @@ def correction(request, player_id):
 
 
 def menuCategories(request):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
     cats = []
     categories = get_categories()
     for c in categories:
-        cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c)})
+        cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c, user)})
 
     data = {'cats':cats}
     return JsonResponse(data)
