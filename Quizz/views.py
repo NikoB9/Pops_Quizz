@@ -35,7 +35,10 @@ import datetime
 
 
 def index(request):
-    allforms = getAllForms()
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
+    allforms = getAllForms(user)
     return render(request, "home/index.html", {'allforms': allforms})
 
 
@@ -44,7 +47,7 @@ def openform(request, id_form):
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
     login = request.session['login']
-    game = create_gameBD(id_form, login, game_name, is_public, slot_max, "IN_PROGRESS")
+    game = create_gameBD(id_form, login, game_name, is_public, slot_max, False, "IN_PROGRESS")
 
     user = getUserByLogin(login)
 
@@ -140,7 +143,6 @@ def create_game(request, id_form):
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
-    # print(f)
 
     return render(request, "home/create-game.html", {'form': f})
 
