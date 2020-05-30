@@ -152,3 +152,31 @@ $(document).on("click", '#disconnect', function(){
 $(document).on("click", '#dashboard', function(){
 window.location.pathname = $('#dashboard-url').val();
 });
+
+
+$(document).ready(function () {
+    /*Entrer le token csrf dans le header si la route est sécurisé*/
+  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+  /*console.log("csrf token : "+csrftoken);*/
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+  $.ajax({
+  	type: 'POST',
+    url: './categories_menu',
+    dataType: 'json',
+    success: function (data) {
+      menuCat = $('#catMenu');
+      menuCat.empty();
+      for (c of data.cats) {
+          menuCat.append('<a class="dropdown-item" href="/show_cat_'+c.id+'">'+c.label+'<span class="nbQuizzSpan">'+c.nbQuizz+'</span></a>');
+        }
+    }
+  });
+});
+
+$('.dropdown-toggle').dropdown();

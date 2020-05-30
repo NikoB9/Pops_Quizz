@@ -17,6 +17,9 @@ urlpatterns = [
     path('game/<int:id_form>/', views.openform, name='openform'),
     path('create-game-<int:id_form>/', views.create_game, name='create-game'),
     path('correction/<int:player_id>/', views.correction, name='correction'),
+    path('show_cat_<int:cat_id>/', views.quizz_by_cat, name='show_cat'),
+
+
 
     #DASHBOARD
     path('dashboard/user', views.user_profil, name="dashboard_profile"),
@@ -27,6 +30,7 @@ urlpatterns = [
     re_path(r'user_connection$', views.connectUser),
     re_path(r'disconnect_user$', views.disconnect),
     re_path(r'save_user_answers$', views.saveUserAnswers),
+    re_path(r'categories_menu$', views.menuCategories),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),
