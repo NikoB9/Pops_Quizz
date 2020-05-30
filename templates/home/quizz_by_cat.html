@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% load personnal_tags %}
+{% block content %}
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+
+        <h1>{{ cat.label }}</h1>
+	  	<h3>{{ cat.description }}</h3>
+
+        <div class="row marg">
+			{% for f in allforms %}
+
+			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
+				<div class="embed-responsive embed-responsive-1by1">
+					<a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
+						<div class="embed-responsive-item boite_form">
+						  		<H5>{{f.name}}</H5>
+								<H6>{{f.description | cut_to_long_text:70}}</H6>
+
+								{% if f.author is not None %}
+							  		<p class="card-text">Créé par {{ f.author.login }}</p>
+							  	{% else %}
+							  		<p class="card-text">Créé par teampopsquizz</p>
+							  	{% endif %}
+					  	</div>
+
+					</a>
+				</div>
+			</div>
+            {% empty %}
+                Pas encore de Quizz dans cette catégorie
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock %}

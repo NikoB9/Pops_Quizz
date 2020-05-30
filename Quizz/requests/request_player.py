@@ -39,7 +39,7 @@ def get_players_by_game_order_by_score_desc(game):
 
 
 def get_players_by_user_desc_date_game(user):
-    return Player.objects.filter(user=user).exclude(game__game_status__type="CANCELLED").order_by('-game__created_at')
+    return Player.objects.filter(user=user).filter(game__game_status__type="DONE").order_by('-game__created_at')
 
 
 def all_player_have_answered_a_game(game):

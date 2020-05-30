@@ -13,6 +13,11 @@ def getAllForms(user=None):
 def getFormById(id):
     return Form.objects.get(id=id)
 
+def nbQuizzByCat(cat):
+    return len(Form.objects.filter(categories=cat))
+
+def getQuizzByCat(cat):
+    return Form.objects.filter(categories=cat)
 
 def addQuizzForm(name, author, description):
     f = Form()
