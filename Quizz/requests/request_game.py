@@ -20,6 +20,9 @@ def change_game_status(game, status):
     game.save()
     return game
 
+def getGamesToJoinByForm(form):
+    games = Game.objects.filter(form=form, is_public=True, game_status__type="WAITING")
+    return games
 
 def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle):
     game = get_game_by_uuid(game_uuid)
