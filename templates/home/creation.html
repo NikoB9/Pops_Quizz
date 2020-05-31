@@ -167,7 +167,7 @@
 				//Set orders
 				if(_order > oldOrder) //Answer Down
 					for(var i = oldOrder; i <= _order; i++) this.answers[i].setOrder(i+1);
-				else //Question Up
+				else //Answer Up
 					for(var i = _order; i <= oldOrder; i++) this.answers[i].setOrder(i+1);
 
 				//Reorganize HTML elements
@@ -197,6 +197,8 @@
 				this.question;
 
 				this.$pnlAnswer = document.createElement("div");
+				this.$btnUp = document.createElement("button");
+				this.$btnDown = document.createElement("button");	
 				this.$inputExample = document.createElement("input");	
 				this.$txtValue = document.createElement("input");
 				this.$chkCorrect = document.createElement("input");
@@ -208,18 +210,34 @@
 				//RENDER HTML
 				this.$inputExample.disabled = true;
 				this.$txtValue.type = "text";
+				this.$txtValue.onclick = function(e){ this.setSelectionRange(0, this.value.length); }
 				this.$chkCorrect.type = "checkbox";
 				this.$btnDelete.type = "button";
 				this.$btnDelete.innerText = "Supprimer";
 				this.$btnDelete.onclick = function(e){ self.question.removeAnswer(self); };
 				this.$hiddenType.type = "hidden";
 				this.$hiddenOrder.type = "hidden";
+
+				//ORDER ELEMENT
+				this.$btnUp.type = "button";
+				this.$btnDown.type = "button";
+				this.$btnUp.innerText = "/\\";
+				this.$btnDown.innerText = "\\/";
+				this.$btnUp.onclick = function(e){ self.question.setAnswerOrder(self, self.order-2) }
+				this.$btnDown.onclick = function(e){ self.question.setAnswerOrder(self, self.order) }
+				let orderE = document.createElement("div");
+				orderE.style.display = "inline-block";
+				orderE.appendChild(this.$btnUp);
+				orderE.appendChild(this.$btnDown);
+
 				this.$pnlAnswer.appendChild(this.$inputExample);
 				this.$pnlAnswer.appendChild(this.$txtValue);
 				this.$pnlAnswer.appendChild(this.$chkCorrect);
+				this.$pnlAnswer.appendChild(orderE);
 				this.$pnlAnswer.appendChild(this.$btnDelete);
 				this.$pnlAnswer.appendChild(this.$hiddenType);
 				this.$pnlAnswer.appendChild(this.$hiddenOrder);
+
 				//SET DATAS
 				this.setType(_type);
 				this.setValue(_value);
@@ -229,6 +247,8 @@
 				this.$txtValue.classList.add("style_form");
 				// this.$chkCorrect.classList.add("style_form");
 				this.$btnDelete.classList.add("btn", "connectBtn");
+				this.$btnUp.classList.add("btn", "connectBtn");
+				this.$btnDown.classList.add("btn", "connectBtn");
 			}
 			setType(_type) {
 				this.type = _type;
@@ -297,28 +317,20 @@
 		function setQuestionOrder(_question, _order) {
 			if(_question.order == _order+1) return;
 			if(_order < 0 || _order >= questions.length) return;
-
 			let oldOrder = _question.order-1;
-
 			//Reorganize array
 			questions.splice(questions.indexOf(_question), 1);
 			questions.splice(_order, 0, _question);
-
 			//Set orders
-			if(_order > oldOrder) { //Question Down
+			if(_order > oldOrder) //Question Down
 				for(var i = oldOrder; i <= _order; i++) questions[i].setOrder(i+1);
-			}
-			else { //Question Up
+			else //Question Up
 				for(var i = _order; i <= oldOrder; i++) questions[i].setOrder(i+1);
-			}
-
 			//Reorganize HTML elements
-			if(_order < questions.length-1) {
+			if(_order < questions.length-1)
 				$questions.insertBefore(_question.$pnlQuestion, questions[_order+1].$pnlQuestion);
-			}
-			else { //Last element
+			else //Last element
 				$questions.appendChild(_question.$pnlQuestion);
-			}
 		}
 
 		questions = [];
