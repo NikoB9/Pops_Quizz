@@ -42,15 +42,6 @@
                 <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
                     <div class="embed-responsive embed-responsive-1by1">
 
-                        {% if f.is_author %}
-                        <button type="button" id="btnRuleForm" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Changement des droits"><i class="fas fa-user-tag"></i></button>
-                        {% endif %}
-                        {% if f.is_allowed_to_edit %}
-                        <button type="button" id="btnEditForm" onclick="window.location.href = '{% url 'Quizz:edit_quizz' f.id %}'" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Modification du Quizz"><i class="fas fa-edit"></i></button>
-                        {% endif %}
-                        {% if f.is_author %}
-                        <button type="button" id="btnDelForm" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Suppression du Quizz"><i class="fas fa-trash-alt"></i></button>
-                        {% endif %}
                         <a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
                             <div class="embed-responsive-item boite_form">
                                     <H5>{{f.name}}</H5>
@@ -75,16 +66,16 @@
         <div id="running_quizz_div" style="display: none">
 
             <div class="row marg">
-                {% for f in allgames %}
+                {% for g in allgames %}
 
                 <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
                     <div class="embed-responsive embed-responsive-1by1">
-                        <a href="" class="liens_bt_form">
+                        <a href="{% url 'Quizz:joindre-partie' g.uuid %}" class="liens_bt_form">
                             <div class="embed-responsive-item boite_form">
-                                    <H5>{{f.name}}</H5>
+                                    <H5>{{g.name}}</H5>
 
-                                    {% if f.author is not None %}
-                                        <p class="card-text">Créé par {{ f.author.login }}</p>
+                                    {% if g.author is not None %}
+                                        <p class="card-text">Partie de {{ g.author.login }}</p>
                                     {% endif %}
                             </div>
 

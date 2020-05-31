@@ -141,6 +141,7 @@
 				{% if request.session.login is None %}
 				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="connectBtn"><i class="fas fa-user-lock"></i>&nbsp;<b>Connexion</b></button></div>
 				{% else %}
+<!--				<a href="{% url 'Quizz:retour-salon' %}"><b>Retourner au salon</b></a>-->
 				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="userBtn"
 					data-html="true"
    					data-toggle="popover"

@@ -54,47 +54,86 @@ def quizz_by_cat(request, cat_id):
     allgames = []
     for f in allforms:
         games = getGamesToJoinByForm(f)
-        print(games)
         for g in games:
             if get_nb_player_by_game(g) < g.slot_max:
                 allgames.append(g)
-    print(allgames)
 
     return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'allgames': allgames, 'cat': cat})
 
 
 def create_game(request, id_form):
+    user = getUserByLogin(request.session['login'])
+    if len(player_waiting_game(user)) > 0:
+        return retour_salon(request)
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
-    user = getUserByLogin(request.session['login'])
-    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, "EDITING")
+    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, False, "DRAFT")
     create_player(game, user)
 
     return render(request, "home/create-game.html", {'form': f, 'game':game})
 
 
 def attente(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     game_name = request.POST.get('game_name', None)
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
     game = get_game_by_uuid(game_uuid)
-    if game.game_status.type=="WAITING":
-        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "IN_PROGRESS")
+    if game.game_status.type=="DRAFT":
+        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "WAITING")
 
     friends = get_users_friends(user)
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
-    change_game_status(game, "WAITING")
 
     return render(request, "home/attente.html", {'game':game, 'is_author':is_author, 'players':players, 'friends':friends})
+
+
+def joindre_partie(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(game_uuid)
+    waiting_games = player_waiting_game(user)
+
+    if len(waiting_games)==1 and waiting_games[0].game.uuid != game_uuid:
+        return retour_salon(request)
+    if not is_user_in_game(user, game):
+        create_player(game, user)
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+
+    return render(request, "home/attente.html", {'game': game, 'is_author': is_author, 'players': players, 'friends': friends})
+
+
+def retour_salon(request):
+    user = getUserByLogin(request.session['login'])
+    if len(player_waiting_game(user)) == 0:
+        return index(request)
+    game = get_game_waiting_of_user(user)
+
+    return joindre_partie(request, game.uuid)
+
+
+def quitter_partie(request, game_uuid):
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(game_uuid)
+    user_leave_game(user, game)
+
+    return index(request)
 
 
 def openform(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
     login = request.session['login']
     player = get_player_by_game_by_login(game, login)
+    if player.score != 0:
+        return correction(request, player.id)
 
     f = getFormById(game.form.id)
     questions = getQuestionsByForm(f)
@@ -247,6 +286,14 @@ def edit_quizz(request, id_quizz):
 
     return render(request, "home/edit_quizz.html", data)
 
+
+def delete_quizz(request, id_quizz):
+
+    delete_form(id_quizz)
+
+    return index(request)
+
+
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
     players = get_players_by_game_order_by_score_desc(game)
@@ -350,7 +397,7 @@ def menuCategories(request):
     categories = get_categories()
     for c in categories:
         if nbQuizzByCat(c, user) > 0:
-            cats.append({'id':c.id,'label':c.label,'nbQuizz':nbQuizzByCat(c, user)})
+            cats.append({'id': c.id,'label': c.label,'nbQuizz': nbQuizzByCat(c, user)})
 
     data = {'cats':cats}
     return JsonResponse(data)

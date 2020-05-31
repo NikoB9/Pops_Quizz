@@ -227,6 +227,11 @@ class Test_model(TestCase):
         accessFormTypeCreator.type = "PUBLISHER"
         accessFormTypePublisher.save()
 
+        cat = Category()
+        cat.label="Autre catégorie"
+        cat.description="Qui possède des questions particulières"
+        cat.save()
+
         f = Form()
         f.name = "Premier formulaire"
         f.description = "C'est parti !"
@@ -778,7 +783,8 @@ class Test_model(TestCase):
         self.assertEquals(forms[0].name, "Premier formulaire")
 
         user = getUserByLogin("TimFake")
-        addQuizzForm("new form", user, "new description")
+        # TODO a modifier pour quand on pourra choisir la catégorie
+        addQuizzForm("new form", user, "new description", ["Autre catégorie"])
         forms = getAllForms()
         self.assertEquals(len(forms), 6)
         self.assertEquals(forms[5].name, "new form")

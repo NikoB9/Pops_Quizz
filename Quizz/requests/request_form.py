@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from Quizz.models import *
 from Quizz.requests.request_access_form import *
+from Quizz.requests.request_categories import *
 
 
 def getAllForms(user=None):
@@ -9,12 +10,15 @@ def getAllForms(user=None):
         return Form.objects.filter(is_public=True)
     forms = []
     for form in Form.objects.all():
-        if is_a_user_allowed_to_access_a_form(user, form):
+        if form.author == user or is_user_editor_of_a_form(user, form):
             forms.append(form)
             form.is_author = form.author == user
-            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
 
     return forms
+
+
+def delete_form(form_id):
+    Form.objects.get(id=form_id).delete()
 
 
 def getFormById(id):
@@ -28,22 +32,18 @@ def nbQuizzByCat(cat, user):
 def getQuizzByCat(cat, user):
     if user is None:
         return Form.objects.filter(is_public=True, categories=cat)
-
-    forms = []
-    for form in Form.objects.filter(categories=cat):
-        if is_a_user_allowed_to_access_a_form(user, form):
-            forms.append(form)
-            form.is_author = form.author == user
-            form.is_allowed_to_edit = form.is_author or is_user_editor_of_a_form(user, form)
-
-    return forms
+    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
 
 
-def addQuizzForm(name, author, description):
+def addQuizzForm(name, author, description, categories_labels):
+
     f = Form()
     f.name = name
     f.author = author
     f.description = description
+    f.save()
+    for lbl in categories_labels:
+        f.categories.add(get_category_by_label(lbl))
     f.save()
     set_access_form_for_a_user(author, f, "CREATOR")
     return f

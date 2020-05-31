@@ -109,7 +109,7 @@ class PossibleAnswer(models.Model):
         return self.value
 
 
-# GameStatus = [EDITING, WAITING, IN_PROGRESS, DONE, CANCELLED]
+# GameStatus = [DRAFT, WAITING, IN_PROGRESS, DONE, CANCELLED]
 class GameStatus(models.Model):
     type = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
@@ -127,14 +127,15 @@ class Game(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_public = models.BooleanField(default=True)
     is_real_time = models.BooleanField(default=False)
+    is_random_form = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Game " + self.name + " created at " + self.createdAt
+        return "Game " + self.name
 
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.PROTECT)
+    game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     score = models.IntegerField(null=True, blank=False, unique=False)
     has_answered = models.BooleanField(default=False)
 

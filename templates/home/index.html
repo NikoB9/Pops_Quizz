@@ -46,12 +46,10 @@
 
 					{% if f.is_author %}
                     <button type="button" id="btnRuleForm" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Changement des droits"><i class="fas fa-user-tag"></i></button>
-                    {% endif %}
-					{% if f.is_allowed_to_edit %}
-                    <button type="button" id="btnEditForm" onclick="window.location.href = '{% url 'Quizz:edit_quizz' f.id %}'" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Modification du Quizz"><i class="fas fa-edit"></i></button>
 					{% endif %}
+					<button type="button" id="btnEditForm" onclick="window.location.href = '{% url 'Quizz:edit_quizz' f.id %}'" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Modification du Quizz"><i class="fas fa-edit"></i></button>
 					{% if f.is_author %}
-					<button type="button" id="btnDelForm" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Suppression du Quizz"><i class="fas fa-trash-alt"></i></button>
+					<button type="button" id="btnDelForm" onclick="window.location.href = '{% url 'Quizz:delete_quizz' f.id %}'" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Suppression du Quizz"><i class="fas fa-trash-alt"></i></button>
 					{% endif %}
 
                     <a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
