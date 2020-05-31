@@ -25,7 +25,7 @@ urlpatterns = [
     path('delete_quizz/<int:id_quizz>/', views.delete_quizz, name='delete_quizz'),
 
 
-                  #DASHBOARD
+    #DASHBOARD
     path('dashboard/user', views.user_profil, name="dashboard_profile"),
     path('dashboard/history', views.user_history, name="dashboard_history"),
 

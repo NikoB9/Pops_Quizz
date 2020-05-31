@@ -25,9 +25,6 @@
 			Aucun ami, n'hésitez pas à en ajouter dans la page ami
 			{% endfor %}
 		</ul>
-		{% if game.game_status.type is not "WAITING" %}
-		<h1>La partie a commencée !</h1>
-		{% endif %}
 
 		<fieldset><legend>Liste des joueurs ({{players|length}}/{{game.slot_max}}):</legend>
 			{% for player in players %}
