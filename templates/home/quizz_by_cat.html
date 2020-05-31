@@ -66,16 +66,16 @@
         <div id="running_quizz_div" style="display: none">
 
             <div class="row marg">
-                {% for f in allgames %}
+                {% for g in allgames %}
 
                 <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
                     <div class="embed-responsive embed-responsive-1by1">
-                        <a href="" class="liens_bt_form">
+                        <a href="{% url 'Quizz:joindre-partie' g.uuid %}" class="liens_bt_form">
                             <div class="embed-responsive-item boite_form">
-                                    <H5>{{f.name}}</H5>
+                                    <H5>{{g.name}}</H5>
 
-                                    {% if f.author is not None %}
-                                        <p class="card-text">Créé par {{ f.author.login }}</p>
+                                    {% if g.author is not None %}
+                                        <p class="card-text">Partie de {{ g.author.login }}</p>
                                     {% endif %}
                             </div>
 

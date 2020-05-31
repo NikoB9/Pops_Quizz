@@ -13,12 +13,22 @@ def get_player_by_id(id):
 
 def create_player(game, user):
     player = Player()
-    player.game=game
-    player.user=user
-    player.score=0
-    player.has_answered=False
+    player.game = game
+    player.user = user
+    player.score = 0
+    player.has_answered = False
     player.save()
 
+
+def user_leave_game(user, game):
+    Player.objects.get(user=user, game=game).delete()
+    if len(Player.objects.filter(game=game)) == 0:
+        change_game_status(game, "CANCELLED")
+
+
+def is_user_in_game(user, game):
+    print(Player.objects.filter(user=user, game=game))
+    return len(Player.objects.filter(user=user, game=game)) > 0
 
 def get_players_by_game(game):
     return Player.objects.filter(game=game)
@@ -34,8 +44,10 @@ def get_player_by_game_by_login(game, login):
     user = User.objects.get(login=login)
     return Player.objects.get(game=game, user=user)
 
+
 def get_nb_player_by_game(game):
-    return len(Player.objects.get(game=game))
+    return len(Player.objects.filter(game=game))
+
 
 def get_players_by_game_order_by_score_desc(game):
     return Player.objects.filter(game=game).order_by('-score')
@@ -47,6 +59,10 @@ def get_players_by_user_desc_date_game(user):
 
 def all_player_have_answered_a_game(game):
     return len(Player.objects.filter(game=game).exclude(has_answered=True)) == 0
+
+
+def player_waiting_game(user):
+    return Player.objects.filter(user=user, game__game_status__type="WAITING")
 
 
 def calculate_score(player):
