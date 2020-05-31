@@ -783,7 +783,6 @@ class Test_model(TestCase):
         self.assertEquals(forms[0].name, "Premier formulaire")
 
         user = getUserByLogin("TimFake")
-        # TODO a modifier pour quand on pourra choisir la catégorie
         addQuizzForm("new form", user, "new description", ["Autre catégorie"])
         forms = getAllForms()
         self.assertEquals(len(forms), 6)
