@@ -4,6 +4,19 @@ from Quizz.models import *
 
 from django.contrib.auth import hashers
 
+from Quizz.requests.request_friends import *
+
+
+def get_users_friends(user):
+    friends = get_friends_of_user(user)
+    user_friends = []
+    for relationship in friends:
+        if relationship.source is not user:
+            user_friends.append(relationship.source)
+        else:
+            user_friends.append(relationship.target)
+    return user_friends
+
 
 def createUserBD(login, mail, password):
     user = User()

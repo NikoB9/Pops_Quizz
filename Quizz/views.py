@@ -18,6 +18,7 @@ from Quizz.requests.request_game import *
 from Quizz.requests.request_possible_answer import *
 from Quizz.requests.request_answer_type import *
 from Quizz.requests.request_player import *
+from Quizz.requests.request_categories import *
 
 # regex
 import re
@@ -39,29 +40,107 @@ def index(request):
     if 'login' in request.session:
         user = getUserByLogin(request.session['login'])
     allforms = getAllForms(user)
+
     return render(request, "home/index.html", {'allforms': allforms})
 
 
-def openform(request, id_form):
-    game_name = request.POST.get('game_name', None)
-    slot_max = request.POST.get('slot_max', None)
-    is_public = True if request.POST.get('is_public', None) == "on" else False
-    login = request.session['login']
-    game = create_gameBD(id_form, login, game_name, is_public, slot_max, False, "IN_PROGRESS")
+def quizz_by_cat(request, cat_id):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
+    cat = get_category_by_id(cat_id)
+    allforms = getQuizzByCat(cat, user)
 
-    user = getUserByLogin(login)
+    allgames = []
+    for f in allforms:
+        games = getGamesToJoinByForm(f)
+        for g in games:
+            if get_nb_player_by_game(g) < g.slot_max:
+                allgames.append(g)
 
-    player = Player()
-    player.user = user
-    player.game = game
-    player.score = 0
-    player.save()
+    return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'allgames': allgames, 'cat': cat})
 
+
+def create_game(request, id_form):
+    user = getUserByLogin(request.session['login'])
+    if len(player_waiting_game(user)) > 0:
+        return retour_salon(request)
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
+    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, False, "DRAFT")
+    create_player(game, user)
 
-    return render(request, "home/game.html", {'form': f, 'player': player})
+    return render(request, "home/create-game.html", {'form': f, 'game':game})
+
+
+def attente(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
+    user = getUserByLogin(request.session['login'])
+    game_name = request.POST.get('game_name', None)
+    slot_max = request.POST.get('slot_max', None)
+    is_public = True if request.POST.get('is_public', None) == "on" else False
+    game = get_game_by_uuid(game_uuid)
+    if game.game_status.type=="DRAFT":
+        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "WAITING")
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+
+    return render(request, "home/attente.html", {'game':game, 'is_author':is_author, 'players':players, 'friends':friends})
+
+
+def joindre_partie(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(game_uuid)
+    waiting_games = player_waiting_game(user)
+
+    if len(waiting_games)==1 and waiting_games[0].game.uuid != game_uuid:
+        return retour_salon(request)
+    if not is_user_in_game(user, game):
+        create_player(game, user)
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+
+    return render(request, "home/attente.html", {'game': game, 'is_author': is_author, 'players': players, 'friends': friends})
+
+
+def retour_salon(request):
+    user = getUserByLogin(request.session['login'])
+    if len(player_waiting_game(user)) == 0:
+        return index(request)
+    game = get_game_waiting_of_user(user)
+
+    return joindre_partie(request, game.uuid)
+
+
+def quitter_partie(request, game_uuid):
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(game_uuid)
+    user_leave_game(user, game)
+
+    return index(request)
+
+
+def openform(request, game_uuid):
+    game = get_game_by_uuid(game_uuid)
+    login = request.session['login']
+    player = get_player_by_game_by_login(game, login)
+    if player.score != 0:
+        return correction(request, player.id)
+
+    f = getFormById(game.form.id)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    change_game_status(game, "IN_PROGRESS")
+
+    return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
 
 
 def users(request):
@@ -139,14 +218,6 @@ def connectUser(request):
     return JsonResponse(data)
 
 
-def create_game(request, id_form):
-    f = getFormById(id_form)
-    questions = getQuestionsByForm(f)
-    f.questions = getPossibleAnswersByQuestions(questions)
-
-    return render(request, "home/create-game.html", {'form': f})
-
-
 def disconnect(request):
     del request.session['login']
 
@@ -160,12 +231,12 @@ def disconnect(request):
 def creation(request):
     if request.method == 'POST':
 
-        # print(request.POST)
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
 
-        form = addQuizzForm(title, author, description)
+        # TODO à modifier pour quand on pourra choisir les catégories
+        form = addQuizzForm(title, author, description, ['Autre catégorie'])
 
         nbQuestions = request.POST.get('nbQuestions')
 
@@ -201,17 +272,34 @@ def creation(request):
 
                 addPossibleAnswer(question, a_correct, a_value)
 
+        return index(request)
+
     return render(request, "home/creation.html")
 
 
-def categories(request):
-    return render(request, "home/categories.html")
+def edit_quizz(request, id_quizz):
+
+    f = getFormById(id_quizz)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+
+    data={
+        'form' : f,
+    }
+
+    return render(request, "home/edit_quizz.html", data)
+
+
+def delete_quizz(request, id_quizz):
+
+    delete_form(id_quizz)
+
+    return index(request)
 
 
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
     players = get_players_by_game_order_by_score_desc(game)
-    print(players)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
@@ -294,6 +382,7 @@ def user_history(request):
 
     return render(request, 'dashboard/history.html', {'active': 1, 'players': players})
 
+
 def correction(request, player_id):
     player = get_player_by_id(player_id)
     calculate_score(player)
@@ -301,3 +390,17 @@ def correction(request, player_id):
     questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
 
     return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})
+
+
+def menuCategories(request):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
+    cats = []
+    categories = get_categories()
+    for c in categories:
+        if nbQuizzByCat(c, user) > 0:
+            cats.append({'id': c.id,'label': c.label,'nbQuizz': nbQuizzByCat(c, user)})
+
+    data = {'cats':cats}
+    return JsonResponse(data)

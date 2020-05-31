@@ -3,6 +3,24 @@
 {% load static %}
 {% load personnal_tags %}
 {% block content %}
+    <style>
+    .editbtn{
+        font-size: xx-small;
+        padding: 1px;
+        position: absolute;
+        top: 0px;
+        z-index: 1;
+    }
+    #btnRuleForm{
+        right: 32px;
+    }
+    #btnEditForm{
+        right: 15px;
+    }
+    #btnDelForm{
+        right: 0;
+    }
+    </style>
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
 		<div class="row marg">
 			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
@@ -25,7 +43,16 @@
 
 			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
 				<div class="embed-responsive embed-responsive-1by1">
-					<a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
+
+					{% if f.is_author %}
+                    <button type="button" id="btnRuleForm" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Changement des droits"><i class="fas fa-user-tag"></i></button>
+					{% endif %}
+					<button type="button" id="btnEditForm" onclick="window.location.href = '{% url 'Quizz:edit_quizz' f.id %}'" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Modification du Quizz"><i class="fas fa-edit"></i></button>
+					{% if f.is_author %}
+					<button type="button" id="btnDelForm" onclick="window.location.href = '{% url 'Quizz:delete_quizz' f.id %}'" class="btn btn-outline-dark editbtn" data-toggle="tooltip" data-placement="left" title="Suppression du Quizz"><i class="fas fa-trash-alt"></i></button>
+					{% endif %}
+
+                    <a href="{% url 'Quizz:create-game' f.id %}" class="liens_bt_form">
 						<div class="embed-responsive-item boite_form">
 						  		<H5>{{f.name}}</H5>
 								<H6>{{f.description | cut_to_long_text:70}}</H6>

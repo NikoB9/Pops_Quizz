@@ -227,6 +227,11 @@ class Test_model(TestCase):
         accessFormTypeCreator.type = "PUBLISHER"
         accessFormTypePublisher.save()
 
+        cat = Category()
+        cat.label="Autre catégorie"
+        cat.description="Qui possède des questions particulières"
+        cat.save()
+
         f = Form()
         f.name = "Premier formulaire"
         f.description = "C'est parti !"
@@ -769,21 +774,21 @@ class Test_model(TestCase):
 
     def test_get_all_forms(self):
         forms = getAllForms()
-        self.assertEquals(len(forms), 7)
+        self.assertEquals(len(forms), 5)
         self.assertEquals(forms[0].name, "Premier formulaire")
 
     def test_add_quizz_form(self):
         forms = getAllForms()
-        self.assertEquals(len(forms), 7)
+        self.assertEquals(len(forms), 5)
         self.assertEquals(forms[0].name, "Premier formulaire")
 
         user = getUserByLogin("TimFake")
-        addQuizzForm("new form", user, "new description")
+        addQuizzForm("new form", user, "new description", ["Autre catégorie"])
         forms = getAllForms()
-        self.assertEquals(len(forms), 8)
-        self.assertEquals(forms[7].name, "new form")
+        self.assertEquals(len(forms), 6)
+        self.assertEquals(forms[5].name, "new form")
 
-        self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, forms[7]))
+        self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, forms[5]))
 
     ## TEST GAME ##
 

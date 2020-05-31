@@ -6,6 +6,10 @@ from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 
 
+def get_game_waiting_of_user(user):
+    return Player.objects.get(user=user, game__game_status__type="WAITING").game
+
+
 def get_all_game():
     return Game.objects.all()
 
@@ -21,7 +25,24 @@ def change_game_status(game, status):
     return game
 
 
-def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, game_status="WAITING"):
+def getGamesToJoinByForm(form):
+    games = Game.objects.filter(form=form, is_public=True, game_status__type="WAITING")
+    return games
+
+
+def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle):
+    game = get_game_by_uuid(game_uuid)
+    game.name = game_name
+    game.slot_max = slot_max
+    game.is_public = is_public
+    game.is_real_time = is_real_time
+    game.save()
+
+    return change_game_status(game, game_status_libelle)
+
+
+def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, is_random_form=False,
+                  game_status="WAITING"):
     author = getUserByLogin(user_name)
     form = getFormById(form_id)
     game_status = get_game_status(game_status)
@@ -35,5 +56,6 @@ def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time,
     new_game.is_real_time = is_real_time
     new_game.game_status = game_status
     new_game.uuid = str(uuid.uuid4())[:8].upper()
+    new_game.is_random_form = is_random_form
     new_game.save()
     return new_game

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+	
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+		<h1>{{ game.name }}</h1>
+
+
+		{% if game.is_random_form %}
+			<h6>Partie sur un formulaire aleatoire<i class="far fa-question-circle"></i></h6>
+		{% else %}
+			{% if game.author is not None %}
+			<h6>Partie sur le formulaire {{ game.form.name }} créé par {{ game.form.author.login }}</h6>
+			{% else %}
+			<h6>Partie sur le formulaire {{ game.form.name }}</h6>
+			{% endif %}
+		{% endif %}
+
+		{{ game.name }} en salle d'attente
+
+		<ul> <u>Inviter des amis :</u>
+			<h1>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></h1>
+			{% for friend in friends %}
+			<li>{{ friend.login }}</li>
+			{% empty %}
+			Aucun ami, n'hésitez pas à en ajouter dans la page ami
+			{% endfor %}
+		</ul>
+
+		<fieldset><legend>Liste des joueurs ({{players|length}}/{{game.slot_max}}):</legend>
+			{% for player in players %}
+				<p>{{ player.user.login }} a joué {{ player.parties }} parties</p>
+			{% empty %}
+				<h6>Aucun joueur trouvé</h6>
+			{% endfor %}
+		</fieldset>
+		<form action="{% url 'Quizz:openform' game.uuid %}">
+			{% if is_author %}
+			<button type="submit">LANCER LA PARTIE ET FERMER LE SALON</button>
+			{% else %}
+			<button type="submit" {% if game.slot_max > players|length %} disabled {% endif%}>
+				COMMENCER LE QUIZZ
+			</button>
+			{% endif %}
+		</form>
+		<form action="{% url 'Quizz:quitter-partie' game.uuid %}">
+			<button type="submit" {% if game.game_status.type is "WAITING" %} disabled {% endif %} >
+				QUITTER LA PARTIE
+			</button>
+		</form>
+	</div>
+
+<script>
+	function copy_link() {
+		var
+	}
+</script>
+
+{% endblock %}
