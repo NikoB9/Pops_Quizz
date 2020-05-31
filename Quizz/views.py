@@ -272,6 +272,8 @@ def creation(request):
 
                 addPossibleAnswer(question, a_correct, a_value)
 
+        return index(request)
+
     return render(request, "home/creation.html")
 
 
