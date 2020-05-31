@@ -235,7 +235,8 @@ def creation(request):
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
 
-        form = addQuizzForm(title, author, description)
+        # TODO à modifier pour quand on pourra choisir les catégories
+        form = addQuizzForm(title, author, description, ['Autre catégorie'])
 
         nbQuestions = request.POST.get('nbQuestions')
 
