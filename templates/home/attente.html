@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 	
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
@@ -20,9 +21,9 @@
 		<ul> <u>Inviter des amis :</u>
 			<h1>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></h1>
 			{% for friend in friends %}
-			<li>{{ friend.login }}</li>
+				<li>{{ friend.login }} <i id="invite" class="fas fa-envelope-square" ></i><!-- <i class="far fa-envelope"></i> --></li>
 			{% empty %}
-			Aucun ami, n'hésitez pas à en ajouter dans la page ami
+				Aucun ami, n'hésitez pas à en ajouter dans la page ami
 			{% endfor %}
 		</ul>
 
@@ -49,10 +50,11 @@
 		</form>
 	</div>
 
-<script>
-	function copy_link() {
-		var
-	}
-</script>
+{% endblock %}
+
+{% block js_per_page %}
+
+	<script type="text/javascript" src="{% static "js/invitefriends.js"%}">
+	</script>
 
 {% endblock %}
