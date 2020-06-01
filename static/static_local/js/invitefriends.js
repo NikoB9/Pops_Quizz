@@ -1,3 +1,4 @@
-$('.invite').click(function(){
-	alert("invitation");
+$('i').click(function(){
+	console.log("invite");
+	window.alert("invitation");
 });
