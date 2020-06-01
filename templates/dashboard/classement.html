@@ -1,0 +1,122 @@
+{% extends 'dashboard/base.html' %}
+
+{% block dashboard_content %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <h1 class="textcolor" style="text-align: center">Statistiques par quizz</h1>
+
+
+    <script type="text/javascript">
+
+        //https://developers.google.com/chart/interactive/docs/gallery/columnchart#configuration-options
+
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart_Quizz);
+
+      function drawChart_Quizz() {
+
+        mydata = [['Quizz', 'Ma moyenne', 'Moyenne générale']]
+            {% for f in forms %}
+                avgPlayer = '{{ f.avgScorePlayer.average_user_score }}' == 'None' ? 0 : {{ f.avgScorePlayer.average_user_score }}
+                avgGen = '{{ f.avgScore.average_score }}' == 'None' ? 0 : {{ f.avgScore.average_score }}
+                mydata.push(['{{ f.name }}',avgPlayer, avgGen])
+            {% endfor %}
+
+        var data = google.visualization.arrayToDataTable(mydata);
+
+        var options = {
+          chart: {
+            /*title: '',
+            subtitle: '',*/
+              hAxis : {
+                  slantedText: true,
+                  slantedTextAngle: 90,
+                  direction: -1
+              }
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('statsbyquizz'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+    </script>
+    <div id="statsbyquizz"></div>
+
+    <h1 class="textcolor" style="text-align: center">Statistiques par catégorie</h1>
+
+    <script type="text/javascript">
+
+
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart_cats);
+
+      function drawChart_cats() {
+
+          mydata = [['Catégorie', 'Ma moyenne', 'Moyenne générale']]
+            {% for f in cats %}
+                avgPlayer = '{{ f.avgScorePlayer.average_user_score }}' == 'None' ? 0 : {{ f.avgScorePlayer.average_user_score }}
+                avgGen = '{{ f.avgScore.average_score }}' == 'None' ? 0 : {{ f.avgScore.average_score }}
+                mydata.push(['{{ f.label }}',avgPlayer, avgGen])
+            {% endfor %}
+
+        var data = google.visualization.arrayToDataTable(mydata);
+
+        var options = {
+          chart: {
+            /*title: '',
+            subtitle: '',*/
+              hAxis : {
+                  slantedText: true,
+                  slantedTextAngle: 90,
+                  direction: -1
+              }
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('statsbycats'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+    </script>
+    <div id="statsbycats"></div>
+
+
+    <h1 class="textcolor" style="text-align: center">Comparaison général</h1>
+
+
+    <script type="text/javascript">
+        google.charts.load("current", {packages:['corechart']});
+        google.charts.setOnLoadCallback(drawChart_gen);
+        avgPerso = '{{ avgScorePlayer.average_user_score }}'
+        avg = '{{ avgScore.average_score }}'
+        function drawChart_gen() {
+          var data = google.visualization.arrayToDataTable([
+            ["Element", "Moyenne", { role: "style" } ],
+            ["Moyenne personnelle", parseFloat(avgPerso.replace(',','.')), "gold"],
+            ["Moyenne générale", parseFloat(avg.replace(',','.')), "silver"],
+          ]);
+
+          var view = new google.visualization.DataView(data);
+          view.setColumns([0, 1,
+                           { calc: "stringify",
+                             sourceColumn: 1,
+                             type: "string",
+                             role: "annotation" },
+                           2]);
+
+          var options = {
+            /*title: "Density of Precious Metals, in g/cm^3",
+            width: 600,
+            height: 400,
+            bar: {groupWidth: "95%"},*/
+            legend: { position: "none" },
+          };
+          var chart = new google.visualization.ColumnChart(document.getElementById("general_stats"));
+          chart.draw(view, options);
+      }
+      </script>
+        <div id="general_stats"></div>
+
+
+
+{% endblock %}

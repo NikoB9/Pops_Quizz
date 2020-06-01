@@ -16,6 +16,14 @@ def getAllForms(user=None):
 
     return forms
 
+def getAllFormsAccessUser(user):
+    forms = []
+    for form in Form.objects.all():
+        if form.author == user or form.is_public or is_user_editor_of_a_form(user, form):
+            forms.append(form)
+
+    return forms
+
 
 def delete_form(form_id):
     Form.objects.get(id=form_id).delete()

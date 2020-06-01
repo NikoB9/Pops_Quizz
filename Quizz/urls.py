@@ -26,8 +26,10 @@ urlpatterns = [
 
 
     #DASHBOARD
+    path('dashboard', views.user_profil, name="dashboard_base"),
     path('dashboard/user', views.user_profil, name="dashboard_profile"),
     path('dashboard/history', views.user_history, name="dashboard_history"),
+    path('dashboard/classement', views.stats, name="dashboard_stats"),
 
     #AJAX
     re_path(r'create_user$', views.create_user),
