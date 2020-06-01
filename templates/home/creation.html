@@ -33,11 +33,12 @@
 				this.answers = [];
 
 				this.$pnlQuestion = document.createElement("fieldset");
-				// $pnlQuestion = document.createElement("div");
 				this.$pnlHeader = document.createElement("div");
 				this.$pnlBody = document.createElement("div");
 				this.$pnlFooter = document.createElement("div");
 
+				this.$btnUp = document.createElement("button");
+				this.$btnDown = document.createElement("button");
 				this.$lblOrder = document.createElement("span");
 				this.$txtTitle = document.createElement("input");
 				this.$divBtnDelete = document.createElement("div");
@@ -52,9 +53,6 @@
 				let self = this;
 				///RENDER HTML AND ATTRIBUTES
 				this.$pnlQuestion.classList.add("fdst_border");
-				// this.$pnlQuestion.classList.add("card", "border-info");
-				// this.$pnlHeader.classList.add("card-header", "header");
-				// this.$pnlHeader.classList.add("row");
 				this.$pnlBody.classList.add("card-body", "body");
 				this.$pnlFooter.classList.add("card-footer", "footer");
 				this.$txtTitle.classList.add("style_form", "typo_generale");
@@ -70,9 +68,22 @@
 				this.$btnDelete.innerText = "Supprimer";
 				this.$btnDelete.onclick = function(e) { removeQuestion(self); };
 
+				//ORDER ELEMENT
+				this.$btnUp.type = "button";
+				this.$btnDown.type = "button";
+				this.$btnUp.innerText = "/\\";
+				this.$btnDown.innerText = "\\/";
+				this.$btnUp.onclick = function(e){ setQuestionOrder(self, self.order-2) }
+				this.$btnDown.onclick = function(e){ setQuestionOrder(self, self.order) }
+				let orderE = document.createElement("div");
+				orderE.style.display = "inline-block";
+				orderE.appendChild(this.$btnUp);
+				orderE.appendChild(this.$btnDown);
+
 				let titleE = document.createElement("h3");
 				titleE.appendChild(this.$lblOrder);
 				titleE.appendChild(this.$txtTitle);
+				this.$pnlHeader.appendChild(orderE);
 				this.$pnlHeader.appendChild(titleE);
 				this.$pnlHeader.appendChild(this.$divBtnDelete);
 				this.$divBtnDelete.appendChild(this.$btnDelete);
@@ -146,6 +157,25 @@
 				}
 				this.$pnlAnswers.removeChild(_answer.$pnlAnswer);
 			}
+			setAnswerOrder(_answer, _order) {
+				if(_answer.order == _order+1) return;
+				if(_order < 0 || _order >= this.answers.length) return;
+				let oldOrder = _answer.order-1;
+				//Reorganize array
+				this.answers.splice(this.answers.indexOf(_answer), 1);
+				this.answers.splice(_order, 0, _answer);
+				//Set orders
+				if(_order > oldOrder) //Answer Down
+					for(var i = oldOrder; i <= _order; i++) this.answers[i].setOrder(i+1);
+				else //Answer Up
+					for(var i = _order; i <= oldOrder; i++) this.answers[i].setOrder(i+1);
+
+				//Reorganize HTML elements
+				if(_order < this.answers.length-1)
+					this.$pnlAnswers.insertBefore(_answer.$pnlAnswer, this.answers[_order+1].$pnlAnswer);
+				else //Last element
+					this.$pnlAnswers.appendChild(_answer.$pnlAnswer);
+			}
 			updateNames() {
 				let prefixName = "qst_" + this.order;
 				this.$txtTitle.name = prefixName + "_title";
@@ -167,6 +197,8 @@
 				this.question;
 
 				this.$pnlAnswer = document.createElement("div");
+				this.$btnUp = document.createElement("button");
+				this.$btnDown = document.createElement("button");	
 				this.$inputExample = document.createElement("input");	
 				this.$txtValue = document.createElement("input");
 				this.$chkCorrect = document.createElement("input");
@@ -175,21 +207,37 @@
 				this.$hiddenOrder = document.createElement("input");
 
 				let self = this;
-				//RENDER HTML AND ATTRIBUTES
+				//RENDER HTML
 				this.$inputExample.disabled = true;
 				this.$txtValue.type = "text";
+				this.$txtValue.onclick = function(e){ this.setSelectionRange(0, this.value.length); }
 				this.$chkCorrect.type = "checkbox";
 				this.$btnDelete.type = "button";
 				this.$btnDelete.innerText = "Supprimer";
 				this.$btnDelete.onclick = function(e){ self.question.removeAnswer(self); };
 				this.$hiddenType.type = "hidden";
 				this.$hiddenOrder.type = "hidden";
+
+				//ORDER ELEMENT
+				this.$btnUp.type = "button";
+				this.$btnDown.type = "button";
+				this.$btnUp.innerText = "/\\";
+				this.$btnDown.innerText = "\\/";
+				this.$btnUp.onclick = function(e){ self.question.setAnswerOrder(self, self.order-2) }
+				this.$btnDown.onclick = function(e){ self.question.setAnswerOrder(self, self.order) }
+				let orderE = document.createElement("div");
+				orderE.style.display = "inline-block";
+				orderE.appendChild(this.$btnUp);
+				orderE.appendChild(this.$btnDown);
+
 				this.$pnlAnswer.appendChild(this.$inputExample);
 				this.$pnlAnswer.appendChild(this.$txtValue);
 				this.$pnlAnswer.appendChild(this.$chkCorrect);
+				this.$pnlAnswer.appendChild(orderE);
 				this.$pnlAnswer.appendChild(this.$btnDelete);
 				this.$pnlAnswer.appendChild(this.$hiddenType);
 				this.$pnlAnswer.appendChild(this.$hiddenOrder);
+
 				//SET DATAS
 				this.setType(_type);
 				this.setValue(_value);
@@ -199,6 +247,8 @@
 				this.$txtValue.classList.add("style_form");
 				// this.$chkCorrect.classList.add("style_form");
 				this.$btnDelete.classList.add("btn", "connectBtn");
+				this.$btnUp.classList.add("btn", "connectBtn");
+				this.$btnDown.classList.add("btn", "connectBtn");
 			}
 			setType(_type) {
 				this.type = _type;
@@ -262,6 +312,25 @@
 				questions[i].setOrder(questions[i].order-1)
 			}
 			$questions.removeChild(_question.$pnlQuestion);
+		}
+
+		function setQuestionOrder(_question, _order) {
+			if(_question.order == _order+1) return;
+			if(_order < 0 || _order >= questions.length) return;
+			let oldOrder = _question.order-1;
+			//Reorganize array
+			questions.splice(questions.indexOf(_question), 1);
+			questions.splice(_order, 0, _question);
+			//Set orders
+			if(_order > oldOrder) //Question Down
+				for(var i = oldOrder; i <= _order; i++) questions[i].setOrder(i+1);
+			else //Question Up
+				for(var i = _order; i <= oldOrder; i++) questions[i].setOrder(i+1);
+			//Reorganize HTML elements
+			if(_order < questions.length-1)
+				$questions.insertBefore(_question.$pnlQuestion, questions[_order+1].$pnlQuestion);
+			else //Last element
+				$questions.appendChild(_question.$pnlQuestion);
 		}
 
 		questions = [];
