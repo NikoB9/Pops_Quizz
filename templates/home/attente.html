@@ -21,7 +21,7 @@
 		<ul> <u>Inviter des amis :</u>
 			<h1>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></h1>
 			{% for friend in friends %}
-				<li>{{ friend.login }} <i id="invite" class="fas fa-envelope-square" ></i><!-- <i class="far fa-envelope"></i> --></li>
+				<li>{{ friend.login }} <i id="invite{{ forloop.counter }}" class="fas fa-envelope-square" onclick="inviter({{friend.id}})"></i><!-- <i class="far fa-envelope"></i> --></li>
 			{% empty %}
 				Aucun ami, n'hésitez pas à en ajouter dans la page ami
 			{% endfor %}
