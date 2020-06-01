@@ -8,10 +8,26 @@ from Quizz.requests.request_friends import *
 
 
 def get_users_friends(user):
-    friends = get_friends_of_user(user)
+    friends = get_friends_relationship_of_user(user)
+    return get_users_from_friends_list_not_user_param(friends, user)
+
+
+def get_waiting_sent_users_friend(user):
+    relationships = get_waiting_friends_relationship_of_user(user)
+    friends = list(filter(lambda relationship: relationship.source.login == user.login, relationships))
+    return get_users_from_friends_list_not_user_param(friends, user)
+
+
+def get_waiting_received_users_friend(user):
+    relationships = get_waiting_friends_relationship_of_user(user)
+    friends = list(filter(lambda relationship: relationship.target.login == user.login, relationships))
+    return get_users_from_friends_list_not_user_param(friends, user)
+
+
+def get_users_from_friends_list_not_user_param(friends, user_to_exclude):
     user_friends = []
     for relationship in friends:
-        if relationship.source is not user:
+        if relationship.source.login != user_to_exclude.login:
             user_friends.append(relationship.source)
         else:
             user_friends.append(relationship.target)

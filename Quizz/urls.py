@@ -30,12 +30,14 @@ urlpatterns = [
     path('dashboard/user', views.user_profil, name="dashboard_profile"),
     path('dashboard/history', views.user_history, name="dashboard_history"),
     path('dashboard/classement', views.stats, name="dashboard_stats"),
+    path('dashboard/amis', views.amis, name="dashboard_friend"),
 
     #AJAX
     re_path(r'create_user$', views.create_user),
     re_path(r'user_connection$', views.connectUser),
     re_path(r'disconnect_user$', views.disconnect),
     re_path(r'save_user_answers$', views.saveUserAnswers),
+    re_path(r'add_friend$', views.add_friend),
     re_path(r'categories_menu$', views.menuCategories),
 
 
