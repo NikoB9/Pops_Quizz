@@ -38,6 +38,8 @@ urlpatterns = [
     re_path(r'disconnect_user$', views.disconnect),
     re_path(r'save_user_answers$', views.saveUserAnswers),
     re_path(r'add_friend$', views.add_friend),
+    re_path(r'remove_friend$', views.remove_friend),
+    re_path(r'answer_friend_request$', views.answer_friend_request),
     re_path(r'categories_menu$', views.menuCategories),
 
 

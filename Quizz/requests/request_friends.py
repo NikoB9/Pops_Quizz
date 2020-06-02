@@ -7,6 +7,21 @@ from Quizz.models import *
 from django.contrib.auth import hashers
 
 
+def remove_friendship(user_1, user_2):
+    get_relationship_between_users(user_1, user_2).delete()
+
+
+def answer_friendship_request(is_accepted, user_1, user_2):
+    if is_accepted:
+        relationship = get_relationship_between_users(user_1, user_2)
+        relationship.accepted = True
+        relationship.save()
+        print("relationship ok")
+    else:
+        remove_friendship(user_1, user_2)
+        print("relationship nok")
+
+
 def two_users_have_relationship(user_1, user_2):
     return len(Friends.objects.filter(source=user_1, target=user_2)) + len(Friends.objects.filter(source=user_2, target=user_1)) > 0
 

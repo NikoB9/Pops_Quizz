@@ -347,6 +347,27 @@ def saveUserAnswers(request):
 
     return JsonResponse(data)
 
+def answer_friend_request(request):
+    user_target = getUserByLogin(request.session['login'])
+    is_accepted = request.POST.get('request_answer') == "accepted"
+    user_source = getUserByLogin(request.POST.get('user_source_login'))
+    answer_friendship_request(is_accepted, user_source, user_target)
+
+    data = {
+        'is_valid': True
+    }
+    return JsonResponse(data)
+
+def remove_friend(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target = getUserByLogin(request.POST.get('user_target_login'))
+    remove_friendship(user_source, user_target)
+
+    data = {
+        'is_valid': True
+    }
+    return JsonResponse(data)
+
 
 def add_friend(request):
     user_source = getUserByLogin(request.session['login'])
