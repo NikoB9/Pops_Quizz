@@ -369,8 +369,23 @@ def add_friend(request):
 
     add_friend_request(user_source, user_target)
 
+
+
     return JsonResponse(data)
 
+def invite_friend(request):
+    friend_id = request.POST.get('friend_id')
+    game_uuid = request.POST.get('game_uuid')
+    data = {}
+
+    if is_user_in_waiting_room(getUserByLogin(friend_id)):
+        data = {'is_valid': False}
+        return JsonResponse(data)
+
+    create_player(get_game_by_uuid(game_uuid), getUserByLogin(friend_id));
+    data = {'is_valid': True}
+
+    return JsonResponse(data)
 
 def user_profil(request):
     user = getUserByLogin(request.session['login'])
