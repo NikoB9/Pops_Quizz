@@ -9,6 +9,9 @@ from Quizz.requests.request_form import *
 def get_game_waiting_of_user(user):
     return Player.objects.get(user=user, game__game_status__type="WAITING").game
 
+def is_user_in_waiting_room(user):
+
+    return len(Player.objects.filter(user=user, game__game_status__type="WAITING")) > 0
 
 def get_all_game():
     return Game.objects.all()
