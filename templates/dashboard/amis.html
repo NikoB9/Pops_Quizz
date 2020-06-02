@@ -38,7 +38,13 @@
     </fieldset>
 
     <fieldset class="fdst_border"><legend class="lgd_style">Faire une invitation d'ami</legend>
-        <input type="text" id="user_target" required>
+        <input list="list-users" type="text" id="user_target">
+        <datalist id="list-users">
+            <option value="Meteor">
+            <option value="Pils">
+            <option value="Kronenbourg">
+            <option value="Grimbergen">
+        </datalist>
         <button type="submit" id="btn-add-friend" disabled><i class="fas fa-user-plus"></i></button>
     </fieldset>
 

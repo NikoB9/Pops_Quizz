@@ -26,7 +26,6 @@ ajaxAddUser = function(that)
     data: {'user_target':user_target},
     dataType: 'json',
     success: function (data) {
-  	  // Traiter le cas où on demande en ami alors que l'utilisateur nous a déjà envoyé une demande ?
   	  if(data.cant_invite_himself) {
   	      alert("vous avez rentré votre login")
       } else {
@@ -48,8 +47,45 @@ ajaxAddUser = function(that)
   });
 }
 
-$('#user_target').change(function () {
-    document.getElementById("btn-add-friend").disabled = $(this).val().trim() === ""
+ajaxChangeUserInvite = function(that)
+{
+    var url_back =  './change_user_invite';
+    var user_target = $('#user_target').val();
+
+    /*Entrer le token csrf dans le header si la route est sécurisé*/
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    /*console.log("csrf token : "+csrftoken);*/
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !that.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    $.ajax({
+        type: 'POST',
+        url: url_back,
+        data: {'user_target':user_target},
+        dataType: 'json',
+        success: function (data) {
+            if(data.is_valid) {
+                console.log(data.users)
+                var list_users = document.getElementById("list-users");
+                list_innerhtml = ""
+                for(const user_login of data.users) {
+                    console.log("login"+user_login)
+                    list_innerhtml+="<option value=\""+user_login+"\" label=\""+user_login+"\">\n";
+                }
+                console.log(list_innerhtml)
+                list_users.innerHTML = list_innerhtml
+            }
+        }
+    });
+}
+
+$('#user_target').keyup(function () {
+    ajaxChangeUserInvite(this)
+    document.getElementById("btn-add-friend").disabled = $(this).val().trim() === "";
 });
 
 $('#btn-add-friend').click(function(){

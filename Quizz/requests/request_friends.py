@@ -16,10 +16,8 @@ def answer_friendship_request(is_accepted, user_1, user_2):
         relationship = get_relationship_between_users(user_1, user_2)
         relationship.accepted = True
         relationship.save()
-        print("relationship ok")
     else:
         remove_friendship(user_1, user_2)
-        print("relationship nok")
 
 
 def two_users_have_relationship(user_1, user_2):

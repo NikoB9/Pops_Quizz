@@ -347,9 +347,24 @@ def saveUserAnswers(request):
 
     return JsonResponse(data)
 
+
+def change_user_invite(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target_login = request.POST.get('user_target')
+    list_users = []
+    for user in get_n_first_users_like_with_a_user_to_exclude(user_target_login, user_source):
+        list_users.append(user.login)
+
+    data = {
+        'is_valid': True,
+        'users': list_users
+    }
+    return JsonResponse(data)
+
+
 def answer_friend_request(request):
     user_target = getUserByLogin(request.session['login'])
-    is_accepted = request.POST.get('request_answer') == "accepted"
+    is_accepted = request.POST.get('request_answer') == "accept"
     user_source = getUserByLogin(request.POST.get('user_source_login'))
     answer_friendship_request(is_accepted, user_source, user_target)
 
@@ -357,6 +372,7 @@ def answer_friend_request(request):
         'is_valid': True
     }
     return JsonResponse(data)
+
 
 def remove_friend(request):
     user_source = getUserByLogin(request.session['login'])
@@ -390,9 +406,8 @@ def add_friend(request):
 
     add_friend_request(user_source, user_target)
 
-
-
     return JsonResponse(data)
+
 
 def invite_friend(request):
     friend_id = request.POST.get('friend_id')
