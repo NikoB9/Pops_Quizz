@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+
+{% load static %}
+{% block dashboard_content %}
+    <h1 class="textcolor" style="text-align: center">Amis</h1>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Liste d'amis :</legend>
+    <ul>
+    {% for friend in friends %}
+        <li>{{ friend.login }}</li>
+    {% empty %}
+        Aucun ami
+    {% endfor %}
+    </ul>
+    </fieldset>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Demande d'ami envoyées :</legend>
+    <ul>
+        {% for friend in send_request_friends %}
+        <li>{{ friend.login }}</li>
+        {% empty %}
+        <li>Aucune invitation envoyée</li>
+        {% endfor %}
+    </ul>
+    </fieldset>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Demande d'ami reçues :</legend>
+        <ul>
+            {% for friend in received_request_friends %}
+            <li>{{ friend.login }}</li>
+            {% empty %}
+            <li>Aucune invitation reçue</li>
+            {% endfor %}
+        </ul>
+    </fieldset>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Faire une invitation d'ami</legend>
+        <input type="text" id="user_target" required>
+        <button type="submit" id="btn-add-friend" disabled>INVITER</button>
+    </fieldset>
+
+{% endblock %}
+
+{% block js_per_page %}
+<script type="text/javascript" src="{% static "js/addfriend.js"%}">
+</script>
+{% endblock %}

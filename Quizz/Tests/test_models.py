@@ -112,41 +112,6 @@ class Test_model(TestCase):
         relationAmiThibaut.comment = "On devient ami Thibaut ?"
         relationAmiThibaut.save()
 
-        relationAmiTony = Friends()
-        relationAmiTony.accepted = True
-        relationAmiTony.source = userAmiAttente
-        relationAmiTony.target = userTony
-        relationAmiTony.comment = "Accepte moi Tony !"
-        relationAmiTony.save()
-
-        relationAmiNico = Friends()
-        relationAmiNico.accepted = True
-        relationAmiNico.source = userAmiAttente
-        relationAmiNico.target = userNico
-        relationAmiNico.comment = "Accepte moi stp Nico"
-        relationAmiNico.save()
-
-        relationAmiSalome = Friends()
-        relationAmiSalome.accepted = True
-        relationAmiSalome.source = userAmiAttente
-        relationAmiSalome.target = userSalome
-        relationAmiSalome.comment = "On devient ami Salomette ?"
-        relationAmiSalome.save()
-
-        relationAmiWarren = Friends()
-        relationAmiWarren.accepted = True
-        relationAmiWarren.source = userAmiAttente
-        relationAmiWarren.target = userWawa
-        relationAmiWarren.comment = "On devient ami Wawa ?"
-        relationAmiWarren.save()
-
-        relationAmiThibaut = Friends()
-        relationAmiThibaut.accepted = True
-        relationAmiThibaut.source = userAmiAttente
-        relationAmiThibaut.target = userThibaut
-        relationAmiThibaut.comment = "On devient ami Thibaut ?"
-        relationAmiThibaut.save()
-
         relationAttenteTony = Friends()
         relationAttenteTony.accepted = False
         relationAttenteTony.source = userAmiAttente
@@ -790,6 +755,39 @@ class Test_model(TestCase):
 
         self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, forms[5]))
 
+    ## TEST FRIENDS ##
+
+    def test_two_users_have_relationship_true(self):
+        userTim = getUserByLogin("TimFake")
+        userAmi = getUserByLogin("copain du 31")
+        self.assertEquals(True, two_users_have_relationship(userTim, userAmi))
+
+    def test_two_users_have_relationship_false(self):
+        userTim = getUserByLogin("TimFake")
+        userSalome = getUserByLogin("SaloméFake")
+        self.assertEquals(False, two_users_have_relationship(userTim, userSalome))
+
+    def test_relationship_accepted_true(self):
+        user = getUserByLogin("TimFake")
+        userAmi = getUserByLogin("copain du 31")
+        self.assertEquals(True, relationship_accepted(user, userAmi))
+
+    def test_relationship_accepted_false(self):
+        user = getUserByLogin("TimFake")
+        userAttente = getUserByLogin("ami en demande")
+        self.assertEquals(False, relationship_accepted(user, userAttente))
+
+    def test_add_friend(self):
+        user = getUserByLogin("TimFake")
+        friends = get_waiting_sent_users_friend(user)
+        self.assertEquals(1, len(friends))
+
+        userSalome = getUserByLogin("SaloméFake")
+        add_friend_request(user, userSalome)
+        friends = get_waiting_sent_users_friend(user)
+        self.assertEquals(2, len(friends))
+        self.assertEquals("SaloméFake", friends[1].login)
+
     ## TEST GAME ##
 
     def test_get_all_Game(self):
@@ -989,3 +987,22 @@ class Test_model(TestCase):
     def test_user_exist(self):
         self.assertEquals(False, valideUser("TimFake", "titi"))
         self.assertEquals(True, valideUser("TimFake", "toto"))
+
+    def test_get_users_friends(self):
+        user = getUserByLogin("TimFake")
+        friends = get_users_friends(user)
+        self.assertEquals(1, len(friends))
+        self.assertEquals("copain du 31", friends[0].login)
+
+    def test_get_waiting_sent_users_friend(self):
+        user = getUserByLogin("TimFake")
+        friends = get_waiting_sent_users_friend(user)
+        self.assertEquals(1, len(friends))
+        self.assertEquals("ami absent", friends[0].login)
+
+    def test_get_waiting_received_users_friend(self):
+        user = getUserByLogin("TimFake")
+        friends = get_waiting_received_users_friend(user)
+        self.assertEquals(1, len(friends))
+        self.assertEquals("ami en demande", friends[0].login)
+
