@@ -16,12 +16,12 @@ def getAllForms(user=None):
 
     return forms
 
+
 def getAllFormsAccessUser(user):
     forms = []
     for form in Form.objects.all():
         if form.author == user or form.is_public or is_user_editor_of_a_form(user, form):
             forms.append(form)
-
     return forms
 
 
@@ -33,7 +33,7 @@ def getFormById(id):
     return Form.objects.get(id=id)
 
 
-def nbQuizzByCat(cat, user):
+def nbQuizzByCat(cat, user=None):
     return len(getQuizzByCat(cat, user))
 
 
@@ -44,7 +44,6 @@ def getQuizzByCat(cat, user):
 
 
 def addQuizzForm(name, author, description, categories_labels):
-
     f = Form()
     f.name = name
     f.author = author
