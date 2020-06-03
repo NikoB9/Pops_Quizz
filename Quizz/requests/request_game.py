@@ -10,6 +10,10 @@ def get_game_waiting_of_user(user):
     return Player.objects.get(user=user, game__game_status__type="WAITING").game
 
 
+def is_user_in_waiting_room(user):
+    return len(Player.objects.filter(user=user, game__game_status__type="WAITING")) > 0
+
+
 def get_all_game():
     return Game.objects.all()
 
@@ -26,19 +30,19 @@ def change_game_status(game, status):
 
 
 def getGamesToJoinByForm(form):
-    games = Game.objects.filter(form=form, is_public=True, game_status__type="WAITING")
-    return games
+    return Game.objects.filter(form=form, is_public=True, game_status__type="WAITING")
 
 
-def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle):
+def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle=None):
     game = get_game_by_uuid(game_uuid)
     game.name = game_name
     game.slot_max = slot_max
     game.is_public = is_public
     game.is_real_time = is_real_time
     game.save()
-
-    return change_game_status(game, game_status_libelle)
+    if game_status_libelle is not None:
+        game = change_game_status(game, game_status_libelle)
+    return game
 
 
 def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, is_random_form=False,

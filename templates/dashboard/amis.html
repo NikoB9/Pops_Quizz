@@ -1,0 +1,56 @@
+{% extends 'dashboard/base.html' %}
+
+{% load static %}
+{% block dashboard_content %}
+    <h1 class="textcolor" style="text-align: center">Amis</h1>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Liste d'amis :</legend>
+    <ul>
+    {% for friend in friends %}
+        <li id="row-friend-{{ friend.login }}">{{ friend.login }} <button value="{{ friend.login }}" class="remove_friend"><i class="fas fa-user-slash"></i></button></li>
+    {% empty %}
+        Aucun ami
+    {% endfor %}
+    </ul>
+    </fieldset>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Demande d'ami envoyées :</legend>
+    <ul>
+        {% for friend in send_request_friends %}
+        <li>{{ friend.login }}</li>
+        {% empty %}
+        <li>Aucune invitation envoyée</li>
+        {% endfor %}
+    </ul>
+    </fieldset>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Demande d'ami reçues :</legend>
+        <ul>
+            {% for friend in received_request_friends %}
+            <li id="row-accept-{{ friend.login }}">{{ friend.login }}
+                <button value="accept|{{ friend.login }}" class="accept_friend"><i class="fas fa-user-check"></i></button>
+                <button value="deny|{{ friend.login }}" class="accept_friend"><i class="fas fa-user-times"></i></button>
+            </li>
+            {% empty %}
+            <li>Aucune invitation reçue</li>
+            {% endfor %}
+        </ul>
+    </fieldset>
+
+    <fieldset class="fdst_border"><legend class="lgd_style">Faire une invitation d'ami</legend>
+        <input list="list-users" type="text" id="user_target">
+        <datalist id="list-users">
+            <option value="Meteor">
+            <option value="Pils">
+            <option value="Kronenbourg">
+            <option value="Grimbergen">
+        </datalist>
+        <button type="submit" id="btn-add-friend" disabled><i class="fas fa-user-plus"></i></button>
+    </fieldset>
+
+{% endblock %}
+
+{% block js_per_page %}
+<script type="text/javascript" src="{% static "js/dashboard-friend.js"%}">
+</script>
+{% endblock %}

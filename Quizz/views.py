@@ -348,6 +348,81 @@ def saveUserAnswers(request):
     return JsonResponse(data)
 
 
+def change_user_invite(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target_login = request.POST.get('user_target')
+    list_users = []
+    for user in get_n_first_users_like_with_a_user_to_exclude(user_target_login, user_source):
+        list_users.append(user.login)
+
+    data = {
+        'is_valid': True,
+        'users': list_users
+    }
+    return JsonResponse(data)
+
+
+def answer_friend_request(request):
+    user_target = getUserByLogin(request.session['login'])
+    is_accepted = request.POST.get('request_answer') == "accept"
+    user_source = getUserByLogin(request.POST.get('user_source_login'))
+    answer_friendship_request(is_accepted, user_source, user_target)
+
+    data = {
+        'is_valid': True
+    }
+    return JsonResponse(data)
+
+
+def remove_friend(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target = getUserByLogin(request.POST.get('user_target_login'))
+    remove_friendship(user_source, user_target)
+
+    data = {
+        'is_valid': True
+    }
+    return JsonResponse(data)
+
+
+def add_friend(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target_login = request.POST.get('user_target')
+    data = {}
+    if not loginExist(user_target_login):
+        data.update({'is_valid_login': False})
+        return JsonResponse(data)
+    if user_target_login == user_source.login:
+        data.update({'cant_invite_himself': True})
+        return JsonResponse(data)
+    data.update({'is_valid_login': True, 'cant_invite_himself':False})
+    user_target = getUserByLogin(user_target_login)
+
+    if two_users_have_relationship(user_source, user_target):
+        data.update({'relationship_already_established': True})
+        data.update({'accepted': relationship_accepted(user_source, user_target)})
+        return JsonResponse(data)
+    data.update({'relationship_already_established': False})
+
+    add_friend_request(user_source, user_target)
+
+    return JsonResponse(data)
+
+
+def invite_friend(request):
+    friend_id = request.POST.get('friend_id')
+    game_uuid = request.POST.get('game_uuid')
+    data = {}
+
+    if is_user_in_waiting_room(getUserByLogin(friend_id)):
+        data = {'is_valid': False}
+        return JsonResponse(data)
+
+    create_player(get_game_by_uuid(game_uuid), getUserByLogin(friend_id));
+    data = {'is_valid': True}
+
+    return JsonResponse(data)
+
 def user_profil(request):
     user = getUserByLogin(request.session['login'])
 
@@ -404,3 +479,44 @@ def menuCategories(request):
 
     data = {'cats':cats}
     return JsonResponse(data)
+
+
+def stats(request):
+    user = getUserByLogin(request.session['login'])
+    forms = getAllFormsAccessUser(user)
+
+    for f in forms :
+        #Results by quizz
+        f.avgScorePlayer = get_average_score_player_by_user_and_quizz(user, f)
+        f.avgScore = get_average_score_player_by_quizz(f)
+
+    cats = get_categories()
+    for c in cats :
+        #Results by cat
+        c.avgScorePlayer = get_average_score_player_by_user_and_category(user, c)
+        c.avgScore = get_average_score_player_by_category(c)
+
+    #total level
+    avgScorePlayer = get_average_total_score_by_user(user)
+    avgScore = get_average_total_score()
+
+    data={
+        'active': 2,
+        'forms':forms,
+        'cats':cats,
+        'avgScorePlayer':avgScorePlayer,
+        'avgScore':avgScore
+    }
+
+    return render(request, 'dashboard/classement.html',data)
+
+
+def amis(request):
+    user = getUserByLogin(request.session['login'])
+    friends = get_users_friends(user)
+    send_request_friends = get_waiting_sent_users_friend(user)
+    received_request_friends = get_waiting_received_users_friend(user)
+
+    return render(request, 'dashboard/amis.html', {'friends': friends,
+                                                   'send_request_friends': send_request_friends,
+                                                   'received_request_friends': received_request_friends})

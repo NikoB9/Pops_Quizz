@@ -36,14 +36,14 @@ class User(models.Model):
         return self.login
 
 
-class Friends(models.Model):
+class Friends(TimestampModel):
     source = models.ForeignKey(User, on_delete=models.CASCADE, related_name='source')
     target = models.ForeignKey(User, on_delete=models.CASCADE, related_name='target')
     accepted = models.BooleanField(default=False)
     comment = models.TextField(null=True)
 
     def __str__(self):
-        return self.source.login + " to " + self.target.login + " is " + self.accepted
+        return self.source.login + " to " + self.target.login + " is " + ("not" if not self.accepted else "") + " accepted"
 
 
 class Category(models.Model):
