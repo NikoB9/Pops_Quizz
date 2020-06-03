@@ -32,7 +32,13 @@
 
 		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs ({{players|length}}/{{game.slot_max}}):</legend>
 			{% for player in players %}
-				<p>{{ player.user.login }} a joué {{ player.parties }} parties</p>
+				<p id="row-user-{{ player.user.login }}">
+					{{ player.user.login }} a joué {{ player.parties }} parties
+					{% if is_author and not player.is_author %}
+						<button value="{{ player.user.login }}" class="exclude_user"><i class="fas fa-user-slash"></i></button>
+					{% endif %}
+					{% if player.is_author %}<i class="fas fa-crown"></i>{% endif %}
+				</p>
 			{% empty %}
 				<h6>Aucun joueur trouvé</h6>
 			{% endfor %}
@@ -59,7 +65,7 @@
 
 {% block js_per_page %}
 
-	<script type="text/javascript" src="{% static "js/invitefriends.js"%}">
+	<script type="text/javascript" src="{% static "js/attente.js"%}">
 	</script>
 
 {% endblock %}

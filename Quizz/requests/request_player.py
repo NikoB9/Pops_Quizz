@@ -1,6 +1,6 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
-from Quizz.requests.request_game import change_game_status
+from Quizz.requests.request_game import *
 from Quizz.requests.request_game_status import get_game_status
 from Quizz.requests.request_question import *
 from Quizz.requests.request_user_answers import *
@@ -12,19 +12,31 @@ def get_player_by_id(id):
     return Player.objects.get(id=id)
 
 
-def create_player(game, user):
+def create_player(game, user, is_invited=False):
     player = Player()
     player.game = game
     player.user = user
     player.score = 0
+    player.is_invited = is_invited
     player.has_answered = False
-    player.save()
+    return player.save()
 
 
 def user_leave_game(user, game):
     Player.objects.get(user=user, game=game).delete()
+    if user.login == game.author.login and get_nb_player_by_game(game) > 0:
+        game.author = Player.objects.filter(is_invited=False)[0].user
+        game.save()
     if len(Player.objects.filter(game=game)) == 0:
         change_game_status(game, "CANCELLED")
+
+
+def kick_invited_players(game):
+    Player.objects.filter(game=game, is_invited=True).delete()
+
+
+def is_user_invited_in_game(user, game):
+    return len(Player.objects.filter(is_invited=True)) > 0
 
 
 def is_user_in_game(user, game):
@@ -32,13 +44,22 @@ def is_user_in_game(user, game):
 
 
 def get_players_by_game(game):
-    return Player.objects.filter(game=game)
+    return Player.objects.filter(game=game, is_invited=False)
 
 
 def get_players_number_of_game(players):
     for player in players:
-        player.parties = len(Player.objects.filter(user=player.user, has_answered=True))
+        player.parties = len(Player.objects.filter(user=player.user, has_answered=True, is_invited=False))
+        player.is_author = player.user.login == player.game.author.login
     return players
+
+
+def is_user_invited_in_game(user, game):
+    return len(Player.objects.filter(game=game, user=user, is_invited=True))>0
+
+
+def is_user_in_waiting_room(user):
+    return len(Player.objects.filter(user=user, game__game_status__type="WAITING", is_invited=False)) > 0
 
 
 def get_player_by_game_by_login(game, login):
@@ -86,11 +107,11 @@ def get_average_total_score():
 
 
 def all_player_have_answered_a_game(game):
-    return len(Player.objects.filter(game=game).exclude(has_answered=True)) == 0
+    return len(Player.objects.filter(game=game).exclude(has_answered=True, is_invited=False)) == 0
 
 
 def player_waiting_game(user):
-    return Player.objects.filter(user=user, game__game_status__type="WAITING")
+    return Player.objects.filter(user=user, game__game_status__type="WAITING", is_invited=False)
 
 
 def calculate_score(player):
@@ -102,15 +123,20 @@ def calculate_score(player):
                 if len(user_selected_possible_answer(possible_answer, player)) > 0:
                     if possible_answer.correct:
                         score += 1
+                        user_add_good_answer(player.user)
+                    else:
+                        user_add_bad_answer(player.user)
         elif q['question'].answer_type.type == "QCM":
             for possible_answer in q['answers']:
                 uas = user_selected_possible_answer(possible_answer, player)
                 if len(uas) > 0 and uas[0].value == "1":
                     if possible_answer.correct:
                         score += 1
+                        user_add_good_answer(player.user)
                     else:
                         # decrease score by one if wrong
                         score -= 1
+                        user_add_bad_answer(player.user)
         elif q['question'].answer_type.type == "INPUT":
             possible_input_values = []
             for possible_answer in q['answers']:
@@ -118,6 +144,9 @@ def calculate_score(player):
             user_answer_input = get_input_response_by_question_by_player(q['question'], player)
             if user_answer_input.value.strip() in possible_input_values:
                 score += 1
+                user_add_good_answer(player.user)
+            else:
+                user_add_bad_answer(player.user)
     player.score = score
     player.has_answered = True
     player.save()

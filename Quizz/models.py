@@ -31,6 +31,8 @@ class User(models.Model):
     mail = models.EmailField(max_length=255, null=False, blank=False, unique=True)
     password = models.CharField(max_length=255, null=False, blank=False, unique=False)
     friends = models.ManyToManyField("self", through='Friends', symmetrical=False)
+    good_answer = models.IntegerField(null=False,  default=0)
+    bad_answer = models.IntegerField(null=False, default=0)
 
     def __str__(self):
         return self.login
@@ -138,6 +140,7 @@ class Player(models.Model):
     game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     score = models.IntegerField(null=True, blank=False, unique=False)
     has_answered = models.BooleanField(default=False)
+    is_invited = models.BooleanField(default=False)
 
     def __str__(self):
         return "Player " + self.user.login + " of game " + self.game.name

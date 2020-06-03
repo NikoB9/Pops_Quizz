@@ -31,6 +31,10 @@ class Test_model(TestCase):
         gameStatusInProgress.type = "IN_PROGRESS"
         gameStatusInProgress.save()
 
+        gameStatusDraft = GameStatus()
+        gameStatusDraft.type = "DRAFT"
+        gameStatusDraft.save()
+
         userWawa = User()
         userWawa.login = "Warren"
         userWawa.mail = "warren.weber@hotmail.fr"
@@ -738,6 +742,13 @@ class Test_model(TestCase):
         user = getUserByLogin("Warren")
         self.assertEquals("CREATOR", return_highest_user_acces_to_form(user, form_1))
 
+    ## TEST CATEGORIES ##
+
+    def test_get_categories(self):
+        categories = get_categories()
+        self.assertEquals(1, len(categories))
+        self.assertEquals("Autre catégorie", categories[0].label)
+
     ## TEST FORM ##
 
     def test_get_form(self):
@@ -892,6 +903,7 @@ class Test_model(TestCase):
         self.assertEquals("Partie de Warren", new_game.name)
         self.assertEquals(True, new_game.is_public)
         self.assertEquals(3, new_game.slot_max)
+
 
     ## TEST PLAYER ##
 
@@ -1055,7 +1067,7 @@ class Test_model(TestCase):
         self.assertEquals("TimFake", user.login)
         self.assertEquals("tony.lim@u-psud.fr", user.mail)
 
-        editUserBD(user.id, "new login", "new.mail@mail.com", None)
+        editUserWithoutPwd(user.id, "new login", "new.mail@mail.com")
 
         new_user = getUserByLogin("new login")
         self.assertEquals(user.id, new_user.id)
@@ -1093,4 +1105,23 @@ class Test_model(TestCase):
         friends = get_waiting_received_users_friend(user)
         self.assertEquals(1, len(friends))
         self.assertEquals("ami en demande", friends[0].login)
+
+    def test_good_bad_answer(self):
+        user = getUserByLogin("TimFake")
+        self.assertEquals(0, user.good_answer)
+        self.assertEquals(0, user.bad_answer)
+
+        user_add_good_answer(user)
+        user_add_bad_answer(user)
+
+        self.assertEquals(1, user.good_answer)
+        self.assertEquals(1, user.bad_answer)
+
+    def test_get_n_first_users_like_with_a_user_to_exclude(self):
+        user = getUserByLogin("TimFake")
+        users = get_n_first_users_like_with_a_user_to_exclude("fake", user)
+        self.assertEquals(3, len(users))
+        self.assertEquals("NicoFake", users[0].login)
+        self.assertEquals("SaloméFake", users[1].login)
+        self.assertEquals("WiirioFake", users[2].login)
 
