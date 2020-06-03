@@ -8,6 +8,8 @@ from Quizz.requests.request_question import *
 from Quizz.requests.request_game import *
 
 
+# coverage run --source='.' manage.py test
+
 # MODIFIER UUID EN BASE POUR APPLIQUER PK
 
 class Test_model(TestCase):
@@ -203,6 +205,8 @@ class Test_model(TestCase):
         f.author = userWawa
         f.is_public = True
         f.save()
+        f.categories.add(cat)
+        f.save()
 
         AF1 = AccessForm()
         AF1.form = f
@@ -215,6 +219,7 @@ class Test_model(TestCase):
         game.author = userWawa
         game.form = f
         game.is_public = False
+        game.is_real_time=False
         game.name = "Game of Wawa on form 1"
         game.uuid = str(uuid.uuid4())[:8]
         game.game_status = gameStatusWaiting
@@ -315,6 +320,8 @@ class Test_model(TestCase):
         f.description = "C'est parti !"
         f.author = userTony
         f.is_public = False
+        f.save()
+        f.categories.add(cat)
         f.save()
         AF2 = AccessForm()
         AF2.form = f
@@ -468,7 +475,7 @@ class Test_model(TestCase):
         f.name = "Quatrième formulaire"
         f.description = "C'est parti !"
         f.author = userNico
-        f.is_public = True
+        f.is_public = False
         f.save()
         AF4 = AccessForm()
         AF4.form = f
@@ -739,21 +746,51 @@ class Test_model(TestCase):
 
     def test_get_all_forms(self):
         forms = getAllForms()
-        self.assertEquals(len(forms), 5)
+        self.assertEquals(len(forms), 4)
         self.assertEquals(forms[0].name, "Premier formulaire")
 
     def test_add_quizz_form(self):
         forms = getAllForms()
-        self.assertEquals(len(forms), 5)
+        self.assertEquals(len(forms), 4)
         self.assertEquals(forms[0].name, "Premier formulaire")
 
         user = getUserByLogin("TimFake")
         addQuizzForm("new form", user, "new description", ["Autre catégorie"])
         forms = getAllForms()
-        self.assertEquals(len(forms), 6)
-        self.assertEquals(forms[5].name, "new form")
+        self.assertEquals(len(forms), 5)
+        self.assertEquals(forms[4].name, "new form")
 
-        self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, forms[5]))
+        self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, forms[4]))
+
+    def test_delete_form(self):
+        forms = getAllForms()
+        self.assertEquals(len(forms), 4)
+        self.assertEquals(forms[0].name, "Premier formulaire")
+
+        delete_form(forms[0].id)
+        forms = getAllForms()
+        self.assertEquals(len(forms), 3)
+
+    def test_get_form_access(self):
+        forms = getAllForms()
+        self.assertEquals(len(forms), 4)
+        self.assertEquals(forms[0].name, "Premier formulaire")
+
+        user = getUserByLogin("TimFake")
+        forms = getAllForms(user)
+        self.assertEquals(len(forms), 3)
+        self.assertEquals(forms[0].name, "Deuxième formulaire")
+
+    def test_getAllFormsAccessUser(self):
+        user = getUserByLogin("TimFake")
+        forms = getAllFormsAccessUser(user)
+        self.assertEquals(len(forms), 6)
+
+    def test_nbQuizzByCat(self):
+        cat = get_category_by_id(1)
+        user = getUserByLogin("TimFake")
+        self.assertEquals(1, nbQuizzByCat(cat))
+        self.assertEquals(2, nbQuizzByCat(cat, user))
 
     ## TEST FRIENDS ##
 
@@ -776,6 +813,20 @@ class Test_model(TestCase):
         user = getUserByLogin("TimFake")
         userAttente = getUserByLogin("ami en demande")
         self.assertEquals(False, relationship_accepted(user, userAttente))
+
+    def test_relationship_accept(self):
+        user = getUserByLogin("TimFake")
+        userAttente = getUserByLogin("ami en demande")
+        self.assertEquals(False, relationship_accepted(user, userAttente))
+        answer_friendship_request(True, user, userAttente)
+        self.assertEquals(True, relationship_accepted(user, userAttente))
+
+    def test_relationship_denied(self):
+        user = getUserByLogin("TimFake")
+        userAttente = getUserByLogin("ami en demande")
+        self.assertEquals(False, relationship_accepted(user, userAttente))
+        answer_friendship_request(False, user, userAttente)
+        self.assertEquals(False, two_users_have_relationship(user, userAttente))
 
     def test_add_friend(self):
         user = getUserByLogin("TimFake")
@@ -809,6 +860,24 @@ class Test_model(TestCase):
         self.assertEquals(1, len(games))
         self.assertEquals("CANCELLED", games[0].game_status.type)
 
+    def test_edit_game(self):
+        game = get_all_game()[0]
+        self.assertEquals("Game of Wawa on form 1", game.name)
+        self.assertEquals(1, game.slot_max)
+        self.assertEquals(False, game.is_real_time)
+        self.assertEquals(False, game.is_public)
+        self.assertEquals("WAITING", game.game_status.type)
+
+        game = edit_game(game.uuid, "new name", 10, True, True)
+        self.assertEquals("new name", game.name)
+        self.assertEquals(10, game.slot_max)
+        self.assertEquals(True, game.is_real_time)
+        self.assertEquals(True, game.is_public)
+        self.assertEquals("WAITING", game.game_status.type)
+
+        game = edit_game(game.uuid, "new name", 10, True, True, "DONE")
+        self.assertEquals("DONE", game.game_status.type)
+
     def test_create_game(self):
         games = get_all_game()
         self.assertEquals(1, len(games))
@@ -837,6 +906,25 @@ class Test_model(TestCase):
         player = get_player_by_game_by_login(game, "TimFake")
         calculate_score(player)
         self.assertEquals(3, player.score)
+
+    def test_create_delete_player(self):
+        user = getUserByLogin("Warren")
+        game = get_all_game()[0]
+        self.assertEquals(False, is_user_in_game(user, game))
+        create_player(game, user)
+        self.assertEquals(True, is_user_in_game(user, game))
+        user_leave_game(user, game)
+        self.assertEquals(False, is_user_in_game(user, game))
+
+    def test_player_number_of_game(self):
+        game = get_all_game()[0]
+        player_parties = get_players_number_of_game(get_players_by_game(game))
+        self.assertEquals(1, player_parties[0].parties)
+
+    def test_get_nb_player_by_game(self):
+        game = get_all_game()[0]
+        self.assertEquals(1, get_nb_player_by_game(game))
+
 
     ## TEST QUESTION ##
     def test_get_question_by_form_id(self):
