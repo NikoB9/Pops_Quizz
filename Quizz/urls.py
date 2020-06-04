@@ -33,9 +33,9 @@ urlpatterns = [
     path('dashboard/amis', views.amis, name="dashboard_friend"),
 
     #AJAX
-    re_path(r'create_user$', views.create_user),
-    re_path(r'user_connection$', views.connectUser),
-    re_path(r'disconnect_user$', views.disconnect),
+    re_path(r'create_user$', views.create_user, name="create_user"),
+    re_path(r'user_connection$', views.connectUser, name="connectUser"),
+    re_path(r'disconnect_user$', views.disconnect, name="disconnect"),
     re_path(r'save_user_answers$', views.saveUserAnswers),
     re_path(r'add_friend$', views.add_friend),
     re_path(r'remove_friend$', views.remove_friend),
