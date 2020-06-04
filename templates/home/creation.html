@@ -1,56 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
-	<style type="text/css">
-		.hidden {
-			display: none;
-		}
-
-	</style> 
-	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale pad">
 		<form method="POST">
 			{% csrf_token %}
 			<div id="form_header">
-				<input type=text name=form_title value="Titre du Quizz">
-				<textarea name=form_description>Description du quizz</textarea>
+				<input type="text" name="form_title" class="style_form typo_generale" value="Titre du Quizz">
+				<br>
+				<br>
+				<textarea name="form_description" class="form-control style_form typo_generale">Description du quizz</textarea>
 			</div>
+			<br>
 			<div id="questions">
 				
 			</div>
-			<button type=button onclick="addNewQuestion()">Ajouter une question</button>
-			<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
-			<input type="submit" value="Sauvegarder">
+			<br>
+			<div class="droite">
+				<button type=button class="btn connectBtn" onclick="addNewQuestion()">Ajouter une question</button>
+				<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
+				<input type="submit" class="btn connectBtn" value="Sauvegarder">
+			</div>		
 		</form>
     </div>
 
 	<script>
 		class Question {
-			order;
-			title;
-			answerType;
-			answers = [];
-
-			$pnlQuestion = document.createElement("div");
-			$pnlHeader = document.createElement("div");
-			$pnlBody = document.createElement("div");
-			$pnlFooter = document.createElement("div");
-
-			$lblOrder = document.createElement("span");
-			$txtTitle = document.createElement("input");
-			$btnDelete = document.createElement("button");
-			$pnlAnswers = document.createElement("div");
-			$btnAddNewAnswer = document.createElement("button");
-			$selectAnswerType = document.createElement("select");
-
-			$hiddenOrder = document.createElement("input");
-			$hiddenNbAnswer = document.createElement("input");
 
 			constructor(_order, _title, _answerType, _answers) {
+				//ATTRIBUTES DEFINITION
+				this.order;
+				this.title;
+				this.answerType;
+				this.answers = [];
+
+				this.$pnlQuestion = document.createElement("fieldset");
+				this.$pnlHeader = document.createElement("div");
+				this.$pnlBody = document.createElement("div");
+				this.$pnlFooter = document.createElement("div");
+
+				this.$btnUp = document.createElement("button");
+				this.$btnDown = document.createElement("button");
+				this.$lblOrder = document.createElement("span");
+				this.$txtTitle = document.createElement("input");
+				this.$divBtnDelete = document.createElement("div");
+				this.$btnDelete = document.createElement("button");
+				this.$pnlAnswers = document.createElement("div");
+				this.$btnAddNewAnswer = document.createElement("button");
+				this.$selectAnswerType = document.createElement("select");
+
+				this.$hiddenOrder = document.createElement("input");
+				this.$hiddenNbAnswer = document.createElement("input");
+
 				let self = this;
 				///RENDER HTML AND ATTRIBUTES
-				this.$pnlQuestion.classList.add("card", "border-info");
-				this.$pnlHeader.classList.add("card-header", "header");
+				this.$pnlQuestion.classList.add("fdst_border");
 				this.$pnlBody.classList.add("card-body", "body");
 				this.$pnlFooter.classList.add("card-footer", "footer");
+				this.$txtTitle.classList.add("style_form", "typo_generale");
+				this.$btnDelete.classList.add("btn","connectBtn");
+				this.$divBtnDelete.classList.add("droite");
+				this.$btnAddNewAnswer.classList.add("btn","connectBtn");
+				this.$selectAnswerType.classList.add("style_form", "typo_generale");
 
 				//TXT TITLE
 				this.$txtTitle.type = "text";
@@ -59,11 +68,25 @@
 				this.$btnDelete.innerText = "Supprimer";
 				this.$btnDelete.onclick = function(e) { removeQuestion(self); };
 
+				//ORDER ELEMENT
+				this.$btnUp.type = "button";
+				this.$btnDown.type = "button";
+				this.$btnUp.innerText = "/\\";
+				this.$btnDown.innerText = "\\/";
+				this.$btnUp.onclick = function(e){ setQuestionOrder(self, self.order-2) }
+				this.$btnDown.onclick = function(e){ setQuestionOrder(self, self.order) }
+				let orderE = document.createElement("div");
+				orderE.style.display = "inline-block";
+				orderE.appendChild(this.$btnUp);
+				orderE.appendChild(this.$btnDown);
+
 				let titleE = document.createElement("h3");
 				titleE.appendChild(this.$lblOrder);
 				titleE.appendChild(this.$txtTitle);
+				this.$pnlHeader.appendChild(orderE);
 				this.$pnlHeader.appendChild(titleE);
-				this.$pnlHeader.appendChild(this.$btnDelete);
+				this.$pnlHeader.appendChild(this.$divBtnDelete);
+				this.$divBtnDelete.appendChild(this.$btnDelete);
 
 				//ANSWER TYPE
 				answerTypes.forEach(element => { 
@@ -134,6 +157,25 @@
 				}
 				this.$pnlAnswers.removeChild(_answer.$pnlAnswer);
 			}
+			setAnswerOrder(_answer, _order) {
+				if(_answer.order == _order+1) return;
+				if(_order < 0 || _order >= this.answers.length) return;
+				let oldOrder = _answer.order-1;
+				//Reorganize array
+				this.answers.splice(this.answers.indexOf(_answer), 1);
+				this.answers.splice(_order, 0, _answer);
+				//Set orders
+				if(_order > oldOrder) //Answer Down
+					for(var i = oldOrder; i <= _order; i++) this.answers[i].setOrder(i+1);
+				else //Answer Up
+					for(var i = _order; i <= oldOrder; i++) this.answers[i].setOrder(i+1);
+
+				//Reorganize HTML elements
+				if(_order < this.answers.length-1)
+					this.$pnlAnswers.insertBefore(_answer.$pnlAnswer, this.answers[_order+1].$pnlAnswer);
+				else //Last element
+					this.$pnlAnswers.appendChild(_answer.$pnlAnswer);
+			}
 			updateNames() {
 				let prefixName = "qst_" + this.order;
 				this.$txtTitle.name = prefixName + "_title";
@@ -145,40 +187,68 @@
 		}
 
 		class Answer {
-			type;
-			value;
-			correct;
-			order;
-			question;
-
-			$pnlAnswer = document.createElement("div");
-			$inputExample = document.createElement("input");	
-			$txtValue = document.createElement("input");
-			$chkCorrect = document.createElement("input");
-			$btnDelete = document.createElement("button", {type: "button"});
-			$hiddenType = document.createElement("input");
-			$hiddenOrder = document.createElement("input");
 
 			constructor(_type, _value) {
+				//ATTRIBUTES DEFINITION
+				this.type;
+				this.value;
+				this.correct;
+				this.order;
+				this.question;
+
+				this.$pnlAnswer = document.createElement("div");
+				this.$btnUp = document.createElement("button");
+				this.$btnDown = document.createElement("button");	
+				this.$inputExample = document.createElement("input");	
+				this.$txtValue = document.createElement("input");
+				this.$chkCorrect = document.createElement("input");
+				this.$btnDelete = document.createElement("button", {type: "button"});
+				this.$hiddenType = document.createElement("input");
+				this.$hiddenOrder = document.createElement("input");
+
 				let self = this;
-				//RENDER HTML AND ATTRIBUTES
+				//RENDER HTML
 				this.$inputExample.disabled = true;
 				this.$txtValue.type = "text";
+				this.$txtValue.onclick = function(e){ this.setSelectionRange(0, this.value.length); }
 				this.$chkCorrect.type = "checkbox";
 				this.$btnDelete.type = "button";
 				this.$btnDelete.innerText = "Supprimer";
 				this.$btnDelete.onclick = function(e){ self.question.removeAnswer(self); };
 				this.$hiddenType.type = "hidden";
 				this.$hiddenOrder.type = "hidden";
+
+				//ORDER ELEMENT
+				this.$btnUp.type = "button";
+				this.$btnDown.type = "button";
+				this.$btnUp.innerText = "/\\";
+				this.$btnDown.innerText = "\\/";
+				this.$btnUp.onclick = function(e){ self.question.setAnswerOrder(self, self.order-2) }
+				this.$btnDown.onclick = function(e){ self.question.setAnswerOrder(self, self.order) }
+				let orderE = document.createElement("div");
+				orderE.style.display = "inline-block";
+				orderE.appendChild(this.$btnUp);
+				orderE.appendChild(this.$btnDown);
+
 				this.$pnlAnswer.appendChild(this.$inputExample);
 				this.$pnlAnswer.appendChild(this.$txtValue);
 				this.$pnlAnswer.appendChild(this.$chkCorrect);
+				this.$pnlAnswer.appendChild(orderE);
 				this.$pnlAnswer.appendChild(this.$btnDelete);
 				this.$pnlAnswer.appendChild(this.$hiddenType);
 				this.$pnlAnswer.appendChild(this.$hiddenOrder);
+
 				//SET DATAS
 				this.setType(_type);
 				this.setValue(_value);
+
+				// SET CSS 
+				// this.$inputExample.classList.add("style_form");
+				this.$txtValue.classList.add("style_form");
+				// this.$chkCorrect.classList.add("style_form");
+				this.$btnDelete.classList.add("btn", "connectBtn");
+				this.$btnUp.classList.add("btn", "connectBtn");
+				this.$btnDown.classList.add("btn", "connectBtn");
 			}
 			setType(_type) {
 				this.type = _type;
@@ -242,6 +312,25 @@
 				questions[i].setOrder(questions[i].order-1)
 			}
 			$questions.removeChild(_question.$pnlQuestion);
+		}
+
+		function setQuestionOrder(_question, _order) {
+			if(_question.order == _order+1) return;
+			if(_order < 0 || _order >= questions.length) return;
+			let oldOrder = _question.order-1;
+			//Reorganize array
+			questions.splice(questions.indexOf(_question), 1);
+			questions.splice(_order, 0, _question);
+			//Set orders
+			if(_order > oldOrder) //Question Down
+				for(var i = oldOrder; i <= _order; i++) questions[i].setOrder(i+1);
+			else //Question Up
+				for(var i = _order; i <= oldOrder; i++) questions[i].setOrder(i+1);
+			//Reorganize HTML elements
+			if(_order < questions.length-1)
+				$questions.insertBefore(_question.$pnlQuestion, questions[_order+1].$pnlQuestion);
+			else //Last element
+				$questions.appendChild(_question.$pnlQuestion);
 		}
 
 		questions = [];

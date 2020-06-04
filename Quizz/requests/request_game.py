@@ -6,11 +6,21 @@ from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 
 
+def get_game_waiting_of_user(user):
+    return Player.objects.get(user=user, game__game_status__type="WAITING").game
+
+
+def is_user_in_waiting_room(user):
+    return len(Player.objects.filter(user=user, game__game_status__type="WAITING")) > 0
+
+
 def get_all_game():
     return Game.objects.all()
 
+
 def get_game_by_uuid(uuid):
     return Game.objects.get(uuid=uuid)
+
 
 def change_game_status(game, status):
     new_status = get_game_status(status)
@@ -18,9 +28,27 @@ def change_game_status(game, status):
     game.save()
     return game
 
-def create_gameBD(form_id, user_name, name, is_public, max_player, game_status="WAITING"):
+
+def getGamesToJoinByForm(form):
+    return Game.objects.filter(form=form, is_public=True, game_status__type="WAITING")
+
+
+def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle=None):
+    game = get_game_by_uuid(game_uuid)
+    game.name = game_name
+    game.slot_max = slot_max
+    game.is_public = is_public
+    game.is_real_time = is_real_time
+    game.save()
+    if game_status_libelle is not None:
+        game = change_game_status(game, game_status_libelle)
+    return game
+
+
+def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, is_random_form=False,
+                  game_status="WAITING"):
     author = getUserByLogin(user_name)
-    form = getFormsById(form_id)
+    form = getFormById(form_id)
     game_status = get_game_status(game_status)
 
     new_game = Game()
@@ -29,7 +57,9 @@ def create_gameBD(form_id, user_name, name, is_public, max_player, game_status="
     new_game.author = author
     new_game.is_public = is_public
     new_game.slot_max = max_player
+    new_game.is_real_time = is_real_time
     new_game.game_status = game_status
     new_game.uuid = str(uuid.uuid4())[:8].upper()
+    new_game.is_random_form = is_random_form
     new_game.save()
     return new_game

@@ -2,60 +2,72 @@ from Quizz.models import *
 from django.contrib.auth import hashers
 
 def set_db():
-    gameStatusWaiting = GameStatus()
-    gameStatusWaiting.type = "CANCELLED"
-    gameStatusWaiting.save()
+    gameStatusCancelled = GameStatus()
+    gameStatusCancelled.type = "CANCELLED"
+    gameStatusCancelled.save()
 
     gameStatusWaiting = GameStatus()
     gameStatusWaiting.type = "WAITING"
     gameStatusWaiting.save()
 
+    gameStatusDone = GameStatus()
+    gameStatusDone.type = "DONE"
+    gameStatusDone.save()
+
+    gameStatusInProgress = GameStatus()
+    gameStatusInProgress.type = "IN_PROGRESS"
+    gameStatusInProgress.save()
+
+    gameStatusInProgress = GameStatus()
+    gameStatusInProgress.type = "DRAFT"
+    gameStatusInProgress.save()
+
     userWawa = User()
-    userWawa.login="Warren"
-    userWawa.mail="warren.weber@hotmail.fr"
-    userWawa.password=hashers.make_password("wawa")
+    userWawa.login = "Warren"
+    userWawa.mail = "warren.weber@hotmail.fr"
+    userWawa.password = hashers.make_password("wawa")
     userWawa.save()
 
     userTony = User()
-    userTony.login="TimFake"
-    userTony.mail="tony.lim@u-psud.fr"
-    userTony.password=hashers.make_password("toto")
+    userTony.login = "TimFake"
+    userTony.mail = "tony.lim@u-psud.fr"
+    userTony.password = hashers.make_password("toto")
     userTony.save()
 
     userNico = User()
-    userNico.login="NicoFake"
-    userNico.mail="nico@wanadoo.com"
-    userNico.password=hashers.make_password("djangogo")
+    userNico.login = "NicoFake"
+    userNico.mail = "nico@wanadoo.com"
+    userNico.password = hashers.make_password("djangogo")
     userNico.save()
 
     userSalome = User()
-    userSalome.login="SaloméFake"
-    userSalome.mail="salomette@yahoo.fr"
-    userSalome.password=hashers.make_password("jaimelecss")
+    userSalome.login = "SaloméFake"
+    userSalome.mail = "salomette@yahoo.fr"
+    userSalome.password = hashers.make_password("jaimelecss")
     userSalome.save()
 
     userThibaut = User()
-    userThibaut.login="WiirioFake"
-    userThibaut.mail="thibaut@aol.fr"
-    userThibaut.password=hashers.make_password("test")
+    userThibaut.login = "WiirioFake"
+    userThibaut.mail = "thibaut@aol.fr"
+    userThibaut.password = hashers.make_password("test")
     userThibaut.save()
 
     userAmi = User()
-    userAmi.login="copain du 31"
-    userAmi.mail="ami@aol.fr"
-    userAmi.password=hashers.make_password("jaime")
+    userAmi.login = "copain du 31"
+    userAmi.mail = "ami@aol.fr"
+    userAmi.password = hashers.make_password("jaime")
     userAmi.save()
 
     userAmiAttente = User()
-    userAmiAttente.login="ami en demande"
-    userAmiAttente.mail="chercheami@gmail.com"
-    userAmiAttente.password=hashers.make_password("demande")
+    userAmiAttente.login = "ami en demande"
+    userAmiAttente.mail = "chercheami@gmail.com"
+    userAmiAttente.password = hashers.make_password("demande")
     userAmiAttente.save()
 
     userGhost = User()
-    userGhost.login="ami absent"
-    userGhost.mail="amiperdu@gmail.com"
-    userGhost.password=hashers.make_password("ghost")
+    userGhost.login = "ami absent"
+    userGhost.mail = "amiperdu@gmail.com"
+    userGhost.password = hashers.make_password("ghost")
     userGhost.save()
 
     relationAmiTony = Friends()
@@ -89,41 +101,6 @@ def set_db():
     relationAmiThibaut = Friends()
     relationAmiThibaut.accepted = True
     relationAmiThibaut.source = userAmi
-    relationAmiThibaut.target = userThibaut
-    relationAmiThibaut.comment = "On devient ami Thibaut ?"
-    relationAmiThibaut.save()
-
-    relationAmiTony = Friends()
-    relationAmiTony.accepted = True
-    relationAmiTony.source = userAmiAttente
-    relationAmiTony.target = userTony
-    relationAmiTony.comment = "Accepte moi Tony !"
-    relationAmiTony.save()
-
-    relationAmiNico = Friends()
-    relationAmiNico.accepted = True
-    relationAmiNico.source = userAmiAttente
-    relationAmiNico.target = userNico
-    relationAmiNico.comment = "Accepte moi stp Nico"
-    relationAmiNico.save()
-
-    relationAmiSalome = Friends()
-    relationAmiSalome.accepted = True
-    relationAmiSalome.source = userAmiAttente
-    relationAmiSalome.target = userSalome
-    relationAmiSalome.comment = "On devient ami Salomette ?"
-    relationAmiSalome.save()
-
-    relationAmiWarren = Friends()
-    relationAmiWarren.accepted = True
-    relationAmiWarren.source = userAmiAttente
-    relationAmiWarren.target = userWawa
-    relationAmiWarren.comment = "On devient ami Wawa ?"
-    relationAmiWarren.save()
-
-    relationAmiThibaut = Friends()
-    relationAmiThibaut.accepted = True
-    relationAmiThibaut.source = userAmiAttente
     relationAmiThibaut.target = userThibaut
     relationAmiThibaut.comment = "On devient ami Thibaut ?"
     relationAmiThibaut.save()
@@ -199,14 +176,19 @@ def set_db():
     relationGhostThibaut.save()
 
     accessFormTypeCreator = AccessFormType()
-    accessFormTypeCreator.type="CREATOR"
+    accessFormTypeCreator.type = "CREATOR"
     accessFormTypeCreator.save()
     accessFormTypeEditor = AccessFormType()
-    accessFormTypeCreator.type="EDITOR"
+    accessFormTypeCreator.type = "EDITOR"
     accessFormTypeEditor.save()
     accessFormTypePublisher = AccessFormType()
-    accessFormTypeCreator.type="PUBLISHER"
+    accessFormTypeCreator.type = "PUBLISHER"
     accessFormTypePublisher.save()
+
+    cat = Category()
+    cat.label="Autre catégorie"
+    cat.description="Qui possède des questions particulières"
+    cat.save()
 
     f = Form()
     f.name = "Premier formulaire"
@@ -214,12 +196,32 @@ def set_db():
     f.author = userWawa
     f.is_public = True
     f.save()
+    f.categories.add(cat)
+    f.save()
 
     AF1 = AccessForm()
     AF1.form = f
     AF1.user = userWawa
     AF1.access_form_type = accessFormTypeCreator
     AF1.save()
+
+    game = Game()
+    game.slot_max = 1
+    game.author = userWawa
+    game.form = f
+    game.is_public = False
+    game.is_real_time=False
+    game.name = "Game of Wawa on form 1"
+    game.uuid = str(uuid.uuid4())[:8]
+    game.game_status = gameStatusWaiting
+    game.save()
+
+    player1 = Player()
+    player1.user = userTony
+    player1.game = game
+    player1.has_answered = 1
+    player1.score = 0
+    player1.save()
 
     qcmType = AnswerType()
     qcmType.type = "QCM"
@@ -237,7 +239,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -252,12 +254,17 @@ def set_db():
     pa.correct = True
     pa.save()
 
+    ua1 = UserAnswers()
+    ua1.player = player1
+    ua1.possible_answer = pa
+    ua1.value = 1
+    ua1.save()
 
     question = Question()
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -272,28 +279,31 @@ def set_db():
     pa.correct = True
     pa.save()
 
+    ua2 = UserAnswers()
+    ua2.player = player1
+    ua2.possible_answer = pa
+    ua2.value = 4
+    ua2.save()
+
     question = Question()
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 
-    game = Game()
-    game.slot_max = 1
-    game.author = userWawa
-    game.form = f
-    game.is_public = False
-    game.name = "Game of Wawa on form 1"
-    game.uuid = str(uuid.uuid4())[:8]
-    game.game_status = gameStatusWaiting
-    game.save()
+    ua3 = UserAnswers()
+    ua3.player = player1
+    ua3.possible_answer = possAnswer
+    ua3.value = "texte"
+    ua3.save()
+
     ####################################
 
     f = Form()
@@ -301,6 +311,8 @@ def set_db():
     f.description = "C'est parti !"
     f.author = userTony
     f.is_public = False
+    f.save()
+    f.categories.add(cat)
     f.save()
     AF2 = AccessForm()
     AF2.form = f
@@ -336,7 +348,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -355,7 +367,7 @@ def set_db():
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -374,12 +386,12 @@ def set_db():
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 
@@ -401,7 +413,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -420,7 +432,7 @@ def set_db():
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -439,12 +451,12 @@ def set_db():
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 
@@ -454,7 +466,7 @@ def set_db():
     f.name = "Quatrième formulaire"
     f.description = "C'est parti !"
     f.author = userNico
-    f.is_public = True
+    f.is_public = False
     f.save()
     AF4 = AccessForm()
     AF4.form = f
@@ -466,7 +478,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -485,7 +497,7 @@ def set_db():
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -504,12 +516,12 @@ def set_db():
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 
@@ -531,7 +543,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -550,7 +562,7 @@ def set_db():
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -569,12 +581,12 @@ def set_db():
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 
@@ -596,7 +608,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -615,7 +627,7 @@ def set_db():
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -634,12 +646,12 @@ def set_db():
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 
@@ -661,7 +673,7 @@ def set_db():
     question.form = f
     question.label = "première question"
     question.order = 1
-    question.answer_type= qcmType
+    question.answer_type = qcmType
     question.save()
 
     pa = PossibleAnswer()
@@ -680,7 +692,7 @@ def set_db():
     question.form = f
     question.label = "deuxième question"
     question.order = 2
-    question.answer_type= uniqueAnswerType
+    question.answer_type = uniqueAnswerType
     question.save()
 
     pa = PossibleAnswer()
@@ -699,12 +711,12 @@ def set_db():
     question.form = f
     question.label = "troisième question"
     question.order = 3
-    question.answer_type= inputType
+    question.answer_type = inputType
     question.save()
 
     possAnswer = PossibleAnswer()
     possAnswer.question = question
-    possAnswer.value= "texte"
+    possAnswer.value = "texte"
     possAnswer.correct = True
     possAnswer.save()
 

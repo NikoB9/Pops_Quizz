@@ -3,146 +3,98 @@
 {% load static %}
 
 {% block content %}
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+		<h1>{{ player.game.name }}</h1>
+	  	<h3>{{ form.name }}</h3>
 
-<style type="text/css">
-	.card{
-		border: transparent;
-    	background: transparent;
-	}
-	.row{
-		padding-top: 10px;
-	}
-	#question{
-		padding-top: 10px;
-	}
-	.col{
-		min-width: 300px;
-	}
-	#subbtn{
-		margin-top: 20px
-	}
-	#resbtn{
-		margin-top: 20px
-	}
-	#resultbtn{
-		margin-top: 20px
-	}
-	.col {
-	    min-width: 300px;
-	    padding: 10px;
-	    background: #dec1de;
-	    border: 2px solid purple;
-	    border-radius: 5px;
-	    margin: 2px;
-	}
-</style>
-
-<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">	
-
-	<div class="card border-info mb-3">
-	  <div class="card-header"><h1>{{ player.game.name }}</h1>
-		  <h3>{{ form.name }}</h3>
 	  	{% if form.author is not None %}
-	  	<p class="card-text">Créé par {{ form.author.login }}</p>
+	  		<h6>Créé par {{ form.author.login }}</h6>
 	  	{% else %}
-	  	<p class="card-text">Créé par teampopsquizz</p>
+	  		<h6>Créé par teampopsquizz</h6>
 	  	{% endif %}
 
-	  </div>
-	  <div class="card-body">
 
-	  		<form id="form_answers" action="{% url 'Quizz:resultats' player.game.uuid %}" method="post">
+  		<form id="form_answers" action="{% url 'Quizz:correction' player.id %}" method="post">
 
-	  			{% csrf_token %}
-	  			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
-				<!-- TODO Calculer le score en Ajax -->
-				<input type="hidden" name="scoreplayer" id="scoreplayer" value="0">
-				<h2 id="score-affichage" hidden>Vous avez eu un score de 0</h2>
+			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
+  			{% csrf_token %}
 
-				{% for q in form.questions %}
-					
-					  <h3 id="question">{{ q.question.label }}</h3>
-					  <div class="row">
+			{% for q in form.questions %}
+				
+				<fieldset class="fdst_border"><legend class="lgd_style" id="question">{{ q.question.label }}</legend>
+					<div class="row">
 
-					  	{% if q.question.answer_type.type == "INPUT" %}
+						{% if q.question.answer_type.type == "INPUT" %}
 
-						  	{% for a in q.answers %}
-						  	<div class="col">
-						  		
-  								<input type="text" class="form-control" id="answer{{ a.id }}" name="answer{{ a.id }}" placeholder="">
-								
-						  	</div>
-						  	{% empty %}
-								Pas de réponse
-							{% endfor %}
-
-					  	{% elif q.question.answer_type.type == "QCM" %}
-
-					  		{% for a in q.answers %}
-						  	<div class="col">
-
-						  		<div class="form-check">
-						  		
-							  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}">
-							        <label class="form-check-label" for="answer{{ a.id }}">
-							          {{ a.value }}
-							        </label>
-
-						    	</div>
-								
-						  	</div>
-						  	{% empty %}
-								Pas de réponse
-							{% endfor %}
-
-
-					  	{% elif q.question.answer_type.type == "UNIQUE_ANSWER" %}
-
-					  		{% for a in q.answers %}
-						  	<div class="col">
-
-						  		<div class="form-check">
-						  		
-									<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}">
-					          		<label class="form-check-label" for="answer{{ a.id }}">
-						            {{ a.value }}
-					          		</label>
-
-					          	</div>
-								
-						  	</div>
-						  	{% empty %}
-								Pas de réponse
-							{% endfor %}
-
-
+					  	{% if q.answers.size == 0 %}
+							Pas de réponse
 					  	{% else %}
+							{% with q.answers|first as answer %}
+						  		<div class="col">
+									<input type="text" class="form-control style_form" id="answer{{ answer.id }}" name="check{{ answer.id }}" placeholder="" required>
+						  		</div>
+							{% endwith %}
+						{% endif %}
 
-					  	Type non pris en charge
-					  	
-					  	{% endif %}
+						{% elif q.question.answer_type.type == "QCM" %}
 
-					  </div>
-					
-					
-				{% empty %}
-					Pas de questions
-				{% endfor %}
+							{% for a in q.answers %}
+							  	<div class="col">
+							  		<div class="form-check">
+								  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="qcm{{ q.question.id }}">
+								        <label class="form-check-label" for="answer{{ a.id }}">{{ a.value }}</label>
+							    	</div>
+							  	</div>
+						  	{% empty %}
+								Pas de réponse
+							{% endfor %}
 
 
-				<button type="button" id="subbtn" class="btn btn-success">VALIDER</button>
-				<button type="reset" id="resbtn" class="btn btn-danger">ANNULER</button>
-				<button type="submit" id="resultbtn" class="btn btn-primary" hidden>VOIR LES RESULTATS</button>
+						{% elif q.question.answer_type.type == "UNIQUE_ANSWER" %}
 
-			</form>
+							{% for a in q.answers %}
+					  	<div class="col">
 
-	  </div>
-	</div>	
-	
-</div>
+					  		<div class="form-check">
+					  		
+								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" required>
+					      		<label class="form-check-label" for="answer{{ a.id }}">
+					            {{ a.value }}
+					      		</label>
+
+					      	</div>
+							
+					  	</div>
+					  	{% empty %}
+							Pas de réponse
+						{% endfor %}
+
+
+						{% else %}
+
+						Type non pris en charge
+						
+						{% endif %}
+
+					</div>
+				
+				
+				</fieldset>
+			{% empty %}
+				Pas de questions
+			{% endfor %}
+
+			<br>
+			<div class="droite">
+				<button type="submit" id="subbtn" class="btn connectBtn">VALIDER</button>
+				<button type="reset" id="resbtn" class="btn connectBtn">ANNULER</button>
+			</div>
+
+		</form>
+	</div>
 {% endblock %}
 
 {% block js_per_page %}
-<script type="text/javascript" src="{% static "js/gamerun.js"%}">
-</script>
+	<script type="text/javascript" src="{% static "js/gamerun.js"%}">
+	</script>
 {% endblock %}

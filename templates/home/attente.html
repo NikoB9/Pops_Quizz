@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+	
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+		<h1>Salle d'attente</h1>
+		<input type="hidden" id="game_uuid" value="{{game.uuid}}">
+
+		{% if game.is_random_form %}
+			<h6>Quizz aleatoire<i class="far fa-question-circle"></i></h6>
+		{% else %}
+			{% if game.author is not None %}
+			<h6>Quizz "{{ game.form.name }}" créé par <em>{{ game.form.author.login }}</em></h6>
+			{% else %}
+			<h6>Quizz {{ game.form.name }}</h6>
+			{% endif %}
+		{% endif %}
+<!-- 
+		{{ game.name }} en salle d'attente -->
+
+		<p>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></p>
+
+		<fieldset class="fdst_border"><legend class="lgd_style">Inviter mes amis :</legend>
+			<ul> 
+				{% for friend in friends %}
+					<li>{{ friend.login }} <i id="{{friend.login}}" class="fas fa-envelope-square"></i></li>
+				{% empty %}
+					Aucun ami, n'hésitez pas à en ajouter dans la page ami
+				{% endfor %}
+			</ul>
+		</fieldset>
+
+		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs ({{players|length}}/{{game.slot_max}}):</legend>
+			{% for player in players %}
+				<p>{{ player.user.login }} a joué {{ player.parties }} parties</p>
+			{% empty %}
+				<h6>Aucun joueur trouvé</h6>
+			{% endfor %}
+		</fieldset>
+
+		<br>
+		<form onsubmit="return attention_commencer()" action="{% url 'Quizz:openform' game.uuid %}">
+			<div class="droite">
+				{% if is_author %}
+					<button type="submit" class="btn connectBtn">COMMENCER</button>
+				{% else %}
+					<button type="submit" class="btn connectBtn" {% if game.slot_max > players|length %} disabled {% endif%}>COMMENCER</button>
+				{% endif %}
+			</div>
+		</form>
+		<form onsubmit="return attention_quitter()" action="{% url 'Quizz:quitter-partie' game.uuid %}">
+			<div class="droite">
+				<button type="submit" class="btn connectBtn marges" {% if game.game_status.type is "WAITING" %} disabled {% endif %} >QUITTER</button>
+			</div>
+		</form>
+	</div>
+
+{% endblock %}
+
+{% block js_per_page %}
+
+	<script type="text/javascript" src="{% static "js/invitefriends.js"%}">
+	</script>
+
+{% endblock %}

@@ -36,14 +36,14 @@ class User(models.Model):
         return self.login
 
 
-class Friends(models.Model):
+class Friends(TimestampModel):
     source = models.ForeignKey(User, on_delete=models.CASCADE, related_name='source')
     target = models.ForeignKey(User, on_delete=models.CASCADE, related_name='target')
     accepted = models.BooleanField(default=False)
     comment = models.TextField(null=True)
 
     def __str__(self):
-        return self.source.login + " to " + self.target.login + " is " + self.accepted
+        return self.source.login + " to " + self.target.login + " is " + ("not" if not self.accepted else "") + " accepted"
 
 
 class Category(models.Model):
@@ -109,7 +109,7 @@ class PossibleAnswer(models.Model):
         return self.value
 
 
-# GameStatus = [WAITING, IN_PROGRESS, DONE, CANCELLED]
+# GameStatus = [DRAFT, WAITING, IN_PROGRESS, DONE, CANCELLED]
 class GameStatus(models.Model):
     type = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
@@ -126,15 +126,18 @@ class Game(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False, unique=False)
     created_at = models.DateTimeField(auto_now_add=True)
     is_public = models.BooleanField(default=True)
+    is_real_time = models.BooleanField(default=False)
+    is_random_form = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Game " + self.name + " created at " + self.createdAt
+        return "Game " + self.name
 
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.PROTECT)
+    game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     score = models.IntegerField(null=True, blank=False, unique=False)
+    has_answered = models.BooleanField(default=False)
 
     def __str__(self):
         return "Player " + self.user.login + " of game " + self.game.name
@@ -148,16 +151,6 @@ class UserAnswers(models.Model):
     def __str__(self):
         return self.value
 
-# # Droits utilisateur
-# class UserRights(TimestampModel):
-# 	rule = models.IntegerField(null=False, blank=False, unique=False)
-# 	libelle = models.CharField(max_length=255, null=False, blank=False, unique=True)
-# 	def __str__(self):
-# 		return self.libelle
-#
-# # utilisateur (pas mal d'exemple avec ça)
-# #exemple relation clé étrangère
-#
 # class Users(TimestampModel):
 # 	role = models.ForeignKey(UserRights, on_delete=models.PROTECT)
 # 	first_name = models.CharField(max_length=255, null=False, blank=False, unique=False)

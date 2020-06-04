@@ -1,78 +1,55 @@
 {% extends 'base.html' %}
-
 {% load static %}
-
 {% block content %}
 
-<style type="text/css">
-	.card{
-		border: transparent;
-    	background: transparent;
-	}
-	.row{
-		padding-top: 10px;
-	}
-	#question{
-		padding-top: 10px;
-	}
-	.col{
-		min-width: 300px;
-	}
-	#subbtn{
-		margin-top: 20px
-	}
-	#resbtn{
-		margin-top: 20px
-	}
-	.col {
-	    min-width: 300px;
-	    padding: 10px;
-	    background: #dec1de;
-	    border: 2px solid purple;
-	    border-radius: 5px;
-	    margin: 2px;
-	}
-</style>
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
 
-<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+		{% if game.game_status.type == "DONE" %}
+			<h1>La partie "{{ game.name }}" est terminée !</h1>
+			<h5>Quizz {{ game.form.name }}</h5>
+			{% if game.form.author is not None %}
+			  	<h6>Créé par {{ game.form.author.login }}</h6>
+			{% else %}
+			  	<h6>Créé par teampopsquizz</h6>
+			{% endif %}
 
-	<div class="card border-info mb-3">
-	  <div class="card-header"><h1>{{ game.name }}</h1>
-		  <h3>{{ game.form.name }}</h3>
-	  	{% if form.author is not None %}
-	  	<p class="card-text">Quizz de {{ game.form.author.login }}</p>
-	  	{% else %}
-	  	<p class="card-text">Créé par teampopsquizz</p>
-	  	{% endif %}
+		  	<fieldset class="fdst_border"><legend class="lgd_style">Résultats</legend>
+				<!-- <div class="row"> -->
+					{% with players|first as winner %}
+						<h6>{{ winner.user.login }} a le plus haut score !</h6>
+					{% endwith %}
+				<!-- </div> -->
 
-	  </div>
-	  <div class="card-body">
+				{% for player in players %}
+					<!-- <div class="row"> -->
+						<p>{{ forloop.counter }}# {{ player.user.login }} a eu un score de {{ player.score }}</p>
+					<!-- </div> -->
+				{% empty %}
+					<!-- <div class="row"> -->
+						<h6>Aucun joueur trouvé</h6>
+					<!-- </div> -->
+				{% endfor %}
+			</fieldset>
+		{% elif game.game_status.type == "IN_PROGRESS" %}
+			<h1>La partie {{ game.name }} est encore en cours</h1>
+		
+		{% elif game.game_status.type == "CANCELLED" %}
+			<h1>La partie {{ game.name }} a été supprimée.</h1>
+		{% elif game.game_status.type == "WAITING" %}
+			<h1>La partie {{ game.name }} est encore en création.</h1>
+		{% endif %}
 
-		  <div class="row">
-			  {% with players|first as winner %}
-			  	{{ winner.user.login }} a le plus haut score !
-			  {% endwith %}
-		  </div>
-		  <div class="row">
-		  {% for player in players %}
-			  <div class="col">
-				  {{ forloop.counter }}# {{ player.user.login }} a eu un score de {{ player.score }}
-			  </div>
-		  </div>
-		  {% empty %}
-		  <h2>Aucun joueur trouvé</h2>
-		  {% endfor %}
-	  </div>
-		<form action="{% url 'Quizz:home' %}">
-			<button id="menubtn" class="btn btn-primary">RETOUR AU MENU</button>
-		</form>
+		<br>
+		<div class="droite">
+			<form action="{% url 'Quizz:home' %}">
+				<button id="menubtn" class="btn connectBtn">RETOUR AU MENU</button>
+			</form>
+		</div>
 	</div>
+	{% endblock %}
 
-</div>
-{% endblock %}
+	{% block js_per_page %}
+	<script>
 
-{% block js_per_page %}
-<script>
-
-</script>
-{% endblock %}
+	</script>
+	{% endblock %}

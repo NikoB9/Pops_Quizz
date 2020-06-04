@@ -10,16 +10,60 @@
 	    <link rel="shortcut icon" type="image/png" href="{% block icon2 %}{% static "img/quiz-ico.png" %}{% endblock %}" />
 	    {% block bts_css %}
 	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
-	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-grid.css" %}">
-	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-grid.min.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-reboot.css" %}">
-	    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-reboot.min.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/fontAwesome5.css" %}">
 	    <link rel="stylesheet" type="text/css" href="{% static "css/styles.css"%}">
 	    {% endblock %}
 	</head>
 	<body >
+
+    <style>
+        #dropdownMenuButton{
+            background: rgb(223,213,250);
+            color: rgb(72,59,107);
+            border: none;
+        }
+        .colperso{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-right: 25px;
+        }
+        @media (max-width: 750px) {
+          .row_perso{
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+        @media (min-width: 750px) {
+          .row_perso{
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+        }
+
+        .dropdown-menu{
+            background: rgb(223,213,250);
+        }
+        /*
+        ATTENTION TRES UTILE AVEC UN TRAITEMENT JS POUR LE MeNu
+        */
+        .dropdown-item{
+            margin-right: 50px;
+        }
+        .nbQuizzSpan {
+            background: rgba(72, 59, 107, 0.9);
+            border-radius: 10px;
+            color: white;
+            position: absolute;
+            right: 5px;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+    </style>
 		<!-- Modal -->
 		<div class="modal fade" id="connectuserModal" tabindex="-1" role="dialog" aria-labelledby="connectuserModal" aria-hidden="true">
 		  <div class="modal-dialog modal-dialog-centered" role="document">
@@ -78,18 +122,35 @@
 
 	    	<!-- HEADER Présent sur toute les pages-->
 	    	<div class="row head_style">
-				<div class="col-md-1"><a href="{% url 'Quizz:home' %}"><img src="{% static "img/logo.png" %}" width="70rem" height="75rem" /></a></div>
-				<div class="col colmenu"><H1 class="textcolor">POPS Quizz</H1></div>
+				<div class="col-md-10" style="padding-bottom: 5px">
+                    <div class="row row_perso">
+                        <div class="colperso">
+                            <a href="{% url 'Quizz:home' %}"><img src="{% static "img/logo.png" %}" height="45rem" /></a>
+                        </div>
+                        <div class="colperso">
+                             <div class="dropdown">
+                              <button class="btn btn-outline-light connectBtn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Catégories
+                              </button>
+                              <div class="dropdown-menu" id="catMenu" aria-labelledby="dropdownMenuButton">
+
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 				{% if request.session.login is None %}
 				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="connectBtn"><i class="fas fa-user-lock"></i>&nbsp;<b>Connexion</b></button></div>
 				{% else %}
+<!--				<a href="{% url 'Quizz:retour-salon' %}"><b>Retourner au salon</b></a>-->
 				<div class="col-md-2 colmenu"><button type="button" class="btn btn-outline-info connectBtn" id="userBtn"
-					data-html="true" 
-   					data-toggle="popover" 
-   					data-trigger="manual" 
+					data-html="true"
+   					data-toggle="popover"
+   					data-trigger="manual"
    					data-placement="bottom"
-   					data-content="<div class='userbtnitem' id='disconnect'><i class='fas fa-sign-out-alt'></i>&nbsp;Déconnexion</div><div class='userbtnitem'><i class='fas fa-tachometer-alt'></i>&nbsp;Tableau de bord</div>"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
+   					data-content="<div class='userbtnitem' id='disconnect'><i class='fas fa-sign-out-alt'></i>&nbsp;Déconnexion</div><div class='userbtnitem' id='dashboard'><i class='fas fa-tachometer-alt'></i>&nbsp;Tableau de bord</div>"><i class="fas fa-user"></i>&nbsp;<b>{{request.session.login}}</b></button></div>
 				{% endif %}
+            <input type="hidden" id="dashboard-url" value="{% url 'Quizz:dashboard_profile' %}">
 	    	</div>
 
 	    	<!-- BODY -->
@@ -117,12 +178,10 @@
 				<script type="text/javascript" src="{% static "js/popper.min.js"%}"></script>
 				<script type="text/javascript" src="{% static "js/jquery-ui.js"%}"></script>
 				<script type="text/javascript" src="{% static "js/bootstrap.bundle.js"%}"></script>
-				<script type="text/javascript" src="{% static "js/bootstrap.bundle.min.js"%}"></script>
 				<script type="text/javascript" src="{% static "js/bootstrap.js"%}"></script>
-				<script type="text/javascript" src="{% static "js/bootstrap.min.js"%}"></script>
-				{% endblock %}
-				{% block js_per_page %}
 				<script type="text/javascript" src="{% static "js/connectuser.js"%}"></script>
+                {% endblock %}
+				{% block js_per_page %}
 				{% endblock %}
 				<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
 	    			<!-- Doit rester vide -->
@@ -130,9 +189,11 @@
 	    	</div>
 
 	    	<!-- FOOTER Présent sur toute les pages-->
-	    	<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 foot">Copyright © 2020 POPS Quizz. All rights reserved.</div>
-	    	</div>
+	    	<!-- <footer>
+		    	<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 foot">Copyright © 2020 POPS Quizz. All rights reserved.</div>
+		    	</div>
+		    </footer> -->
 		</div>
 	</body>
 </html>

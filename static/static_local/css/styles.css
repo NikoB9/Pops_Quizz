@@ -42,11 +42,11 @@ html, body {
 	height: 100%;
     min-height: 100%;
 }
-
+/*
 .foot {
 	padding: 15pt 0pt 15pt 0pt;
 	text-align: center;
-}
+}*/
 
 .textcolor{
 	color: rgb(177,155,217) !important;
@@ -161,3 +161,31 @@ html, body {
 	float: right;
 }
 
+.hidden {
+	visibility: hidden;
+}
+
+.style_form {
+	border-radius: .25rem;
+	border: 1px solid rgb(177,155,217);
+	height: 35px;
+	padding: 5px
+}
+
+.bonne_reponse {
+	background-color: lightgreen !important;
+	color:darkgreen !important;
+}
+
+.mauvaise_reponse {
+	background-color: red !important;
+	color:darkred !important;
+}
+
+.pad {
+	padding-top: 15px
+}
+
+.marges {
+	margin-right: 4px;
+}

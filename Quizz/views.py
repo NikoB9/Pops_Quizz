@@ -18,6 +18,7 @@ from Quizz.requests.request_game import *
 from Quizz.requests.request_possible_answer import *
 from Quizz.requests.request_answer_type import *
 from Quizz.requests.request_player import *
+from Quizz.requests.request_categories import *
 
 # regex
 import re
@@ -35,30 +36,111 @@ import datetime
 
 
 def index(request):
-    allforms = getAllForms()
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
+    allforms = getAllForms(user)
+
     return render(request, "home/index.html", {'allforms': allforms})
 
 
-def openform(request, id_form):
+def quizz_by_cat(request, cat_id):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
+    cat = get_category_by_id(cat_id)
+    allforms = getQuizzByCat(cat, user)
+
+    allgames = []
+    for f in allforms:
+        games = getGamesToJoinByForm(f)
+        for g in games:
+            if get_nb_player_by_game(g) < g.slot_max:
+                allgames.append(g)
+
+    return render(request, "home/quizz_by_cat.html", {'allforms': allforms, 'allgames': allgames, 'cat': cat})
+
+
+def create_game(request, id_form):
+    user = getUserByLogin(request.session['login'])
+    if len(player_waiting_game(user)) > 0:
+        return retour_salon(request)
+    f = getFormById(id_form)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, False, "DRAFT")
+    create_player(game, user)
+
+    return render(request, "home/create-game.html", {'form': f, 'game':game})
+
+
+def attente(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
+    user = getUserByLogin(request.session['login'])
     game_name = request.POST.get('game_name', None)
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
+    game = get_game_by_uuid(game_uuid)
+    if game.game_status.type=="DRAFT":
+        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "WAITING")
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+
+    return render(request, "home/attente.html", {'game':game, 'is_author':is_author, 'players':players, 'friends':friends})
+
+
+def joindre_partie(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(game_uuid)
+    waiting_games = player_waiting_game(user)
+
+    if len(waiting_games)==1 and waiting_games[0].game.uuid != game_uuid:
+        return retour_salon(request)
+    if not is_user_in_game(user, game):
+        create_player(game, user)
+
+    friends = get_users_friends(user)
+    players = get_players_number_of_game(get_players_by_game(game))
+    is_author = game.author == user
+
+    return render(request, "home/attente.html", {'game': game, 'is_author': is_author, 'players': players, 'friends': friends})
+
+
+def retour_salon(request):
+    user = getUserByLogin(request.session['login'])
+    if len(player_waiting_game(user)) == 0:
+        return index(request)
+    game = get_game_waiting_of_user(user)
+
+    return joindre_partie(request, game.uuid)
+
+
+def quitter_partie(request, game_uuid):
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(game_uuid)
+    user_leave_game(user, game)
+
+    return index(request)
+
+
+def openform(request, game_uuid):
+    game = get_game_by_uuid(game_uuid)
     login = request.session['login']
-    game = create_gameBD(id_form, login, game_name, is_public, slot_max, "IN_PROGRESS")
+    player = get_player_by_game_by_login(game, login)
+    if player.score != 0:
+        return correction(request, player.id)
 
-    user = getUserByLogin(login)
-
-    player = Player()
-    player.user = user
-    player.game = game
-    player.score = 0
-    player.save()
-
-    f = getFormsById(id_form)
+    f = getFormById(game.form.id)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
+    change_game_status(game, "IN_PROGRESS")
 
-    return render(request, "home/game.html", {'form': f, 'player': player})
+    return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
 
 
 def users(request):
@@ -136,15 +218,6 @@ def connectUser(request):
     return JsonResponse(data)
 
 
-def create_game(request, id_form):
-    f = getFormsById(id_form)
-    questions = getQuestionsByForm(f)
-    f.questions = getPossibleAnswersByQuestions(questions)
-    #print(f)
-
-    return render(request, "home/create-game.html", {'form': f})
-
-
 def disconnect(request):
     del request.session['login']
 
@@ -156,42 +229,41 @@ def disconnect(request):
 
 
 def creation(request):
+    if request.method == 'POST':
 
-    if request.method == 'POST' :
-
-        #print(request.POST)
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
 
-        form = addQuizzForm(title, author, description)
+        # TODO à modifier pour quand on pourra choisir les catégories
+        form = addQuizzForm(title, author, description, ['Autre catégorie'])
 
         nbQuestions = request.POST.get('nbQuestions')
 
         for i in range(int(nbQuestions)):
-            numq = i+1
+            numq = i + 1
             numq = str(numq)
 
-            q_title = request.POST.get('qst_'+numq+'_title')
-            q_answerType = request.POST.get('qst_'+numq+'_answerType')
+            q_title = request.POST.get('qst_' + numq + '_title')
+            q_answerType = request.POST.get('qst_' + numq + '_answerType')
             if q_answerType == "radio":
                 q_answerType = "UNIQUE_ANSWER"
             elif q_answerType == "checkbox":
                 q_answerType = "QCM"
             elif q_answerType == "text":
                 q_answerType = "INPUT"
-            q_order = request.POST.get('qst_'+numq+'_order')
+            q_order = request.POST.get('qst_' + numq + '_order')
 
             type = getType(q_answerType)
             question = addQuestion(form, type, q_title, q_order)
 
-            q_nbAnswers = request.POST.get('qst_'+numq+'_nbAnswers')
+            q_nbAnswers = request.POST.get('qst_' + numq + '_nbAnswers')
 
             for j in range(int(q_nbAnswers)):
-                numa = str(j+1)
+                numa = str(j + 1)
                 numa = str(numa)
 
-                a_value = request.POST.get('qst_'+numq+'_ans_'+numa+'_value')
+                a_value = request.POST.get('qst_' + numq + '_ans_' + numa + '_value')
                 if q_answerType == "INPUT":
                     a_correct = True
                 else:
@@ -200,64 +272,251 @@ def creation(request):
 
                 addPossibleAnswer(question, a_correct, a_value)
 
+        return index(request)
 
     return render(request, "home/creation.html")
 
 
-def categories(request):
-    return render(request, "home/categories.html")
+def edit_quizz(request, id_quizz):
+
+    f = getFormById(id_quizz)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+
+    data={
+        'form' : f,
+    }
+
+    return render(request, "home/edit_quizz.html", data)
+
+
+def delete_quizz(request, id_quizz):
+
+    delete_form(id_quizz)
+
+    return index(request)
 
 
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)
-    change_game_status(game, "DONE")
     players = get_players_by_game_order_by_score_desc(game)
-    print(players)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
 def saveUserAnswers(request):
-	idplayer = request.POST.get('idplayer')
-	player = Player.objects.get(id=idplayer)
+    idplayer = request.POST.get('idplayer')
+    player = Player.objects.get(id=idplayer)
 
-	idPA = request.POST.get('idPA')
-	valueUser = request.POST.get('value')
+    idPA = request.POST.get('idPA')
+    valueUser = request.POST.get('value')
 
-	pa = PossibleAnswer.objects.get(id=idPA)
-	if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT" :
-		ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
-		if ua.count() >= 1 :
-			ua = UserAnswers.objects.get(player=player, possible_answer=pa)			
-			ua.value = valueUser
-		else :
-			ua = UserAnswers()
-			ua.player = player
-			ua.possible_answer = pa
-			ua.value = valueUser
+    pa = PossibleAnswer.objects.get(id=idPA)
+    if pa.question.answer_type.type == "QCM" or pa.question.answer_type.type == "INPUT":
+        ua = UserAnswers.objects.filter(player=player, possible_answer=pa)
+        if ua.count() >= 1:
+            ua = UserAnswers.objects.get(player=player, possible_answer=pa)
+            ua.value = valueUser
+        else:
+            ua = UserAnswers()
+            ua.player = player
+            ua.possible_answer = pa
+            ua.value = valueUser
 
-		ua.save()
-
-
-	elif pa.question.answer_type.type == "UNIQUE_ANSWER":
-
-		answers = PossibleAnswer.objects.filter(question=pa.question)
-
-		for a in answers :
-			ua = UserAnswers.objects.filter(player=player, possible_answer=a)
-			if ua.count() >= 1 :
-				ua = UserAnswers.objects.get(player=player, possible_answer=a)		
-				ua.delete()
+        ua.save()
 
 
-		ua = UserAnswers()
-		ua.player = player
-		ua.possible_answer = pa
-		ua.value = valueUser
-		ua.save()
+    elif pa.question.answer_type.type == "UNIQUE_ANSWER":
+
+        answers = PossibleAnswer.objects.filter(question=pa.question)
+
+        for a in answers:
+            ua = UserAnswers.objects.filter(player=player, possible_answer=a)
+            if ua.count() >= 1:
+                ua = UserAnswers.objects.get(player=player, possible_answer=a)
+                ua.delete()
+
+        ua = UserAnswers()
+        ua.player = player
+        ua.possible_answer = pa
+        ua.value = valueUser
+        ua.save()
+
+    data = {
+        'is_valid': True
+    }
+
+    return JsonResponse(data)
 
 
-	data = {
-	'is_valid' : True
-	}
+def change_user_invite(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target_login = request.POST.get('user_target')
+    list_users = []
+    for user in get_n_first_users_like_with_a_user_to_exclude(user_target_login, user_source):
+        list_users.append(user.login)
 
-	return JsonResponse(data)
+    data = {
+        'is_valid': True,
+        'users': list_users
+    }
+    return JsonResponse(data)
+
+
+def answer_friend_request(request):
+    user_target = getUserByLogin(request.session['login'])
+    is_accepted = request.POST.get('request_answer') == "accept"
+    user_source = getUserByLogin(request.POST.get('user_source_login'))
+    answer_friendship_request(is_accepted, user_source, user_target)
+
+    data = {
+        'is_valid': True
+    }
+    return JsonResponse(data)
+
+
+def remove_friend(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target = getUserByLogin(request.POST.get('user_target_login'))
+    remove_friendship(user_source, user_target)
+
+    data = {
+        'is_valid': True
+    }
+    return JsonResponse(data)
+
+
+def add_friend(request):
+    user_source = getUserByLogin(request.session['login'])
+    user_target_login = request.POST.get('user_target')
+    data = {}
+    if not loginExist(user_target_login):
+        data.update({'is_valid_login': False})
+        return JsonResponse(data)
+    if user_target_login == user_source.login:
+        data.update({'cant_invite_himself': True})
+        return JsonResponse(data)
+    data.update({'is_valid_login': True, 'cant_invite_himself':False})
+    user_target = getUserByLogin(user_target_login)
+
+    if two_users_have_relationship(user_source, user_target):
+        data.update({'relationship_already_established': True})
+        data.update({'accepted': relationship_accepted(user_source, user_target)})
+        return JsonResponse(data)
+    data.update({'relationship_already_established': False})
+
+    add_friend_request(user_source, user_target)
+
+    return JsonResponse(data)
+
+
+def invite_friend(request):
+    friend_id = request.POST.get('friend_id')
+    game_uuid = request.POST.get('game_uuid')
+    data = {}
+
+    if is_user_in_waiting_room(getUserByLogin(friend_id)):
+        data = {'is_valid': False}
+        return JsonResponse(data)
+
+    create_player(get_game_by_uuid(game_uuid), getUserByLogin(friend_id));
+    data = {'is_valid': True}
+
+    return JsonResponse(data)
+
+def user_profil(request):
+    user = getUserByLogin(request.session['login'])
+
+    return render(request, 'dashboard/profil.html', {'user': user})
+    if request.method == "POST":
+
+        if request.POST.get('newpwd') == '':
+
+            user = editUserWithoutPwd(user.id, request.POST.get('loginedit'), request.POST.get('emailedit'))
+
+        elif request.POST.get('newpwd') == request.POST.get('newpwd2'):
+
+            if valideUser(user.login, request.POST.get('oldPwd')):
+
+                user = editUserBD(user.id, request.POST.get('loginedit'), request.POST.get('emailedit'), request.POST.get('newpwd'))
+
+            else :
+
+                return render(request, 'dashboard/profil.html', {'user': user, 'active': 0, 'invalid_old_pwd': True, 'invalid_new_pwd': False})
+
+        else :
+
+            return render(request, 'dashboard/profil.html', {'user': user, 'active': 0, 'invalid_old_pwd': False, 'invalid_new_pwd': True})
+
+    return render(request, 'dashboard/profil.html', {'user':user, 'active': 0, 'invalid_old_pwd': False, 'invalid_new_pwd': False})
+
+def user_history(request):
+
+    user = getUserByLogin(request.session['login'])
+
+    players = get_players_by_user_desc_date_game(user)
+
+    return render(request, 'dashboard/history.html', {'active': 1, 'players': players})
+
+
+def correction(request, player_id):
+    player = get_player_by_id(player_id)
+    calculate_score(player)
+    game = player.game
+    questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
+
+    return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})
+
+
+def menuCategories(request):
+    user = None
+    if 'login' in request.session:
+        user = getUserByLogin(request.session['login'])
+    cats = []
+    categories = get_categories()
+    for c in categories:
+        if nbQuizzByCat(c, user) > 0:
+            cats.append({'id': c.id,'label': c.label,'nbQuizz': nbQuizzByCat(c, user)})
+
+    data = {'cats':cats}
+    return JsonResponse(data)
+
+
+def stats(request):
+    user = getUserByLogin(request.session['login'])
+    forms = getAllFormsAccessUser(user)
+
+    for f in forms :
+        #Results by quizz
+        f.avgScorePlayer = get_average_score_player_by_user_and_quizz(user, f)
+        f.avgScore = get_average_score_player_by_quizz(f)
+
+    cats = get_categories()
+    for c in cats :
+        #Results by cat
+        c.avgScorePlayer = get_average_score_player_by_user_and_category(user, c)
+        c.avgScore = get_average_score_player_by_category(c)
+
+    #total level
+    avgScorePlayer = get_average_total_score_by_user(user)
+    avgScore = get_average_total_score()
+
+    data={
+        'active': 2,
+        'forms':forms,
+        'cats':cats,
+        'avgScorePlayer':avgScorePlayer,
+        'avgScore':avgScore
+    }
+
+    return render(request, 'dashboard/classement.html',data)
+
+
+def amis(request):
+    user = getUserByLogin(request.session['login'])
+    friends = get_users_friends(user)
+    send_request_friends = get_waiting_sent_users_friend(user)
+    received_request_friends = get_waiting_received_users_friend(user)
+
+    return render(request, 'dashboard/amis.html', {'friends': friends,
+                                                   'send_request_friends': send_request_friends,
+                                                   'received_request_friends': received_request_friends})

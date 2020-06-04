@@ -1,0 +1,52 @@
+{% extends 'dashboard/base.html' %}
+
+{% block dashboard_content %}
+    <h1 class="textcolor" style="text-align: center">Profil</h1>
+
+
+    {% if invalid_old_pwd %}
+        <br>
+        <div class="alert alert-danger" role="alert">
+          L'ancien mot de passe est incorrect.
+        </div>
+        <br>
+    {% elif invalid_new_pwd %}
+        <br>
+        <div class="alert alert-danger" role="alert">
+          Le nouveau mot de passe est différent de celui de vérification.
+        </div>
+        <br>
+    {% endif %}
+
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="emailedit" class="textcolor">Email</label>
+            <input type="email" class="form-control" id="emailedit" name="emailedit" value="{{ user.mail }}" aria-describedby="emailHelp" placeholder="nom.prenom@servermail.gtld">
+            <small id="emailHelp" class="form-text text-muted textcolor">Nous ne partageons pas vos données.</small>
+        </div>
+        <div class="form-group">
+            <label for="loginedit" class="textcolor">Pseudo</label>
+            <input type="text" class="form-control" id="loginedit" name="loginedit" value="{{ user.login }}" placeholder="pseudo">
+        </div>
+        <div class="form-group">
+            <label for="oldPwd" class="textcolor">Mot de passe actuel</label>
+            <input type="password" class="form-control" id="oldPwd" name="oldPwd" placeholder="Mot de passe">
+        </div>
+        <div class="form-group">
+            <label for="newpwd" class="textcolor">Nouveau mot de passe</label>
+            <input type="password" class="form-control" name="newpwd" id="newpwd" placeholder="Nouveau mot de passe">
+        </div>
+        <div class="form-group">
+            <label for="newpwd2" class="textcolor">Confirmation du nouveau mot de passe</label>
+            <input type="password" class="form-control" name="newpwd2" id="newpwd2" placeholder="Nouveau mot de passe">
+        </div>
+
+        <button type="submit"  id="subbtn" class="btn btn-success connectBtn">VALIDER</button>
+        <button type="reset"  id="resbtn" class="btn btn-danger connectBtn">ANNULER</button>
+    </form>
+
+
+{% endblock %}

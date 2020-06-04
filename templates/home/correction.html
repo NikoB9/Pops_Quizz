@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+		<h1>Votre correction de la partie : {{ game.name }}</h1>
+	  	<h3>{{ game.form.name }}</h3>
+
+	  	{% if game.form.author is not None %}
+	  		<h6>Créé par {{ game.form.author.login }}</h6>
+	  	{% else %}
+	  		<h6>Créé par teampopsquizz</h6>
+	  	{% endif %}
+
+
+  		<form id="form_answers" action="{% url 'Quizz:resultats' game.uuid %}" method="post">
+
+  			{% csrf_token %}
+  			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
+			<h2 id="score-affichage">Vous avez eu un score de {{ player.score }}</h2>
+
+			{% for q in questions %}
+				
+				<fieldset class="fdst_border"><legend class="lgd_style">{{ q.question.label }}</legend>
+					<div class="row">
+
+						{% if q.question.answer_type.type == "INPUT" %}
+
+						  	{% if q.answers.size == 0 %}
+								Pas de réponse
+						  	{% else %}
+
+						  		{% with q.answers|first as a %}
+									{% if q.question.input_valide %}
+								  		<div class="col">
+											<input type="text" class="form-control style_form bonne_reponse" id="answer{{ a.id }}" name="check{{ a.id }}" placeholder="" value="{{a.ua.value}}" disabled>
+								  		</div>
+								  	{% else %}
+								  		<div class="col">
+								  			Erreur, la/les bonne(s) réponse(s) était(ent) : 
+								  			{% for poA in q.answers %}
+								  				{{poA.value}} ;
+								  			{% endfor%}
+											<input type="text" class="form-control style_form mauvaise_reponse" id="answer{{ a.id }}" name="check{{ a.id }}" placeholder="" value="{{a.ua.value}}" disabled>
+								  		</div>
+								  	{% endif %}
+								{% endwith %}
+							{% endif %}
+
+						{% elif q.question.answer_type.type == "QCM" %}
+
+								{% for a in q.answers %}
+								  	<div class="col">
+							  			<!-- <p>a.ua={{a.ua}}</p> -->
+							  			{% if a.correct and a.ua.value == "1" %}
+									  		<div class="form-check bonne_reponse">
+									  			<input class="form-check-input " type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}" checked disabled>
+										        <label class="form-check-label bonne_reponse" for="answer{{ a.id }}">{{ a.value }}</label>
+									    	</div>
+									  	{% elif a.correct and a.ua.value != "1" %}
+									  		<div class="form-check bonne_reponse">
+										  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}" disabled>
+										        <label class="form-check-label bonne_reponse" for="answer{{ a.id }}">{{ a.value }}</label>
+									    	</div>
+									    {% elif not a.correct and a.ua.value == "1" %}
+									  		<div class="form-check mauvaise_reponse">
+										  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}" checked disabled>
+										        <label class="form-check-label mauvaise_reponse" for="answer{{ a.id }}">{{ a.value }}</label>
+									    	</div>
+									    {% else %}
+									  		<div class="form-check">
+										  		<input class="form-check-input" type="checkbox" id="answer{{ a.id }}" name="answer{{ a.id }}" disabled>
+										        <label class="form-check-label" for="answer{{ a.id }}">{{ a.value }}</label>
+									    	</div>
+									  	{% endif %}
+								  	</div>
+							  	{% empty %}
+									Pas de réponse
+								{% endfor %}
+
+
+						{% elif q.question.answer_type.type == "UNIQUE_ANSWER" %}
+
+								{% for a in q.answers %}
+								  	<div class="col">
+							  			{% if a.correct and a.ua != None %}
+									  		<div class="form-check bonne_reponse">
+												<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" checked disabled>
+									      		<label class="form-check-label bonne_reponse" for="answer{{ a.id }}">{{ a.value }}</label>
+									      	</div>
+									  	{% elif a.correct and a.ua == None %}
+									  		<div class="form-check bonne_reponse">
+												<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" disabled>
+									      		<label class="form-check-label bonne_reponse" for="answer{{ a.id }}">{{ a.value }}</label>
+									      	</div>
+									    {% elif not a.correct and a.ua != None %}
+									  		<div class="form-check mauvaise_reponse">
+												<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" checked disabled>
+									      		<label class="form-check-label mauvaise_reponse" for="answer{{ a.id }}">{{ a.value }}</label>
+									      	</div>
+									    {% else %}
+									  		<div class="form-check">
+												<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" disabled>
+									      		<label class="form-check-label" for="answer{{ a.id }}">{{ a.value }}</label>
+									      	</div>
+									    {% endif %}
+								  	</div>
+							  	{% empty %}
+									Pas de réponse
+								{% endfor %}
+
+
+						{% else %}
+
+							Type non pris en charge
+							
+						{% endif %}
+
+					</div>
+				
+				
+				</fieldset>
+			{% empty %}
+				Pas de questions
+			{% endfor %}
+
+			<br>
+			<div class="droite">
+				<button type="submit" id="resultbtn" class="btn connectBtn">VOIR LES RESULTATS</button>
+			</div>
+
+		</form>
+	</div>
+{% endblock %}
+
+{% block js_per_page %}
+{% endblock %}
