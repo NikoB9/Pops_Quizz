@@ -62,7 +62,11 @@ class Test_view(SessionEnabledTestCase):
         self.assertEquals(response.context.get('game').name, "Partie de Warren")
 
     def test_attente(self):
-        data = { 'game_name': self.game_warren.name, 'slot_max': self.game_warren.slot_max, 'is_public': self.game_warren.is_public}
+        data = {
+                'game_name': self.game_warren.name,
+                'slot_max': self.game_warren.slot_max,
+                'is_public': self.game_warren.is_public
+                }
         response = self.client.post(reverse('Quizz:attente', kwargs={'game_uuid':self.game_warren.uuid}), data)
         self.assertEquals(response.status_code, 200)
 
@@ -91,7 +95,12 @@ class Test_view(SessionEnabledTestCase):
         self.assertEquals(response.status_code, 200)
 
     def test_create_user(self):
-        data = { 'loginco': "abc", 'emailco': "abc@abc.com", 'passwordco': "abcabc", 'passwordco2': "abcabc"}
+        data = {
+                'loginco': "abc",
+                'emailco': "abc@abc.com",
+                'passwordco': "abcabc",
+                'passwordco2': "abcabc"
+                }
         response = self.client.post(reverse('Quizz:create_user'), data)
         self.assertEquals(response.status_code, 200)
 
@@ -102,4 +111,103 @@ class Test_view(SessionEnabledTestCase):
 
     def test_disconnect(self):
         response = self.client.get(reverse('Quizz:disconnect'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_creation_post(self):
+        data = {
+                'form_title': "Test",
+                'form_description': "Test",
+                'nbQuestions': "3",
+                'qst_1_title': "Test question 1 radio",
+                'qst_1_answerType': "radio",
+                'qst_1_order': "1",
+                'qst_1_nbAnswers': "2",
+                'qst_1_ans_1_value': "A",
+                'qst_1_ans_2_value': "B",
+                'qst_1_ans_1_correct': "on",
+                'qst_1_ans_2_correct': "off",
+
+                'qst_2_title': "Test question 2 checkbox",
+                'qst_2_answerType': "checkbox",
+                'qst_2_order': "2",
+                'qst_2_nbAnswers': "3",
+                'qst_2_ans_1_value': "A",
+                'qst_2_ans_2_value': "B",
+                'qst_2_ans_3_value': "C",
+                'qst_2_ans_1_correct': "on",
+                'qst_2_ans_2_correct': "on",
+                'qst_2_ans_3_correct': "off",
+
+                'qst_3_title': "Test question 3 text",
+                'qst_3_answerType': "text",
+                'qst_3_order': "3",
+                'qst_3_nbAnswers': "1",
+                'qst_3_ans_1_value': "A",
+                }
+        response = self.client.post(reverse('Quizz:creation'), data)
+        self.assertEquals(response.status_code, 200)
+
+    def test_creation_get(self):
+        response = self.client.get(reverse('Quizz:creation'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_edit_quizz(self):
+        response = self.client.get(reverse('Quizz:edit_quizz', kwargs={'id_quizz': 1}))
+        self.assertEquals(response.status_code, 200)
+
+    def test_delete_quizz(self):
+        response = self.client.get(reverse('Quizz:delete_quizz', kwargs={'id_quizz': 1}))
+        self.assertEquals(response.status_code, 200)
+
+    def test_saveUserAnswers_QCM(self):
+        data = {
+                'idplayer': "1",
+                'idPA': "2",
+                'value': "2",
+                }
+        response = self.client.post(reverse('Quizz:save_user_answers'), data)
+        self.assertEquals(response.status_code, 200)
+
+    def test_saveUserAnswers_UNIQUE_ANSWERS(self):
+        data = {
+                'idplayer': "1",
+                'idPA': "4",
+                'value': "2",
+                }
+        response = self.client.post(reverse('Quizz:save_user_answers'), data)
+        self.assertEquals(response.status_code, 200)
+
+    def test_change_user_invite(self):
+        pass
+
+    def test_remove_friend(self):
+        pass
+
+    def test_add_friend(self):
+        pass
+
+    def test_invite_friend(self):
+        pass
+
+    def test_user_profil(self):
+        pass
+
+    def test_user_history(self):
+        response = self.client.get(reverse('Quizz:dashboard_history'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_correction(self):
+        response = self.client.get(reverse('Quizz:correction', kwargs={'player_id': 1}))
+        self.assertEquals(response.status_code, 200)
+
+    def test_menuCategories(self):
+        response = self.client.get(reverse('Quizz:menuCategories'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_stats(self):
+        response = self.client.get(reverse('Quizz:dashboard_stats'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_amis(self):
+        response = self.client.get(reverse('Quizz:dashboard_friend'))
         self.assertEquals(response.status_code, 200)
