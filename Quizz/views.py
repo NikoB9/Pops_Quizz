@@ -538,7 +538,8 @@ def stats(request):
         'forms':forms,
         'cats':cats,
         'avgScorePlayer':avgScorePlayer,
-        'avgScore':avgScore
+        'avgScore':avgScore,
+        'user':user,
     }
 
     return render(request, 'dashboard/classement.html',data)

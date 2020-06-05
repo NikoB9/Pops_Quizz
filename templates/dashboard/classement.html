@@ -117,6 +117,31 @@
       </script>
         <div id="general_stats"></div>
 
+    {% if user.good_answer == 0 and user.bad_answer == 0 %}
+    {% else %}
+    <h1 class="textcolor" style="text-align: center">Répartition des réponses</h1>
+
+
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart_answer);
+      function drawChart_answer() {
+        var data = google.visualization.arrayToDataTable([
+          ['Réponses', 'Nombres'],
+          ['Bonnes réponses', {{user.good_answer}}],
+          ['Mauvaises réponses', {{user.bad_answer}}],
+        ]);
+        var options = {
+          pieSliceText: 'label',
+          colors: ['#00ff00', '#cc33ff']
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('answer_stats'));
+        chart.draw(data, options);
+      }
+
+      </script>
+        <div id="answer_stats"></div>
+    {% endif %}
 
 
 {% endblock %}

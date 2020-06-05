@@ -97,6 +97,7 @@ class Question(models.Model):
     answer_type = models.ForeignKey(AnswerType, on_delete=models.CASCADE)
     label = models.TextField(null=False, blank=False, unique=False)
     order = models.IntegerField(null=False, blank=False, unique=False)
+    need_correction = models.BooleanField(default=True)
 
     def __str__(self):
         return self.label

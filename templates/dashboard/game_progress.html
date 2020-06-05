@@ -14,7 +14,14 @@
     <br>
     <h1 class="textcolor" style="text-align: center">Parties en cours</h1>
     {% for game in in_progress_game %}
-    <p>{{ game.name }} créé par {{ game.author.login }} {{game.player_playing}}/{{game.player_max}} ont répondu</p>
+    <p>
+        {{ game.name }} créé par {{ game.author.login }}
+        {{game.player_playing}}/{{game.player_max}} ont répondu.
+        {% if game.not_answered %}
+            N'avez pas encore répondu à ce quizz :
+            <button onclick="window.location.href = '{% url 'Quizz:openform' game.uuid %}'">REPONDRE AU QUIZZ</button>
+        {% endif %}
+    </p>
     {% empty %}
     Aucune en cours
     {% endfor %}
