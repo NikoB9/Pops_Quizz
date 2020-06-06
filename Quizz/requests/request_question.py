@@ -22,6 +22,7 @@ def addQuestion(form, at, label, order):
     q.answer_type = at
     q.label = label
     q.order = order
+    q.need_correction = False
     q.save()
     return q
 

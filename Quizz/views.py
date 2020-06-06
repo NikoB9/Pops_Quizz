@@ -69,7 +69,8 @@ def create_game(request, id_form):
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
     game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, False, "DRAFT")
-    create_player(game, user)
+    if not is_user_in_game(user, game):
+        create_player(game, user)
 
     return render(request, "home/create-game.html", {'form': f, 'game':game})
 
@@ -101,6 +102,10 @@ def joindre_partie(request, game_uuid):
 
     if len(waiting_games)==1 and waiting_games[0].game.uuid != game_uuid:
         return retour_salon(request)
+    if is_user_invited_in_game(user, game):
+        player = get_player_by_game_by_login(game, user.login)
+        player.is_invited = False
+        player.save()
     if not is_user_in_game(user, game):
         create_player(game, user)
 
@@ -139,6 +144,7 @@ def openform(request, game_uuid):
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
     change_game_status(game, "IN_PROGRESS")
+    kick_invited_players(game)
 
     return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
 
@@ -303,6 +309,13 @@ def resultats(request, game_uuid):
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
+def game_progress(request):
+    user = getUserByLogin(request.session['login'])
+    invited_games = get_game_invited_of_user(user)
+    in_progress_game = get_game_in_progress_of_user(user)
+    return render(request, "dashboard/game_progress.html", {'invited_games': invited_games, 'in_progress_game': in_progress_game})
+
+
 def saveUserAnswers(request):
     idplayer = request.POST.get('idplayer')
     player = Player.objects.get(id=idplayer)
@@ -410,15 +423,34 @@ def add_friend(request):
 
 
 def invite_friend(request):
-    friend_id = request.POST.get('friend_id')
-    game_uuid = request.POST.get('game_uuid')
-    data = {}
+    user = getUserByLogin(request.POST.get('friend_id'))
+    game = get_game_by_uuid(request.POST.get('game_uuid'))
 
-    if is_user_in_waiting_room(getUserByLogin(friend_id)):
+    if is_user_in_waiting_room(user) or is_user_invited_in_game(user, game):
         data = {'is_valid': False}
         return JsonResponse(data)
 
-    create_player(get_game_by_uuid(game_uuid), getUserByLogin(friend_id));
+    create_player(game, user, True);
+    data = {'is_valid': True}
+
+    return JsonResponse(data)
+
+
+def kick_user(request):
+    user = getUserByLogin(request.POST.get('user_login'))
+    game = get_game_by_uuid(request.POST.get('game_uuid'))
+    user_leave_game(user, game)
+
+    data = {'is_valid': True}
+
+    return JsonResponse(data)
+
+
+def refuse_game_invitation(request):
+    user = getUserByLogin(request.session['login'])
+    game = get_game_by_uuid(request.POST.get('game_uuid'))
+    user_leave_game(user, game)
+
     data = {'is_valid': True}
 
     return JsonResponse(data)
@@ -448,6 +480,7 @@ def user_profil(request):
             return render(request, 'dashboard/profil.html', {'user': user, 'active': 0, 'invalid_old_pwd': False, 'invalid_new_pwd': True})
 
     return render(request, 'dashboard/profil.html', {'user':user, 'active': 0, 'invalid_old_pwd': False, 'invalid_new_pwd': False})
+
 
 def user_history(request):
 
@@ -505,7 +538,8 @@ def stats(request):
         'forms':forms,
         'cats':cats,
         'avgScorePlayer':avgScorePlayer,
-        'avgScore':avgScore
+        'avgScore':avgScore,
+        'user':user,
     }
 
     return render(request, 'dashboard/classement.html',data)

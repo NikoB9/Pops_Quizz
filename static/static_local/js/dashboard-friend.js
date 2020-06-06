@@ -84,7 +84,7 @@ ajaxChangeUserInvite = function(that)
 }
 
 $('#user_target').keyup(function () {
-    ajaxChangeUserInvite(this)
+    ajaxChangeUserInvite(this);
     document.getElementById("btn-add-friend").disabled = $(this).val().trim() === "";
 });
 
@@ -101,7 +101,6 @@ ajaxRemoveFriend = function(that)
 
     /*Entrer le token csrf dans le header si la route est sécurisé*/
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-    /*console.log("csrf token : "+csrftoken);*/
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !that.crossDomain) {
@@ -135,7 +134,6 @@ ajaxAnswerFriendRequest = function(that)
 
     /*Entrer le token csrf dans le header si la route est sécurisé*/
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-    /*console.log("csrf token : "+csrftoken);*/
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !that.crossDomain) {
@@ -158,7 +156,6 @@ ajaxAnswerFriendRequest = function(that)
 
 $('.accept_friend').click(function(){
     ajaxAnswerFriendRequest(this);
-    console.log("row-accept-"+$(this).val().split("|")[1])
     document.getElementById("row-accept-"+$(this).val().split("|")[1]).style.display = "none";
 });
 

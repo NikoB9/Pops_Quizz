@@ -1,0 +1,37 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block dashboard_content %}
+    <h1 class="textcolor" style="text-align: center">Parties invitées</h1>
+    {% for game in invited_games %}
+    <p id="row-invited-game-{{game.uuid}}">
+        {{ game.name }} créé par {{ game.author.login }}
+        <button onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'"><i class="fas fa-door-open"></i></button>
+        <button value="{{ game.uuid }}" class="refuse_invite"><i class="fas fa-door-closed"></i></button>
+    </p>
+    {% empty %}
+    Aucune invitation de partie
+    {% endfor %}
+    <br>
+    <h1 class="textcolor" style="text-align: center">Parties en cours</h1>
+    {% for game in in_progress_game %}
+    <p>
+        {{ game.name }} créé par {{ game.author.login }}
+        {{game.player_playing}}/{{game.player_max}} ont répondu.
+        {% if game.not_answered %}
+            N'avez pas encore répondu à ce quizz :
+            <button onclick="window.location.href = '{% url 'Quizz:openform' game.uuid %}'">REPONDRE AU QUIZZ</button>
+        {% endif %}
+    </p>
+    {% empty %}
+    Aucune en cours
+    {% endfor %}
+    <br>
+
+{% endblock %}
+
+{% block js_per_page %}
+
+<script type="text/javascript" src="{% static "js/dashboard-game-progress.js"%}">
+</script>
+
+{% endblock %}

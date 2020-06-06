@@ -31,6 +31,7 @@ urlpatterns = [
     path('dashboard/history', views.user_history, name="dashboard_history"),
     path('dashboard/classement', views.stats, name="dashboard_stats"),
     path('dashboard/amis', views.amis, name="dashboard_friend"),
+    path('game-progress/', views.game_progress, name='dashboard-game-progress'),
 
     #AJAX
     re_path(r'create_user$', views.create_user, name="create_user"),
@@ -43,6 +44,8 @@ urlpatterns = [
     re_path(r'change_user_invite$', views.change_user_invite),
     re_path(r'categories_menu$', views.menuCategories, name="menuCategories"),
     re_path(r'invite_friend$', views.invite_friend),
+    re_path(r'kick_user$', views.kick_user),
+    re_path(r'refuse_game_invitation$', views.refuse_game_invitation),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),
