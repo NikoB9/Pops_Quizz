@@ -63,8 +63,6 @@ def quizz_by_cat(request, cat_id):
 
 def create_game(request, id_form):
     user = getUserByLogin(request.session['login'])
-    if len(player_waiting_game(user)) > 0:
-        return retour_salon(request)
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
@@ -311,12 +309,14 @@ def resultats(request, game_uuid):
 
 def game_progress(request):
     user = getUserByLogin(request.session['login'])
-    invited_games = get_game_invited_of_user(user)
-    in_progress_game = get_game_in_progress_of_user(user)
+    invited_games = get_games_invited_of_user(user)
+    in_progress_game = get_games_in_progress_of_user(user)
+    waiting_games = get_waiting_games(user)
     return render(request, "dashboard/game_progress.html",
                   {'active': 4,
                   'invited_games': invited_games,
-                   'in_progress_game': in_progress_game})
+                   'in_progress_game': in_progress_game,
+                   'waiting_games':waiting_games})
 
 
 def saveUserAnswers(request):

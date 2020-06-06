@@ -27,6 +27,17 @@
     {% endfor %}
     <br>
 
+    <h1 class="textcolor" style="text-align: center">Parties en attente</h1>
+    {% for game in waiting_games %}
+    <p>
+        {{ game.name }} créé par {{ game.author.login }}
+        <button onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'"><i class="fas fa-door-open"></i></button>
+    </p>
+    {% empty %}
+    Aucune en cours
+    {% endfor %}
+    <br>
+
 {% endblock %}
 
 {% block js_per_dashboard_page %}
