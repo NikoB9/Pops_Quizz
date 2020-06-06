@@ -43,14 +43,14 @@ def getQuizzByCat(cat, user):
     return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
 
 
-def addQuizzForm(name, author, description, categories_labels):
+def addQuizzForm(name, author, description, categories_ids):
     f = Form()
     f.name = name
     f.author = author
     f.description = description
     f.save()
-    for lbl in categories_labels:
-        f.categories.add(get_category_by_label(lbl))
+    for cat_id in categories_ids:
+        f.categories.add(get_category_by_id(cat_id))
     f.save()
     set_access_form_for_a_user(author, f, "CREATOR")
     return f

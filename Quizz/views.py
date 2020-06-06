@@ -234,9 +234,8 @@ def creation(request):
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
-
-        # TODO à modifier pour quand on pourra choisir les catégories
-        form = addQuizzForm(title, author, description, ['Autre catégorie'])
+        categories = request.POST.get('category_list').split(';')
+        form = addQuizzForm(title, author, description, categories)
 
         nbQuestions = request.POST.get('nbQuestions')
 
@@ -274,20 +273,27 @@ def creation(request):
 
         return index(request)
 
-    return render(request, "home/creation.html")
+    categories = get_categories()
+    data={
+        'categories' : categories,
+    }
+
+    return render(request, "home/creation.html", data)
 
 
 def edit_quizz(request, id_quizz):
-
+    
     f = getFormById(id_quizz)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
-
+    categories = get_categories()
+    
     data={
         'form' : f,
+        'categories' : categories,
     }
 
-    return render(request, "home/edit_quizz.html", data)
+    return render(request, "home/creation.html", data)
 
 
 def delete_quizz(request, id_quizz):
