@@ -313,7 +313,10 @@ def game_progress(request):
     user = getUserByLogin(request.session['login'])
     invited_games = get_game_invited_of_user(user)
     in_progress_game = get_game_in_progress_of_user(user)
-    return render(request, "dashboard/game_progress.html", {'invited_games': invited_games, 'in_progress_game': in_progress_game})
+    return render(request, "dashboard/game_progress.html",
+                  {'active': 4,
+                  'invited_games': invited_games,
+                   'in_progress_game': in_progress_game})
 
 
 def saveUserAnswers(request):
@@ -551,6 +554,17 @@ def amis(request):
     send_request_friends = get_waiting_sent_users_friend(user)
     received_request_friends = get_waiting_received_users_friend(user)
 
-    return render(request, 'dashboard/amis.html', {'friends': friends,
-                                                   'send_request_friends': send_request_friends,
-                                                   'received_request_friends': received_request_friends})
+    return render(request, 'dashboard/amis.html', {
+        'active': 3,
+        'friends': friends,
+        'send_request_friends': send_request_friends,
+        'received_request_friends': received_request_friends})
+
+
+def chat(request):
+    return render(request, 'chat/index.html')
+
+def room(request, room_name):
+    return render(request, 'chat/room.html', {
+        'room_name': room_name
+    })

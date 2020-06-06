@@ -29,6 +29,9 @@
               #resp-menu-dahsboard-small {
                 display: block;
               }
+              #dashboard_content{
+                  max-width: calc(100% - 70px);
+              }
             }
             @media (min-width: 1000px) {
               #resp-menu-dahsboard-large {
@@ -36,6 +39,9 @@
               }
               #resp-menu-dahsboard-small {
                 display: none;
+              }
+              #dashboard_content{
+                  max-width: calc(100% - 180px);
               }
             }
         </style>
@@ -59,7 +65,7 @@
                     <li class="list-group-item dashboard-item" onclick="window.location.pathname='{% url 'Quizz:dashboard-game-progress' %}'"><i class="fas fa-gamepad"></i></li>
                 </ul>
             </div>
-            <div class="col">
+            <div class="col" id="dashboard_content">
                 {% block dashboard_content %}
 
                 {% endblock %}
@@ -79,11 +85,15 @@
     <script>
     $( document ).ready(function() {
       var itemactive = $('#activeitem').val();
+      console.log(itemactive)
         $( ".list-group" ).each(function( index ) {
           $( this ).find('li').each(function (index) {
+              console.log(index)
             if (itemactive == index) $(this).addClass('active');
           });
         });
     });
     </script>
+{% block js_per_dashboard_page %}
+{% endblock %}
 {% endblock %}
