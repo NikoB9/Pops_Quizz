@@ -6,12 +6,25 @@ from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 
 
+def get_game_invited_of_user(user):
+    games = []
+    for player in Player.objects.filter(user=user, is_invited=True):
+        games.append(player.game)
+    return games
+
+
+def get_game_in_progress_of_user(user):
+    games = []
+    for player in Player.objects.filter(user=user, is_invited=False, game__game_status__type="IN_PROGRESS"):
+        player.game.player_playing = len(Player.objects.filter(game=player.game, is_invited=False, has_answered=True))
+        player.game.player_max = len(Player.objects.filter(game=player.game, is_invited=False))
+        player.game.not_answered = len(Player.objects.filter(user=user, game=player.game, has_answered=False)) > 0
+        games.append(player.game)
+    return games
+
+
 def get_game_waiting_of_user(user):
-    return Player.objects.get(user=user, game__game_status__type="WAITING").game
-
-
-def is_user_in_waiting_room(user):
-    return len(Player.objects.filter(user=user, game__game_status__type="WAITING")) > 0
+    return Player.objects.get(user=user, game__game_status__type="WAITING", is_invited=False).game
 
 
 def get_all_game():

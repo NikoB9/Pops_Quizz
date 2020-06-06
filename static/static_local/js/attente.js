@@ -41,7 +41,7 @@ ajaxInvitationGame = function (that){
 }
 
 
-$('i').click(function(){
+$('.fa-envelope-square').click(function(){
 	ajaxInvitationGame(this);
 });
 
@@ -52,3 +52,40 @@ function attention_commencer() {
 function attention_quitter() {
 	return confirm("Attention, vous êtes sur le point de quitter la partie. \nVous ne pourrez plus la rejoindre à moins d'y être invité. \nEtes-vous sûr de vouloir continuer ?");
 }
+
+ajaxKickUser = function (that){
+
+	var game_uuid = document.getElementById("game_uuid").value;
+	var user_login = $(that).val();
+	var url_back = './kick_user';
+
+	/*Entrer le token csrf dans le header si la route est sécurisé*/
+	var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+	$.ajaxSetup({
+		beforeSend: function(xhr, settings) {
+			if (!csrfSafeMethod(settings.type) && !that.crossDomain) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		}
+	});
+
+	$.ajax({
+		type: 'POST',
+		url: url_back,
+		data: {'user_login':user_login, 'game_uuid':game_uuid},
+		dataType: 'json',
+		success: function (data) {
+			if (data.is_valid) {
+
+			}
+		}
+	});
+}
+
+
+$('.exclude_user').click(function(){
+	ajaxKickUser(this);
+	console.log("row-user-"+$(this).val())
+	document.getElementById("row-user-"+$(this).val()).style.visibility = "hidden";
+});

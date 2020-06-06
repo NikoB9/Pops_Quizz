@@ -34,7 +34,7 @@ def get_users_from_friends_list_not_user_param(friends, user_to_exclude):
     return user_friends
 
 
-def get_n_first_users_like_with_a_user_to_exclude(regex, user, number_of_user=4):
+def get_n_first_users_like_with_a_user_to_exclude(regex, user, number_of_user=5):
     return User.objects.exclude(login=user.login).filter(login__icontains=regex)[:number_of_user]
 
 
@@ -42,7 +42,19 @@ def createUserBD(login, mail, password):
     user = User()
     user.login = login
     user.mail = mail
+    user.good_answer = 0
+    user.bad_answer = 0
     user.password = hashers.make_password(password)
+    user.save()
+
+
+def user_add_good_answer(user):
+    user.good_answer += 1
+    user.save()
+
+
+def user_add_bad_answer(user):
+    user.bad_answer += 1
     user.save()
 
 

@@ -31,18 +31,21 @@ urlpatterns = [
     path('dashboard/history', views.user_history, name="dashboard_history"),
     path('dashboard/classement', views.stats, name="dashboard_stats"),
     path('dashboard/amis', views.amis, name="dashboard_friend"),
+    path('game-progress/', views.game_progress, name='dashboard-game-progress'),
 
     #AJAX
-    re_path(r'create_user$', views.create_user),
-    re_path(r'user_connection$', views.connectUser),
-    re_path(r'disconnect_user$', views.disconnect),
-    re_path(r'save_user_answers$', views.saveUserAnswers),
+    re_path(r'create_user$', views.create_user, name="create_user"),
+    re_path(r'user_connection$', views.connectUser, name="connectUser"),
+    re_path(r'disconnect_user$', views.disconnect, name="disconnect"),
+    re_path(r'save_user_answers$', views.saveUserAnswers, name="save_user_answers"),
     re_path(r'add_friend$', views.add_friend),
     re_path(r'remove_friend$', views.remove_friend),
     re_path(r'answer_friend_request$', views.answer_friend_request),
     re_path(r'change_user_invite$', views.change_user_invite),
-    re_path(r'categories_menu$', views.menuCategories),
+    re_path(r'categories_menu$', views.menuCategories, name="menuCategories"),
     re_path(r'invite_friend$', views.invite_friend),
+    re_path(r'kick_user$', views.kick_user),
+    re_path(r'refuse_game_invitation$', views.refuse_game_invitation),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),
