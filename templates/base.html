@@ -24,6 +24,15 @@
             color: rgb(72,59,107);
             border: none;
         }
+        .MenuButton{
+            background: rgb(223,213,250);
+            color: rgb(72,59,107);
+            border: none;
+        }
+        .MenuButton:hover{
+            background: rgb(223,213,250);
+            color: rgb(72,59,107);
+        }
         .colperso{
             display: flex;
             flex-direction: column;
@@ -136,6 +145,11 @@
 
                               </div>
                             </div>
+                        </div>
+                        <div class="colperso">
+                            <button onclick="window.location.href = '{% url 'Quizz:chat' %}'" class="btn btn-outline-light MenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Chat
+                              </button>
                         </div>
                     </div>
                 </div>

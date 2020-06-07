@@ -31,7 +31,11 @@ urlpatterns = [
     path('dashboard/history', views.user_history, name="dashboard_history"),
     path('dashboard/classement', views.stats, name="dashboard_stats"),
     path('dashboard/amis', views.amis, name="dashboard_friend"),
-    path('game-progress/', views.game_progress, name='dashboard-game-progress'),
+    path('dashboard/game-progress', views.game_progress, name='dashboard-game-progress'),
+
+    #Chat
+    path('chat/', views.chat, name='chat'),
+    path('chat/<str:room_name>/', views.room, name='room'),
 
     #AJAX
     re_path(r'create_user$', views.create_user, name="create_user"),

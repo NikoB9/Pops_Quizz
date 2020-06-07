@@ -6,14 +6,19 @@ from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
 
 
-def get_game_invited_of_user(user):
+def get_games_invited_of_user(user):
     games = []
     for player in Player.objects.filter(user=user, is_invited=True):
         games.append(player.game)
     return games
 
+def get_waiting_games(user):
+    games = []
+    for player in Player.objects.filter(user=user, game__game_status__type="WAITING"):
+        games.append(player.game)
+    return games
 
-def get_game_in_progress_of_user(user):
+def get_games_in_progress_of_user(user):
     games = []
     for player in Player.objects.filter(user=user, is_invited=False, game__game_status__type="IN_PROGRESS"):
         player.game.player_playing = len(Player.objects.filter(game=player.game, is_invited=False, has_answered=True))
