@@ -117,7 +117,7 @@ class Test_view(SessionEnabledTestCase):
         data = {
                 'form_title': "Test",
                 'form_description': "Test",
-                'category_list': "[]",
+                'category_list': "",
                 'nbQuestions': "3",
                 'qst_1_title': "Test question 1 radio",
                 'qst_1_answerType': "radio",
