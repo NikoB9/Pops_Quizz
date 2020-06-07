@@ -6,7 +6,7 @@ function csrfSafeMethod(method) {
 
 ajaxInvitationGame = function (that){
 
-	var game_uuid = document.getElementById("game_uuid").value;
+	var game_uuid = $("#game_uuid").val();
 	var friend_id = $(that).attr('id');
 	var url_back = './invite_friend';
 
@@ -31,6 +31,7 @@ ajaxInvitationGame = function (that){
     			alert("L'inviation a été envoyée avec succès !")
     			document.getElementById(friend_id).classList.remove("fa-envelope-square");
     			document.getElementById(friend_id).classList.add("fa-check-square");
+    			window.location.href = window.location.href;
     		} else {
     			alert("La personne a déjà été invité dans une partie.")
     			document.getElementById(friend_id).classList.remove("fa-envelope-square");
@@ -89,3 +90,46 @@ $('.exclude_user').click(function(){
 	console.log("row-user-"+$(this).val())
 	document.getElementById("row-user-"+$(this).val()).style.visibility = "hidden";
 });
+
+
+/*******Real Time********/
+const idgame = JSON.parse(document.getElementById('idgame').textContent);
+
+var loc = window.location, new_uri;
+if (loc.protocol === "https:") {
+	new_uri = "wss:";
+} else {
+	new_uri = "ws:";
+}
+
+const chatSocket = new WebSocket(
+	new_uri += '//'
+	+ window.location.host
+	+ '/ws/attente_game/'
+	+ idgame
+	+ '/'
+);
+
+chatSocket.onopen = function(e) {
+  chatSocket.send(JSON.stringify({
+		'type' : 'connect_on',
+		'user' : document.getElementById('pseudo').value,
+		'message': ""
+	}));
+};
+
+chatSocket.onmessage = function(e) {
+	const data = JSON.parse(e.data);
+	console.log(data);
+	if (data.type == 'connect_on'){
+		if ($('#row-user_wait-'+data.user).length){
+			console.log('userdetect')
+			window.location.href = window.location.href;
+		}
+	}
+};
+
+chatSocket.onclose = function(e) {
+	console.error('Chat socket closed unexpectedly');
+};
+

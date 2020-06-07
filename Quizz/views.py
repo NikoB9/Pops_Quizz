@@ -62,6 +62,8 @@ def quizz_by_cat(request, cat_id):
 
 
 def create_game(request, id_form):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     f = getFormById(id_form)
     questions = getQuestionsByForm(f)
@@ -80,15 +82,24 @@ def attente(request, game_uuid):
     game_name = request.POST.get('game_name', None)
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
+    is_real_time = True if request.POST.get('is_real_time', None) == "on" else False
     game = get_game_by_uuid(game_uuid)
     if game.game_status.type=="DRAFT":
-        game = edit_game(game_uuid, game_name, slot_max, is_public, False, "WAITING")
+        game = edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, "WAITING")
 
     friends = get_users_friends(user)
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
+    waiting_players = get_players_waiting_by_game(game)
+    answered_players = get_players_answered_by_game(game)
 
-    return render(request, "home/attente.html", {'game':game, 'is_author':is_author, 'players':players, 'friends':friends})
+    return render(request, "home/attente.html",
+                  {'game':game,
+                   'is_author':is_author,
+                   'players':players,
+                   'friends':friends,
+                   'waiting_players':waiting_players,
+                   'answered_players':answered_players})
 
 
 def joindre_partie(request, game_uuid):
@@ -115,6 +126,8 @@ def joindre_partie(request, game_uuid):
 
 
 def retour_salon(request):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     if len(player_waiting_game(user)) == 0:
         return index(request)
@@ -124,6 +137,8 @@ def retour_salon(request):
 
 
 def quitter_partie(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     game = get_game_by_uuid(game_uuid)
     user_leave_game(user, game)
@@ -132,6 +147,8 @@ def quitter_partie(request, game_uuid):
 
 
 def openform(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
     game = get_game_by_uuid(game_uuid)
     login = request.session['login']
     player = get_player_by_game_by_login(game, login)
@@ -233,6 +250,8 @@ def disconnect(request):
 
 
 def creation(request):
+    if 'login' not in request.session:
+        return index(request)
     if request.method == 'POST':
 
         title = request.POST.get('form_title')
@@ -302,12 +321,16 @@ def delete_quizz(request, id_quizz):
 
 
 def resultats(request, game_uuid):
+    if 'login' not in request.session:
+        return index(request)
     game = get_game_by_uuid(game_uuid)
     players = get_players_by_game_order_by_score_desc(game)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
 
 def game_progress(request):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     invited_games = get_games_invited_of_user(user)
     in_progress_game = get_games_in_progress_of_user(user)
@@ -429,7 +452,7 @@ def invite_friend(request):
     user = getUserByLogin(request.POST.get('friend_id'))
     game = get_game_by_uuid(request.POST.get('game_uuid'))
 
-    if is_user_in_waiting_room(user) or is_user_invited_in_game(user, game):
+    if is_user_in_waiting_room(game, user) or is_user_invited_in_game(user, game):
         data = {'is_valid': False}
         return JsonResponse(data)
 
@@ -459,6 +482,8 @@ def refuse_game_invitation(request):
     return JsonResponse(data)
 
 def user_profil(request):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
 
     return render(request, 'dashboard/profil.html', {'user': user})
@@ -518,6 +543,8 @@ def menuCategories(request):
 
 
 def stats(request):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     forms = getAllFormsAccessUser(user)
 
@@ -549,6 +576,8 @@ def stats(request):
 
 
 def amis(request):
+    if 'login' not in request.session:
+        return index(request)
     user = getUserByLogin(request.session['login'])
     friends = get_users_friends(user)
     send_request_friends = get_waiting_sent_users_friend(user)
@@ -562,9 +591,13 @@ def amis(request):
 
 
 def chat(request):
+    if 'login' not in request.session:
+        return index(request)
     return render(request, 'chat/index.html')
 
 def room(request, room_name):
+    if 'login' not in request.session:
+        return index(request)
     return render(request, 'chat/room.html', {
         'room_name': room_name
     })

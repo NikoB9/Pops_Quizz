@@ -5,6 +5,8 @@
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
 		<h1>Salle d'attente</h1>
 		<input type="hidden" id="game_uuid" value="{{game.uuid}}">
+		<input type="hidden" id="pseudo" value="{{request.session.login}}">
+        {{ game.id|json_script:"idgame" }}
 
 		{% if game.is_random_form %}
 			<h6>Quizz aleatoire<i class="far fa-question-circle"></i></h6>
@@ -20,7 +22,7 @@
 
 		<p>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></p>
 
-		<fieldset class="fdst_border"><legend class="lgd_style">Inviter mes amis :</legend>
+		<fieldset class="fdst_border"><legend class="lgd_style">Inviter mes amis</legend>
 			<ul> 
 				{% for friend in friends %}
 					<li>{{ friend.login }} <i id="{{friend.login}}" class="fas fa-envelope-square"></i></li>
@@ -30,7 +32,7 @@
 			</ul>
 		</fieldset>
 
-		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs ({{players|length}}/{{game.slot_max}}):</legend>
+		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs ({{players|length}}/{{game.slot_max}})</legend>
 			{% for player in players %}
 				<p id="row-user-{{ player.user.login }}">
 					{{ player.user.login }} a joué {{ player.parties }} parties
@@ -44,6 +46,19 @@
 			{% endfor %}
 		</fieldset>
 
+        {% if game.is_real_time %}
+            <h1>En temps réel tous les invités doivent avoir répondus pour lancer le jeu</h1>
+            <fieldset class="fdst_border" id="wait_users"><legend class="lgd_style">Demandes en attente</legend>
+			{% for player in waiting_players %}
+				<p id="row-user_wait-{{ player.user.login }}">
+					{{ player.user.login }}
+				</p>
+			{% empty %}
+				<h6>Aucun joueur en attente</h6>
+			{% endfor %}
+            </fieldset>
+
+        {% endif %}
 		<br>
 		<form onsubmit="return attention_commencer()" action="{% url 'Quizz:openform' game.uuid %}">
 			<div class="droite">

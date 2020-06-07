@@ -46,6 +46,12 @@ def is_user_in_game(user, game):
 def get_players_by_game(game):
     return Player.objects.filter(game=game, is_invited=False)
 
+def get_players_waiting_by_game(game):
+    return Player.objects.filter(game=game, is_invited=True, has_answered=False)
+
+def get_players_answered_by_game(game):
+    return Player.objects.filter(game=game, is_invited=False, has_answered=True)
+
 
 def get_players_number_of_game(players):
     for player in players:
@@ -58,8 +64,8 @@ def is_user_invited_in_game(user, game):
     return len(Player.objects.filter(game=game, user=user, is_invited=True))>0
 
 
-def is_user_in_waiting_room(user):
-    return len(Player.objects.filter(user=user, game__game_status__type="WAITING", is_invited=False)) > 0
+def is_user_in_waiting_room(game, user):
+    return len(Player.objects.filter(user=user, game=game, game__game_status__type="WAITING", is_invited=False)) > 0
 
 
 def get_player_by_game_by_login(game, login):

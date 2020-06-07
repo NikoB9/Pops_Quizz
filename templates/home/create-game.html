@@ -28,9 +28,18 @@
 				<input type="number" class="style_form" id="slot_max" name="slot_max" value="1" min="1" onclick="privee()" >
 				<br>
 
+
+                <div id="alertcheck" class="hidden" role="alert">
+                   Information : Une partie en temps réel ne peut pas être publique.
+                </div>
+
 				<div id="public" class="hidden">
-		      		<label for="is_public">Rendre la partie publique : </label>
+		      		<label for="is_public">Partie publique </label>
 					<input type="checkbox" id="is_public" unchecked name="is_public">
+				</div>
+                <div id="realtime" class="hidden">
+		      		<label for="is_real_time">Partie en temps réel </label>
+					<input type="checkbox" id="is_real_time" unchecked name="is_real_time">
 				</div>
 				<br>
 				<!-- <label id="info" class="nothidden">Attention, il faut plus d'un joueur pour pouvoir rendre la partie publique.</label>
@@ -48,12 +57,35 @@
 		function privee(){
 			var saisie =document.getElementById("slot_max").value;
 			var info = document.getElementById("public");
+			var info2 = document.getElementById("realtime");
 			if (saisie == 1) {
 				info.className = 'hidden';
+				info2.className = 'hidden';
 			} else {
-				info.className = '';
+				info.className = 'visible';
+				info2.className = 'visible';
 			}
 		}
 	</script>
 
+{% endblock %}
+
+{% block js_per_page %}
+    <script>
+        //Verifier que publique et temps réel ne soient pas tous les deux check
+        $('#is_public').click(function () {
+            if($(this).prop("checked") == true && $('#is_real_time').prop("checked") == true){
+                $('#is_real_time').prop("checked",false);
+                $('#alertcheck').removeClass('hidden');
+                $('#alertcheck').addClass('visible');
+              }
+        });
+        $('#is_real_time').click(function () {
+            if($(this).prop("checked") == true && $('#is_public').prop("checked") == true){
+                $('#is_public').prop("checked",false);
+                $('#alertcheck').removeClass('hidden');
+                $('#alertcheck').addClass('visible');
+              }
+        });
+	</script>
 {% endblock %}
