@@ -240,7 +240,7 @@ def creation(request):
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
-        categories = request.POST.get('category_list').split(';')
+        categories = request.POST.get('category_list').split(';').remove('')
         form = addQuizzForm(title, author, description, categories)
 
         nbQuestions = request.POST.get('nbQuestions')
