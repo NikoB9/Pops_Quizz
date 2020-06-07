@@ -43,6 +43,7 @@ ajaxInvitationGame = function (that){
 
 
 $('.fa-envelope-square').click(function(){
+	console.log("envelope click")
 	ajaxInvitationGame(this);
 });
 
@@ -57,7 +58,7 @@ function attention_quitter() {
 ajaxKickUser = function (that){
 
 	var game_uuid = document.getElementById("game_uuid").value;
-	var user_login = $(that).val();
+	var user_id = $(that).val();
 	var url_back = './kick_user';
 
 	/*Entrer le token csrf dans le header si la route est sécurisé*/
@@ -74,7 +75,7 @@ ajaxKickUser = function (that){
 	$.ajax({
 		type: 'POST',
 		url: url_back,
-		data: {'user_login':user_login, 'game_uuid':game_uuid},
+		data: {'user_id':user_id, 'game_uuid':game_uuid},
 		dataType: 'json',
 		success: function (data) {
 			if (data.is_valid) {

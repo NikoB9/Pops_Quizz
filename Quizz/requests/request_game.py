@@ -1,9 +1,9 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
-from Quizz.models import *
+from Quizz.requests import request_user
 from Quizz.requests.request_game_status import get_game_status
-from Quizz.requests.request_user import *
 from Quizz.requests.request_form import *
+import Quizz.requests.request_user
 
 
 def get_games_invited_of_user(user):
@@ -12,11 +12,13 @@ def get_games_invited_of_user(user):
         games.append(player.game)
     return games
 
+
 def get_waiting_games(user):
     games = []
     for player in Player.objects.filter(user=user, game__game_status__type="WAITING"):
         games.append(player.game)
     return games
+
 
 def get_games_in_progress_of_user(user):
     games = []
@@ -38,6 +40,10 @@ def get_all_game():
 
 def get_game_by_uuid(uuid):
     return Game.objects.get(uuid=uuid)
+
+
+def get_game_by_id(id):
+    return Game.objects.get(id=id)
 
 
 def change_game_status(game, status):
@@ -65,7 +71,7 @@ def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_stat
 
 def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, is_random_form=False,
                   game_status="WAITING"):
-    author = getUserByLogin(user_name)
+    author = request_user.getUserByLogin(user_name)
     form = getFormById(form_id)
     game_status = get_game_status(game_status)
 

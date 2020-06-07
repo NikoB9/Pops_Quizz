@@ -8,7 +8,7 @@ function csrfSafeMethod(method) {
 ajaxRefuseInvitation = function(that)
 {
   var url_back =  './refuse_game_invitation';
-  var game_uuid = $(that).val();
+  var game_id = $(that).val();
 
   /*Entrer le token csrf dans le header si la route est sécurisé*/
   var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -22,7 +22,7 @@ ajaxRefuseInvitation = function(that)
   $.ajax({
   	type: 'POST',
     url: url_back,
-    data: {'game_uuid':game_uuid},
+    data: {'game_id':game_id},
     dataType: 'json',
     success: function (data) {
   	  if(data.is_valid) {

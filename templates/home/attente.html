@@ -25,7 +25,7 @@
 		<fieldset class="fdst_border"><legend class="lgd_style">Inviter mes amis</legend>
 			<ul> 
 				{% for friend in friends %}
-					<li>{{ friend.login }} <i id="{{friend.login}}" class="fas fa-envelope-square"></i></li>
+					<li>{{ friend.login }} <i id="{{friend.id}}" class="fas fa-envelope-square"></i></li>
 				{% empty %}
 					Aucun ami, n'hésitez pas à en ajouter dans la page ami
 				{% endfor %}
@@ -34,10 +34,10 @@
 
 		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs ({{players|length}}/{{game.slot_max}})</legend>
 			{% for player in players %}
-				<p id="row-user-{{ player.user.login }}">
+				<p id="row-user-{{ player.user.id }}">
 					{{ player.user.login }} a joué {{ player.parties }} parties
 					{% if is_author and not player.is_author %}
-						<button value="{{ player.user.login }}" class="exclude_user"><i class="fas fa-user-slash"></i></button>
+						<button value="{{ player.user.id }}" class="exclude_user"><i class="fas fa-user-slash"></i></button>
 					{% endif %}
 					{% if player.is_author %}<i class="fas fa-crown"></i>{% endif %}
 				</p>

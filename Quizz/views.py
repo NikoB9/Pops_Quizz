@@ -87,7 +87,7 @@ def attente(request, game_uuid):
     if game.game_status.type=="DRAFT":
         game = edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, "WAITING")
 
-    friends = get_users_friends(user)
+    friends = get_users_friends_not_in_game(user, game)
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
     waiting_players = get_players_waiting_by_game(game)
@@ -107,10 +107,10 @@ def joindre_partie(request, game_uuid):
         return index(request)
     user = getUserByLogin(request.session['login'])
     game = get_game_by_uuid(game_uuid)
-    waiting_games = player_waiting_game(user)
+    if not is_user_in_game(user, game) and game.slot_max <= len(get_players_by_game(game)):
+        # TODO afficher un message de redirection vers les parties en cours lorsque la partie est pleine
+        return game_progress(request)
 
-    if len(waiting_games)==1 and waiting_games[0].game.uuid != game_uuid:
-        return retour_salon(request)
     if is_user_invited_in_game(user, game):
         player = get_player_by_game_by_login(game, user.login)
         player.is_invited = False
@@ -118,22 +118,11 @@ def joindre_partie(request, game_uuid):
     if not is_user_in_game(user, game):
         create_player(game, user)
 
-    friends = get_users_friends(user)
+    friends = get_users_friends_not_in_game(user, game)
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
 
     return render(request, "home/attente.html", {'game': game, 'is_author': is_author, 'players': players, 'friends': friends})
-
-
-def retour_salon(request):
-    if 'login' not in request.session:
-        return index(request)
-    user = getUserByLogin(request.session['login'])
-    if len(player_waiting_game(user)) == 0:
-        return index(request)
-    game = get_game_waiting_of_user(user)
-
-    return joindre_partie(request, game.uuid)
 
 
 def quitter_partie(request, game_uuid):
@@ -142,7 +131,6 @@ def quitter_partie(request, game_uuid):
     user = getUserByLogin(request.session['login'])
     game = get_game_by_uuid(game_uuid)
     user_leave_game(user, game)
-
     return index(request)
 
 
@@ -470,7 +458,7 @@ def invite_friend(request):
 
 
 def kick_user(request):
-    user = getUserByLogin(request.POST.get('user_login'))
+    user = get_user_by_id(request.POST.get('user_id'))
     game = get_game_by_uuid(request.POST.get('game_uuid'))
     user_leave_game(user, game)
 
@@ -481,7 +469,7 @@ def kick_user(request):
 
 def refuse_game_invitation(request):
     user = getUserByLogin(request.session['login'])
-    game = get_game_by_uuid(request.POST.get('game_uuid'))
+    game = get_game_by_id(request.POST.get('game_id'))
     user_leave_game(user, game)
 
     data = {'is_valid': True}

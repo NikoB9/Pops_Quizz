@@ -16,7 +16,6 @@ urlpatterns = [
     path('salle-attente/<str:game_uuid>/', views.attente, name='attente'),
     path('joindre-partie/<str:game_uuid>/', views.joindre_partie, name='joindre-partie'),
     path('quitter-partie/<str:game_uuid>/', views.quitter_partie, name='quitter-partie'),
-    path('retour-salon', views.retour_salon, name='retour-salon'),
     path('game/<str:game_uuid>/', views.openform, name='openform'),
     path('correction/<int:player_id>/', views.correction, name='correction'),
     path('resultats/<str:game_uuid>/', views.resultats, name='resultats'),
