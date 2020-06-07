@@ -302,6 +302,20 @@ def delete_quizz(request, id_quizz):
 
     return index(request)
 
+def edit_right(request, id_quizz):
+    f = getFormById(id_quizz)
+    if request.method == 'POST':
+        print(request.POST)
+        for key, value in request.POST.items():
+            if "role" in key:
+                id_user = key.split("_")[1]
+                role = value
+                user = getUserByLogin(id_user)
+                set_access_form_for_a_user(user, f, role)
+    user = getUserByLogin(request.session['login'])
+    users = get_users_access_form(user, f)
+    return render(request, "home/edit_right.html", {'form':f, 'users':users})
+
 
 def resultats(request, game_uuid):
     game = get_game_by_uuid(game_uuid)

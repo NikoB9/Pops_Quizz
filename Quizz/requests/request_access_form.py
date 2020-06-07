@@ -26,3 +26,6 @@ def set_access_form_for_a_user(user, form, access_form_type_libelle):
     access_form.form = form
     access_form.access_form_type = access_form_type
     access_form.save()
+
+def get_users_access_form(user, form):
+    return AccessForm.objects.select_related('access_form_type').exclude(user=user).filter(form=form)

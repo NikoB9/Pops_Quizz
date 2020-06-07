@@ -23,7 +23,7 @@ urlpatterns = [
     path('show_cat_<int:cat_id>/', views.quizz_by_cat, name='show_cat'),
     path('edit_quizz_<int:id_quizz>/', views.edit_quizz, name='edit_quizz'),
     path('delete_quizz/<int:id_quizz>/', views.delete_quizz, name='delete_quizz'),
-
+    path('edit_right/<int:id_quizz>/', views.edit_right, name='edit_right'),
 
     #DASHBOARD
     path('dashboard', views.user_profil, name="dashboard_base"),
