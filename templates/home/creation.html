@@ -4,10 +4,27 @@
 		<form method="POST">
 			{% csrf_token %}
 			<div id="form_header">
-				<input type="text" name="form_title" class="style_form typo_generale" value="Titre du Quizz">
+				<input type="text" name="form_title" class="style_form typo_generale" value="{% if form is not None %}{{form.name}}{% else %}Titre du Quizz{% endif %}">
 				<br>
 				<br>
-				<textarea name="form_description" class="form-control style_form typo_generale">Description du quizz</textarea>
+				<textarea name="form_description" class="form-control style_form typo_generale">{% if form is not None %}{{form.description}}{% else %}Description du Quizz{% endif %}</textarea>
+				<br>
+				<label for="select_category">Catégorie(s)</label>
+				<div id="pnl_category">
+					<select id="select_category">
+						<option value="">Ajouter une catégorie</option>
+						{% for c in categories %}
+							<option value={{c.id}}>{{c.label}}</option>
+						{% endfor %}
+					</select>
+					<input type="hidden" id="hidden_category_list" value="" name="category_list">
+				</div>
+				<br>
+				<div id="pnl_time">
+					<label for="chk_limited_time">Temps limité ?</label>
+					<input type="checkbox" name="limited_time" id="chk_limited_time" class="">
+					<input type="time" name="time_limit" value="00:00" id="tm_time_limit" class="hidden">
+				</div>
 			</div>
 			<br>
 			<div id="questions">
@@ -16,12 +33,14 @@
 			<br>
 			<div class="droite">
 				<button type=button class="btn connectBtn" onclick="addNewQuestion()">Ajouter une question</button>
-				<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
 				<input type="submit" class="btn connectBtn" value="Sauvegarder">
-			</div>		
+			</div>
+			<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
+			{% if form is not None %}
+			<input type="hidden" id="hidden_form_id" value="{{form.id}}"" name="formId">
+			{% endif %}
 		</form>
     </div>
-
 	<script>
 		class Question {
 
@@ -101,7 +120,7 @@
 				this.$btnAddNewAnswer.type = "button";
 				this.$btnAddNewAnswer.innerText = "+";
 				this.$btnAddNewAnswer.onclick = function(e){
-					let ans = new Answer(self.type, "Nouvelle réponse");
+					let ans = new Answer(self.type, "Nouvelle réponse", false);
 					self.addAnswer(ans);
 				}
 
@@ -118,6 +137,10 @@
 				this.$pnlQuestion.appendChild(this.$pnlFooter);
 				this.$pnlQuestion.appendChild(this.$hiddenOrder);
 				this.$pnlQuestion.appendChild(this.$hiddenNbAnswer);
+
+				//SET CSS
+				this.$btnUp.classList.add("btn", "connectBtn");
+				this.$btnDown.classList.add("btn", "connectBtn");
 
 				//SET DATA
 				this.setOrder(_order);
@@ -188,7 +211,7 @@
 
 		class Answer {
 
-			constructor(_type, _value) {
+			constructor(_type, _value, _correct) {
 				//ATTRIBUTES DEFINITION
 				this.type;
 				this.value;
@@ -238,10 +261,6 @@
 				this.$pnlAnswer.appendChild(this.$hiddenType);
 				this.$pnlAnswer.appendChild(this.$hiddenOrder);
 
-				//SET DATAS
-				this.setType(_type);
-				this.setValue(_value);
-
 				// SET CSS 
 				// this.$inputExample.classList.add("style_form");
 				this.$txtValue.classList.add("style_form");
@@ -249,6 +268,11 @@
 				this.$btnDelete.classList.add("btn", "connectBtn");
 				this.$btnUp.classList.add("btn", "connectBtn");
 				this.$btnDown.classList.add("btn", "connectBtn");
+
+				//SET DATAS
+				this.setType(_type);
+				this.setValue(_value);
+				this.setCorrect(_correct);
 			}
 			setType(_type) {
 				this.type = _type;
@@ -271,7 +295,8 @@
 				this.$txtValue.value = this.value;
 			}
 			setCorrect(_correct) {
-
+				this.correct = _correct;
+				this.$chkCorrect.checked = this.correct;
 			}
 			setOrder(_order) {
 				this.order = _order;
@@ -293,7 +318,7 @@
 
 		function addNewQuestion() {
 			let newQuestion = new Question(questions.length+1, "Nouvelle question "+(questions.length+1) , "radio", []);
-			let newAnswer = new Answer("checkbox", "Nouvelle réponse");
+			let newAnswer = new Answer("checkbox", "Nouvelle réponse", false);
 			newQuestion.addAnswer(newAnswer);
 			addQuestion(newQuestion);
 		}
@@ -333,10 +358,88 @@
 				$questions.appendChild(_question.$pnlQuestion);
 		}
 
+		class Category {
+			constructor(_id, _label) {
+				this.id = _id;
+				this.label = _label;		
+				this.$pnlCategory = document.createElement("div");
+				this.$label = document.createElement("label");
+				this.$btnDelete = document.createElement("button");
+				this.$pnlCategory.appendChild(this.$label);
+				this.$pnlCategory.appendChild(this.$btnDelete);
+
+				this.$label.innerText = _label;
+				this.$btnDelete.innerText = "X";
+				this.$btnDelete.type = "button";
+
+				this.$pnlCategory.classList.add("category_item");
+				this.$btnDelete.classList.add("category_delete_button");
+
+				let self = this;
+				this.$btnDelete.onclick = function(e){ removeCategory(self); };
+			}
+		}
+
+		function addCategory(_category) {
+			categories.push(_category.id);
+			$categoryList.value = categories.join(";");
+			$categories.insertBefore(_category.$pnlCategory, $selectCategory);
+			for(var i = 0; i < $selectCategory.length; i++)
+				if($selectCategory[i].value == _category.id)
+					$selectCategory[i].disabled = true;
+		}
+
+		function removeCategory(_category) {
+			categories.splice(categories.indexOf(_category.id), 1);
+			$categoryList.value = categories.join(";");
+			_category.$pnlCategory.remove();
+			for(var i = 0; i < $selectCategory.length; i++)
+				if($selectCategory[i].value == _category.id)
+					$selectCategory[i].disabled = false;
+		}
+
+		//DATA
+		categories = [];
 		questions = [];
+		answerTypes = ["radio", "checkbox", "text"];
+		answerTypeControl = { "UNIQUE_ANSWER":"radio", "QCM":"checkbox", "INPUT":"text" };
+		//HTML ELEMENTS
+		$categories = document.getElementById("pnl_category");
+		$selectCategory = document.getElementById("select_category");
+		$categoryList = document.getElementById("hidden_category_list");
 		$questions = document.getElementById("questions");
 		$nbQuestions = document.getElementById("hidden_nb_questions");
-		answerTypes = ["radio", "checkbox", "text"];
+		$chkLimitedTime = document.getElementById("chk_limited_time");
+		$tmTimeLimit = document.getElementById("tm_time_limit");
+
+		$chkLimitedTime.onchange = function(e) {
+			if($chkLimitedTime.checked)
+				$tmTimeLimit.classList.remove("hidden");
+			else 
+				$tmTimeLimit.classList.add("hidden"); 
+		}
+
+		$selectCategory.onchange = function(e) {
+			if($selectCategory.value == undefined || $selectCategory.value == "")
+				return;
+			let cat = new Category($selectCategory.value, $selectCategory.options[$selectCategory.selectedIndex].text);
+			addCategory(cat);
+			$selectCategory.value = "";
+		}
+
+		{% if form is not None %}
+			{% for c in form.categories.all %}
+				addCategory(new Category({{c.id}}, "{{c.label}}"));
+			{% endfor %}
+			let answersQ = [];
+			{% for q in form.questions %}
+				{% for a in q.answers %}
+					answersQ.push(new Answer(answerTypeControl["{{q.question.answer_type.type}}"], "{{a.value}}", "{{a.correct}}"=="True"?true:false));
+				{% endfor %}
+				addQuestion(new Question({{q.question.order}}, "{{q.question.label}}", answerTypeControl["{{q.question.answer_type.type}}"], answersQ));
+				answersQ = [];
+			{% endfor %}
+		{% endif %}
 	</script>
 
 

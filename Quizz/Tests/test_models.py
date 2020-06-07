@@ -49,7 +49,8 @@ class Test_model(TestCase):
         self.assertEquals(forms[0].name, "Premier formulaire")
 
         user = getUserByLogin("TimFake")
-        addQuizzForm("new form", user, "new description", ["Autre catégorie"])
+        categories = [get_category_by_label("Autre catégorie").id]
+        addQuizzForm("new form", user, "new description", categories)
         forms = getAllForms()
         self.assertEquals(len(forms), 5)
         self.assertEquals(forms[4].name, "new form")
