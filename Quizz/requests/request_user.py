@@ -5,17 +5,11 @@ from Quizz.models import *
 from django.contrib.auth import hashers
 
 from Quizz.requests.request_friends import *
-from Quizz.requests.request_player import *
 
 
 def get_users_friends(user):
     friends = get_friends_relationship_of_user(user)
     return get_users_from_friends_list_not_user_param(friends, user)
-
-
-def get_users_friends_not_in_game(user, game):
-    friends = get_users_friends(user)
-    return list(filter(lambda u: not is_user_in_game(u, game), friends))
 
 
 def get_waiting_sent_users_friend(user):

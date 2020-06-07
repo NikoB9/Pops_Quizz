@@ -1,9 +1,8 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
-from Quizz.requests import request_user
+from Quizz.requests.request_user import *
 from Quizz.requests.request_game_status import get_game_status
 from Quizz.requests.request_form import *
-import Quizz.requests.request_user
 
 
 def get_games_invited_of_user(user):
@@ -71,7 +70,7 @@ def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_stat
 
 def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, is_random_form=False,
                   game_status="WAITING"):
-    author = request_user.getUserByLogin(user_name)
+    author = getUserByLogin(user_name)
     form = getFormById(form_id)
     game_status = get_game_status(game_status)
 

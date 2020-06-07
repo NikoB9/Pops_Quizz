@@ -74,10 +74,6 @@ class Test_view(SessionEnabledTestCase):
         response = self.client.get(reverse('Quizz:joindre-partie', kwargs={'game_uuid': self.game_warren.uuid}))
         self.assertEquals(response.status_code, 200)
 
-    def test_retour_salon(self):
-        response = self.client.get(reverse('Quizz:retour-salon'))
-        self.assertEquals(response.status_code, 200)
-
     def test_quitter_partie(self):
         user = getUserByLogin("Warren")
         create_player(self.game_warren, user)
