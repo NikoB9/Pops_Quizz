@@ -3,10 +3,10 @@
 {% block dashboard_content %}
     <h1 class="textcolor" style="text-align: center">Parties invitées</h1>
     {% for game in invited_games %}
-    <p id="row-invited-game-{{game.uuid}}">
+    <p id="row-invited-game-{{game.id}}">
         {{ game.name }} créé par {{ game.author.login }}
         <button onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'"><i class="fas fa-door-open"></i></button>
-        <button value="{{ game.uuid }}" class="refuse_invite"><i class="fas fa-door-closed"></i></button>
+        <button value="{{ game.id }}" class="refuse_invite"><i class="fas fa-door-closed"></i></button>
     </p>
     {% empty %}
     Aucune invitation de partie

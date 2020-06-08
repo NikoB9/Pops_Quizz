@@ -3,6 +3,7 @@
 from Quizz.requests.request_game import *
 from Quizz.requests.request_game_status import get_game_status
 from Quizz.requests.request_question import *
+from Quizz.requests.request_user import *
 from Quizz.requests.request_user_answers import *
 from Quizz.requests.request_possible_answer import *
 from django.db.models import Avg, Count, Min, Sum
@@ -33,6 +34,11 @@ def user_leave_game(user, game):
 
 def kick_invited_players(game):
     Player.objects.filter(game=game, is_invited=True).delete()
+
+
+def get_users_friends_not_in_game(user, game):
+    friends = get_users_friends(user)
+    return list(filter(lambda u: not is_user_in_game(u, game), friends))
 
 
 def is_user_invited_in_game(user, game):
@@ -144,15 +150,16 @@ def calculate_score(player):
                         score -= 1
                         user_add_bad_answer(player.user)
         elif q['question'].answer_type.type == "INPUT":
-            possible_input_values = []
-            for possible_answer in q['answers']:
-                possible_input_values.append(possible_answer.value.strip())
-            user_answer_input = get_input_response_by_question_by_player(q['question'], player)
-            if user_answer_input.value.strip() in possible_input_values:
-                score += 1
-                user_add_good_answer(player.user)
-            else:
-                user_add_bad_answer(player.user)
+            if is_input_response_have_user_answer(q['question'], player):
+                possible_input_values = []
+                for possible_answer in q['answers']:
+                    possible_input_values.append(possible_answer.value.strip().upper())
+                user_answer_input = get_input_response_by_question_by_player(q['question'], player)
+                if user_answer_input.value.strip().upper() in possible_input_values:
+                    score += 1
+                    user_add_good_answer(player.user)
+                else:
+                    user_add_bad_answer(player.user)
     player.score = score
     player.has_answered = True
     player.save()

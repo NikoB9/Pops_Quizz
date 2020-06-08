@@ -31,7 +31,7 @@
 					  	{% else %}
 							{% with q.answers|first as answer %}
 						  		<div class="col">
-									<input type="text" class="form-control style_form" id="answer{{ answer.id }}" name="check{{ answer.id }}" placeholder="" required>
+									<input type="text" class="form-control style_form" id="answer{{ answer.id }}" name="check{{ answer.id }}" placeholder="">
 						  		</div>
 							{% endwith %}
 						{% endif %}
@@ -57,7 +57,7 @@
 
 					  		<div class="form-check">
 					  		
-								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}" required>
+								<input class="form-check-input" type="radio" name="qradio{{ q.question.id }}" id="answer{{ a.id }}" value="{{ a.id }}">
 					      		<label class="form-check-label" for="answer{{ a.id }}">
 					            {{ a.value }}
 					      		</label>

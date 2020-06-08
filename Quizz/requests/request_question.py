@@ -36,13 +36,14 @@ def getUserAnswersByQuestions(questions, player):
                 p.ua = UserAnswers.objects.get(player=player, possible_answer=p)
 
         if q.answer_type.type == "INPUT":
-            possible_input_values = []
-            for possible_answer in pa:
-                possible_input_values.append(possible_answer.value.strip())
-            q.input_valide = False
-            user_answer_input = get_input_response_by_question_by_player(q, player)
-            if user_answer_input.value.strip() in possible_input_values:
-                q.input_valide = True
+            if is_input_response_have_user_answer(q, player):
+                possible_input_values = []
+                for possible_answer in pa:
+                    possible_input_values.append(possible_answer.value.strip().upper())
+                q.input_valide = False
+                user_answer_input = get_input_response_by_question_by_player(q, player)
+                if user_answer_input.value.strip().upper() in possible_input_values:
+                    q.input_valide = True
 
         Tquestion.append({'question': q, 'answers': pa})
 

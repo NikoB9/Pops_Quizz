@@ -76,6 +76,10 @@ def getUserByLogin(login):
     return User.objects.get(login=login)
 
 
+def get_user_by_id(id):
+    return User.objects.get(id=id)
+
+
 def getAllUsers():
     return User.objects.all()
 
