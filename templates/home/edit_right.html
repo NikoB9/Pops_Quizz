@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+        <h3>Liste des joueurs du formulaire: {{ form.name }}</h3>
+        <form action="{% url 'Quizz:edit_right' form.id %}" method="post">
+            {% csrf_token %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom utilisateur</th>
+                        <th scope="col">Droit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <th>{{u.user.login}}</th>
+                        <th>
+                            <select class="custom-select" name="role_{{u.user.login}}" >
+                                <option selected>{{u.access_form_type.type}}</option>
+                                {% if u.access_form_type.type == "PUBLISHER" %}
+                                    <option value="EDITOR">EDITOR</option>
+                                    <option value="CREATOR">CREATOR</option>
+                                {% elif u.access_form_type.type == "EDITOR" %}
+                                    <option value="PUBLISHER">PUBLISHER</option>
+                                    <option value="CREATOR">CREATOR</option>
+                                {% else %}
+                                    <option value="PUBLISHER">PUBLISHER</option>
+                                    <option value="EDITOR">EDITOR</option>
+                                {% endif %}
+                            </select>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="droite">
+                <button type="submit"  id="subbtn" class="btn connectBtn">ENREGISTRER</button>
+                <button type="reset"  id="resbtn" class="btn connectBtn">ANNULER</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js_per_page %}
+<script type="text/javascript" src="{% static "js/edit_right.js"%}"></script>
+{% endblock %}
