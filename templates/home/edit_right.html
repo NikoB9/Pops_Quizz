@@ -15,22 +15,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for u in users %}
+                    {% for u in friends %}
                     <tr>
-                        <th>{{u.user.login}}</th>
+                        <th>{{u.login}}>{{u.role_none}}</th>
                         <th>
-                            <select class="custom-select" name="role_{{u.user.login}}" >
-                                <option selected>{{u.access_form_type.type}}</option>
-                                {% if u.access_form_type.type == "PUBLISHER" %}
-                                    <option value="EDITOR">EDITOR</option>
-                                    <option value="CREATOR">CREATOR</option>
-                                {% elif u.access_form_type.type == "EDITOR" %}
-                                    <option value="PUBLISHER">PUBLISHER</option>
-                                    <option value="CREATOR">CREATOR</option>
-                                {% else %}
-                                    <option value="PUBLISHER">PUBLISHER</option>
-                                    <option value="EDITOR">EDITOR</option>
-                                {% endif %}
+                            <select class="custom-select" name="role_{{u.id}}">
+                                <option value="EDITOR" {% if u.role_editor %} selected {% endif %}>Editeur</option>
+                                <option value="PUBLISHER" {% if u.role_publisher %} selected {% endif %}>Joueur</option>
+                                <option value="NONE" {% if u.role_none %} selected{% endif %}>Aucun droit</option>
                             </select>
                         </th>
                     </tr>

@@ -23,7 +23,7 @@ class Test_model(TestCase):
     def test_get_access_form_from_form_and_user(self):
         form_1 = getFormById(1)
         user = getUserByLogin("Warren")
-        self.assertEquals("CREATOR", return_highest_user_acces_to_form(user, form_1))
+        self.assertEquals("CREATOR", return_highest_user_acces_to_form(user, form_1).access_form_type.type)
 
     ## TEST CATEGORIES ##
 
