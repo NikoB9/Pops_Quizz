@@ -111,3 +111,23 @@ class WaitingRoom(AsyncWebsocketConsumer):
             'user': user,
             'message': message
         }))
+
+    # Receive message from room group
+    async def chat_message(self, event):
+        message = event['message']
+        user = event['user']
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'chat_message',
+            'user': user,
+            'message': message
+        }))
+
+    # Receive message from room group
+    async def refresh(self, event):
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'refresh',
+        }))

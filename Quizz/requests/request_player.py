@@ -78,6 +78,8 @@ def get_player_by_game_by_login(game, login):
     user = User.objects.get(login=login)
     return Player.objects.get(game=game, user=user)
 
+def get_nb_player_invited_or_not_by_game(game):
+    return len(Player.objects.filter(game=game))
 
 def get_nb_player_by_game(game):
     return len(get_players_by_game(game))

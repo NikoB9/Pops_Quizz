@@ -91,15 +91,13 @@ def attente(request, game_uuid):
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
     waiting_players = get_players_waiting_by_game(game)
-    answered_players = get_players_answered_by_game(game)
 
     return render(request, "home/attente.html",
                   {'game':game,
                    'is_author':is_author,
                    'players':players,
                    'friends':friends,
-                   'waiting_players':waiting_players,
-                   'answered_players':answered_players})
+                   'waiting_players':waiting_players})
 
 
 def joindre_partie(request, game_uuid):
@@ -121,8 +119,14 @@ def joindre_partie(request, game_uuid):
     friends = get_users_friends_not_in_game(user, game)
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
+    waiting_players = get_players_waiting_by_game(game)
 
-    return render(request, "home/attente.html", {'game': game, 'is_author': is_author, 'players': players, 'friends': friends})
+    return render(request, "home/attente.html", {
+        'game': game,
+        'is_author': is_author,
+        'players': players,
+        'friends': friends,
+       'waiting_players':waiting_players})
 
 
 def quitter_partie(request, game_uuid):
@@ -471,15 +475,27 @@ def add_friend(request):
 
 
 def invite_friend(request):
-    user = getUserByLogin(request.POST.get('friend_id'))
+    user = get_user_by_id(request.POST.get('friend_id'))
     game = get_game_by_uuid(request.POST.get('game_uuid'))
+    print(game.slot_max)
+    print(get_nb_player_invited_or_not_by_game(game))
 
     if is_user_in_waiting_room(game, user) or is_user_invited_in_game(user, game):
-        data = {'is_valid': False}
+        data = {'is_valid': False,
+                'message':"La personne a déjà été invité dans la partie.",
+                }
+        return JsonResponse(data)
+
+    elif game.is_real_time and game.slot_max <= get_nb_player_invited_or_not_by_game(game) :
+
+        data = {'is_valid': False,
+                'message':"Vous avez atteind le nombre maximal d'invités pour cette partie.",
+                }
         return JsonResponse(data)
 
     create_player(game, user, True);
-    data = {'is_valid': True}
+    data = {'is_valid': True,
+            'message':'L\'inviation a été envoyée avec succès !'}
 
     return JsonResponse(data)
 
