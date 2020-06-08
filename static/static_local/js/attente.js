@@ -27,13 +27,12 @@ ajaxInvitationGame = function (that){
 		data: {'friend_id':friend_id, 'game_uuid':game_uuid},
 		dataType: 'json',
     	success: function (data) {
+			alert(data.message)
     		if (data.is_valid) {
-    			alert("L'inviation a été envoyée avec succès !")
     			document.getElementById(friend_id).classList.remove("fa-envelope-square");
     			document.getElementById(friend_id).classList.add("fa-check-square");
-    			window.location.href = window.location.href;
+				refreshForAll();
     		} else {
-    			alert("La personne a déjà été invité dans une partie.")
     			document.getElementById(friend_id).classList.remove("fa-envelope-square");
     			document.getElementById(friend_id).classList.add("fa-times");
     		}
@@ -92,7 +91,24 @@ $('.exclude_user').click(function(){
 	document.getElementById("row-user-"+$(this).val()).style.visibility = "hidden";
 });
 
+/*****Chat open/close*****/
+$('#chatbtn').click(function () {
+	$(this).removeClass('visible');
+	$(this).addClass('hidden');
 
+	$('#chatdiv').removeClass('hidden');
+	$('#chatdiv').addClass('visible');
+
+	document.querySelector('#chat-message-input-min').focus();
+})
+
+$('#closechat').click(function () {
+	$('#chatdiv').removeClass('visible');
+	$('#chatdiv').addClass('hidden');
+
+	$('#chatbtn').removeClass('hidden');
+	$('#chatbtn').addClass('visible');
+})
 /*******Real Time********/
 const idgame = JSON.parse(document.getElementById('idgame').textContent);
 
@@ -103,7 +119,7 @@ if (loc.protocol === "https:") {
 	new_uri = "ws:";
 }
 
-const chatSocket = new WebSocket(
+var chatSocket = new WebSocket(
 	new_uri += '//'
 	+ window.location.host
 	+ '/ws/attente_game/'
@@ -115,7 +131,15 @@ chatSocket.onopen = function(e) {
   chatSocket.send(JSON.stringify({
 		'type' : 'connect_on',
 		'user' : document.getElementById('pseudo').value,
-		'message': ""
+		'message': " a rejoint le chat"
+	}));
+};
+
+function refreshForAll(){
+	chatSocket.send(JSON.stringify({
+		'type' : 'refresh',
+		'user' : '',
+		'message': ''
 	}));
 };
 
@@ -123,14 +147,52 @@ chatSocket.onmessage = function(e) {
 	const data = JSON.parse(e.data);
 	console.log(data);
 	if (data.type == 'connect_on'){
+		document.querySelector('#chat-log-min').innerHTML += "<div class='connect_on'>"+data.user+data.message+"</div>";
+
 		if ($('#row-user_wait-'+data.user).length){
-			console.log('userdetect')
-			window.location.href = window.location.href;
+			if (parseInt($('#playerslength').text()) >= parseInt($('#slotmax').text())){
+				window.location.pathname = '/game/'+$('#game_uuid').val()+'/';
+			}
+			else {
+				window.location.href = window.location.href;
+			}
 		}
+		else if (parseInt($('#playerslength').text()) >= parseInt($('#slotmax').text())){
+			window.location.pathname = '/game/'+$('#game_uuid').val()+'/';
+		}
+
 	}
+	else if (data.type == 'refresh')
+		window.location.href = window.location.href;
+	else if (data.type == 'chat_message')
+		document.querySelector('#chat-log-min').innerHTML += "<div class='chat_message_title-min'>"+data.user+" : </div><div class='chat_message-min'>"+data.message+"</div>";
 };
 
 chatSocket.onclose = function(e) {
 	console.error('Chat socket closed unexpectedly');
+	chatSocket = new WebSocket(
+		new_uri += '//'
+		+ window.location.host
+		+ '/ws/attente_game/'
+		+ idgame
+		+ '/'
+	);
+};
+
+document.querySelector('#chat-message-input-min').onkeyup = function(e) {
+	if (e.keyCode === 13) {  // enter, return
+		document.querySelector('#chat-message-submit-min').click();
+	}
+};
+
+document.querySelector('#chat-message-submit-min').onclick = function(e) {
+	const messageInputDom = document.querySelector('#chat-message-input-min');
+	const message = messageInputDom.value;
+	chatSocket.send(JSON.stringify({
+		'type' : 'chat_message',
+		'user' : document.getElementById('pseudo').value,
+		'message': message
+	}));
+	messageInputDom.value = '';
 };
 
