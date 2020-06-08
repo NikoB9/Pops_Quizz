@@ -20,7 +20,9 @@
 <!-- 
 		{{ game.name }} en salle d'attente -->
 
+        {% if not game.is_real_time %}
 		<p>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></p>
+        {% endif %}
 
 		<fieldset class="fdst_border"><legend class="lgd_style">Inviter mes amis</legend>
 			<ul> 
@@ -32,7 +34,7 @@
 			</ul>
 		</fieldset>
 
-		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs ({{players|length}}/{{game.slot_max}})</legend>
+		<fieldset class="fdst_border"><legend class="lgd_style">Liste des joueurs (<span id="playerslength">{{players|length}}</span>/<span id="slotmax">{{game.slot_max}})</span></legend>
 			{% for player in players %}
 				<p id="row-user-{{ player.user.id }}">
 					{{ player.user.login }} a joué {{ player.parties }} parties
@@ -47,7 +49,8 @@
 		</fieldset>
 
         {% if game.is_real_time %}
-            <h1>En temps réel tous les invités doivent avoir répondus pour lancer le jeu</h1>
+            <h2>En temps réel tous les invités doivent avoir répondus pour lancer le jeu</h2>
+            <h6>Attendez dans le salon car la partie commencera directement quand le salon sera plein et que tous le monde sera connecté.</h6>
             <fieldset class="fdst_border" id="wait_users"><legend class="lgd_style">Demandes en attente</legend>
 			{% for player in waiting_players %}
 				<p id="row-user_wait-{{ player.user.login }}">
@@ -58,7 +61,7 @@
 			{% endfor %}
             </fieldset>
 
-        {% endif %}
+        {% else %}
 		<br>
 		<form onsubmit="return attention_commencer()" action="{% url 'Quizz:openform' game.uuid %}">
 			<div class="droite">
@@ -74,7 +77,24 @@
 				<button type="submit" class="btn connectBtn marges" {% if game.game_status.type is "WAITING" %} disabled {% endif %} >QUITTER</button>
 			</div>
 		</form>
+        {% endif %}
 	</div>
+
+
+    <div id="chatbtn" class="visible">
+    <i class="fas fa-comments"></i>
+    </div>
+    <div id="chatdiv" class="hidden">
+        <div id="chat-title-min">
+            <h6>Chat</h6>
+            <span id="closechat"><i class="far fa-times-circle"></i></span>
+        </div>
+        <div id="chat-log-min"></div>
+        <div class="row" style="margin: 0">
+            <input id="chat-message-input-min" type="text" class="input-group" placeholder="Message..."><br>
+            <button id="chat-message-submit-min" type="button" class="btn connectBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
 {% endblock %}
 
