@@ -26,7 +26,7 @@ def user_form_right(user, form, exclude_author=True):
 
 def remove_access_form_for_a_user(user, form):
     access = user_form_right(user, form)
-    if access is not "NONE":
+    if access != "NONE":
         access.delete()
 
 
