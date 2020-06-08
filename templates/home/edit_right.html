@@ -17,7 +17,7 @@
                 <tbody>
                     {% for u in friends %}
                     <tr>
-                        <th>{{u.login}}>{{u.role_none}}</th>
+                        <th>{{u.login}}</th>
                         <th>
                             <select class="custom-select" name="role_{{u.id}}">
                                 <option value="EDITOR" {% if u.role_editor %} selected {% endif %}>Editeur</option>
