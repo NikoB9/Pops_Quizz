@@ -142,6 +142,8 @@ class Player(models.Model):
     score = models.IntegerField(null=True, blank=False, unique=False)
     has_answered = models.BooleanField(default=False)
     is_invited = models.BooleanField(default=False)
+    #for real time
+    questions_answered = models.ManyToManyField(Question)
 
     def __str__(self):
         return "Player " + self.user.login + " of game " + self.game.name

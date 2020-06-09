@@ -559,6 +559,9 @@ def user_history(request):
 
 def correction(request, player_id):
     player = get_player_by_id(player_id)
+    if player.game.is_real_time :
+        recalculate_user_answers(player)
+        change_game_status(player.game, "DONE")
     calculate_score(player)
     game = player.game
     questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
@@ -639,3 +642,8 @@ def room(request, room_name):
     return render(request, 'chat/room.html', {
         'room_name': room_name
     })
+
+def question_answer_by(request):
+    add_question_to_player(request.POST.get('player'),request.POST.get('question'))
+
+    return JsonResponse({'is_valid':True})

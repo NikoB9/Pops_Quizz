@@ -171,11 +171,7 @@ chatSocket.onmessage = function(e) {
 chatSocket.onclose = function(e) {
 	console.error('Chat socket closed unexpectedly');
 	chatSocket = new WebSocket(
-		new_uri += '//'
-		+ window.location.host
-		+ '/ws/attente_game/'
-		+ idgame
-		+ '/'
+		new_uri
 	);
 };
 
