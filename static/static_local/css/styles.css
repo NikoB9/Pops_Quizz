@@ -3,6 +3,107 @@ html, body {
 	margin: 0;
 	height: 100%;
 }
+#resp-menu-dahsboard-large{
+    max-width: 180px;
+    height: 100%;
+    border: solid 1px rgb(177,155,217);
+    /*background: rgba(255,255,255,0.2);*/
+}
+#resp-menu-dahsboard-small{
+    max-width: 60px;
+    height: 100%;
+    border: solid 1px rgb(177,155,217);
+    /*background: rgba(255,255,255,0.2);*/
+    text-align: center;
+}
+.dashboard-item{
+    border: solid 1px rgb(177,155,217);
+    background: rgb(223,213,250);
+    color: rgb(72,59,107) !important;
+    cursor: pointer;
+}
+.dashboard-item.active{
+    border: solid 1px rgb(72,59,107) !important;
+    background: rgb(72,59,107);
+    color: rgb(223,213,250) !important;
+    border: none;
+}
+@media (max-width: 1000px) {
+  #resp-menu-dahsboard-large {
+    display: none;
+  }
+  #resp-menu-dahsboard-small {
+    display: block;
+  }
+  #dashboard_content{
+      max-width: calc(100% - 70px);
+  }
+}
+@media (min-width: 1000px) {
+  #resp-menu-dahsboard-large {
+    display: block;
+  }
+  #resp-menu-dahsboard-small {
+    display: none;
+  }
+  #dashboard_content{
+      max-width: calc(100% - 180px);
+  }
+} 
+
+#dropdownMenuButton{
+    background: rgb(223,213,250);
+    color: rgb(72,59,107);
+    border: none;
+}
+.MenuButton{
+    background: rgb(223,213,250);
+    color: rgb(72,59,107);
+    border: none;
+}
+.MenuButton:hover{
+    background: rgb(223,213,250);
+    color: rgb(72,59,107);
+}
+.colperso{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 25px;
+}
+@media (max-width: 750px) {
+  .row_perso{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+@media (min-width: 750px) {
+  .row_perso{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+}
+
+.dropdown-menu{
+    background: rgb(223,213,250);
+}
+/*
+ATTENTION TRES UTILE AVEC UN TRAITEMENT JS POUR LE MeNu
+*/
+.dropdown-item{
+    margin-right: 50px;
+}
+.nbQuizzSpan {
+    background: rgba(72, 59, 107, 0.9);
+    border-radius: 10px;
+    color: white;
+    position: absolute;
+    right: 5px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
 
 .typo_generale {
 	color: rgb(72,59,107);
@@ -47,11 +148,6 @@ html, body {
 	padding: 15pt 0pt 15pt 0pt;
 	text-align: center;
 }*/
-
-.textcolor{
-	color: rgb(177,155,217) !important;
-	font-weight: bold;
-}
 
 /******Colonnes verticalement centrées****/
 .colmenu{
@@ -339,4 +435,116 @@ html, body {
 	-webkit-border-bottom-left-radius: 5px;
 	-moz-border-bottom-right-radius: 5px;
 	-moz-border-bottom-left-radius: 5px;
+}
+
+.inpt_len {
+	width: 100%;
+}
+
+.maintimeline {
+    min-width: 300px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.timeline_item {
+    font-size: 1em;
+    line-height: 1.75em;
+    border-top: 3px solid;
+    border-image: linear-gradient(to right, #743ad5 0%, #d53a9d 100%);
+    border-image-slice: 1;
+    border-width: 3px;
+    margin: 0;
+    padding: 40px;
+    counter-increment: section;
+    position: relative;
+    color: #34435E;
+}
+
+.timeline_item:before {
+    position: absolute;
+    border-radius: 50%;
+    padding: 10px;
+    height: 1.25em;
+    width: 1.25em;
+    background-color: #34435E;
+    text-align: center;
+    line-height: 1.25em;
+    color: #ffffff;
+    font-size: 1em;
+}
+
+.timeline_item:nth-child(odd) {
+    border-right: 3px solid;
+    padding-left: 0;
+}
+
+.timeline_item:nth-child(odd):before {
+    left: 100%;
+    margin-left: -20px;
+}
+
+.timeline_item:nth-child(even) {
+    border-left: 3px solid;
+    padding-right: 0;
+}
+
+.timeline_item:nth-child(even):before {
+    right: 100%;
+    margin-right: -20px;
+}
+
+.timeline_item:first-child {
+    border-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.timeline_item:last-child {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.timeline_item:nth-child(odd) > .game_date {
+    background: rgb(72,59,107);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    right: -15px;
+    top: -10px;
+}
+
+.timeline_item:nth-child(even) > .game_date {
+    background: rgb(72,59,107);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    left: -15px;
+    top: -10px;
+}
+
+.iconBtn {
+	border: 1px rgb(72,59,107);
+    margin: 1px;
+	color:rgb(223,213,250);
+    border-radius: 5px;
+}
+
+
+.iconBtn:hover {
+	border: 1px rgb(72,59,107) !important;
+    margin: 1px;
+	color:rgb(72,59,107);
+    border-radius: 5px;
+}
+
+.iconBtnSpe:disabled {
+	border: 1px rgba(72,59,107, 0.5);
+	background-color: rgba(72,59,107, 0.5);
+	color:rgba(223,213,250, 0.5);
+    margin: 1px;
+    border-radius: 5px;
+    
 }

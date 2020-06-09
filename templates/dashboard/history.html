@@ -1,104 +1,16 @@
 {% extends 'dashboard/base.html' %}
 
 {% block dashboard_content %}
-    <h1 class="textcolor" style="text-align: center">Historique des parties</h1>
+    <h1>Historique des parties</h1>
 
     <br>
-
-    <style>
-    .maintimeline {
-        min-width: 300px;
-        max-width: 500px;
-        margin: auto;
-    }
-
-    .timeline_item {
-        font-size: 1em;
-        line-height: 1.75em;
-        border-top: 3px solid;
-        border-image: linear-gradient(to right, #743ad5 0%, #d53a9d 100%);
-        border-image-slice: 1;
-        border-width: 3px;
-        margin: 0;
-        padding: 40px;
-        counter-increment: section;
-        position: relative;
-        color: #34435E;
-    }
-
-    .timeline_item:before {
-        position: absolute;
-        border-radius: 50%;
-        padding: 10px;
-        height: 1.25em;
-        width: 1.25em;
-        background-color: #34435E;
-        text-align: center;
-        line-height: 1.25em;
-        color: #ffffff;
-        font-size: 1em;
-    }
-
-    .timeline_item:nth-child(odd) {
-        border-right: 3px solid;
-        padding-left: 0;
-    }
-
-    .timeline_item:nth-child(odd):before {
-        left: 100%;
-        margin-left: -20px;
-    }
-
-    .timeline_item:nth-child(even) {
-        border-left: 3px solid;
-        padding-right: 0;
-    }
-
-    .timeline_item:nth-child(even):before {
-        right: 100%;
-        margin-right: -20px;
-    }
-
-    .timeline_item:first-child {
-        border-top: 0;
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
-    }
-
-    .timeline_item:last-child {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    .timeline_item:nth-child(odd) > .game_date {
-        background: rgb(72,59,107);
-        color: white;
-        padding: 5px;
-        border-radius: 5px;
-        position: absolute;
-        right: -15px;
-        top: -10px;
-    }
-
-    .timeline_item:nth-child(even) > .game_date {
-        background: rgb(72,59,107);
-        color: white;
-        padding: 5px;
-        border-radius: 5px;
-        position: absolute;
-        left: -15px;
-        top: -10px;
-    }
-
-    </style>
-
     <div class="maintimeline">
         {% for p in players %}
             <div class="timeline_item">
-            <span class="game_date">{{ p.game.created_at | date:"d/m/Y H:i" }}</span>
-            Quizz : {{ p.game.form.name }}
-            <br>Partie : {{ p.game.name }}
-            <br>Score : {{ p.score }}
+                <span class="game_date">{{ p.game.created_at | date:"d/m/Y H:i" }}</span>
+                Quizz : {{ p.game.form.name }}
+                <br>Partie : {{ p.game.name }}
+                <br>Score : {{ p.score }}
             </div>
         {% empty %}
             <p>Vous n'avez pas encore de score.</p>
