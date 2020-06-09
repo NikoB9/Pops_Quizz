@@ -84,11 +84,9 @@ def attente(request, game_uuid):
     is_public = True if request.POST.get('is_public', None) == "on" else False
     is_real_time = True if request.POST.get('is_real_time', None) == "on" else False
     is_limited_time = True if request.POST.get('chk_limited_time', None) == "on" else False
-    print(request.POST)
     timer = 0
     if is_limited_time:
         timer = request.POST.get('time_limit', None)
-        print(timer)
     game = get_game_by_uuid(game_uuid)
     if game.game_status.type=="DRAFT":
         game = edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, is_limited_time, timer, "WAITING")
@@ -363,6 +361,9 @@ def resultats(request, game_uuid):
     if 'login' not in request.session:
         return index(request)
     game = get_game_by_uuid(game_uuid)
+    if game.is_limited_time and (game.time_launched + game.timer) < now():
+        for p in get_players_not_answered_by_game(game):
+            calculate_score(p)
     players = get_players_by_game_order_by_score_desc(game)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
@@ -490,8 +491,6 @@ def add_friend(request):
 def invite_friend(request):
     user = get_user_by_id(request.POST.get('friend_id'))
     game = get_game_by_uuid(request.POST.get('game_uuid'))
-    print(game.slot_max)
-    print(get_nb_player_invited_or_not_by_game(game))
 
     if is_user_in_waiting_room(game, user) or is_user_invited_in_game(user, game):
         data = {'is_valid': False,
@@ -576,10 +575,6 @@ def correction(request, player_id):
         recalculate_user_answers(player)
         change_game_status(player.game, "DONE")
     calculate_score(player)
-    print(player.game.time_launched + player.game.timer)
-    print(now())
-    print(player.game.time_launched + player.game.timer < now())
-    print(player.game.is_limited_time)
     if player.game.is_limited_time and (player.game.time_launched + player.game.timer) < now():
         for p in get_players_not_answered_by_game(player.game):
             calculate_score(p)

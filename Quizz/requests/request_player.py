@@ -175,6 +175,7 @@ def calculate_score(player):
     if all_player_have_answered_a_game(player.game):
         change_game_status(player.game, "DONE")
 
+
 def add_question_to_player(id_p, id_q):
     p = Player.objects.get(id=id_p)
     p.questions_answered.add(Question.objects.get(id=id_q))

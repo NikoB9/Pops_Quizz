@@ -66,10 +66,9 @@ def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, is_limite
     game.is_real_time = is_real_time
     game.is_limited_time = is_limited_time
     if is_limited_time:
-        minutes = int(timer.split(":")[0])
-        seconds = int(timer.split(":")[1])
+        minutes = int(str(timer).split(":")[0])
+        seconds = int(str(timer).split(":")[1])
         game.timer = timedelta(minutes=minutes, seconds=seconds)
-    print
     game.save()
     if game_status_libelle is not None:
         game = change_game_status(game, game_status_libelle)
