@@ -83,9 +83,15 @@ def attente(request, game_uuid):
     slot_max = request.POST.get('slot_max', None)
     is_public = True if request.POST.get('is_public', None) == "on" else False
     is_real_time = True if request.POST.get('is_real_time', None) == "on" else False
+    is_limited_time = True if request.POST.get('chk_limited_time', None) == "on" else False
+    print(request.POST)
+    timer = 0
+    if is_limited_time:
+        timer = request.POST.get('time_limit', None)
+        print(timer)
     game = get_game_by_uuid(game_uuid)
     if game.game_status.type=="DRAFT":
-        game = edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, "WAITING")
+        game = edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, is_limited_time, timer, "WAITING")
 
     friends = get_users_friends_not_in_game(user, game)
     players = get_players_number_of_game(get_players_by_game(game))
@@ -150,8 +156,15 @@ def openform(request, game_uuid):
     f = getFormById(game.form.id)
     questions = getQuestionsByForm(f)
     f.questions = getPossibleAnswersByQuestions(questions)
-    change_game_status(game, "IN_PROGRESS")
     kick_invited_players(game)
+    if game.game_status.type == "WAITING":
+        change_game_status(game, "IN_PROGRESS")
+    if game.time_launched is None:
+        set_game_time_launch_to_now(game)
+    game = get_game_by_uuid(game_uuid)
+    game.date_limite = game.time_launched + game.timer
+    game.timer_sec = str((game.date_limite - game.time_launched).total_seconds()*1000)
+    game.date_limite = str(game.date_limite)
 
     return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
 
@@ -560,6 +573,13 @@ def user_history(request):
 def correction(request, player_id):
     player = get_player_by_id(player_id)
     calculate_score(player)
+    print(player.game.time_launched + player.game.timer)
+    print(now())
+    print(player.game.time_launched + player.game.timer < now())
+    print(player.game.is_limited_time)
+    if player.game.is_limited_time and (player.game.time_launched + player.game.timer) < now():
+        for p in get_players_not_answered_by_game(player.game):
+            calculate_score(p)
     game = player.game
     questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
 

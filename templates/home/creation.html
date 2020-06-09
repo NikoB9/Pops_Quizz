@@ -20,11 +20,6 @@
 					<input type="hidden" id="hidden_category_list" value="" name="category_list">
 				</div>
 				<br>
-				<div id="pnl_time">
-					<label for="chk_limited_time">Temps limité ?</label>
-					<input type="checkbox" name="limited_time" id="chk_limited_time" class="">
-					<input type="time" name="time_limit" value="00:00" id="tm_time_limit" class="hidden">
-				</div>
 			</div>
 			<br>
 			<div id="questions">
@@ -37,7 +32,7 @@
 			</div>
 			<input type="hidden" id="hidden_nb_questions" value=0 name="nbQuestions">
 			{% if form is not None %}
-			<input type="hidden" id="hidden_form_id" value="{{form.id}}"" name="formId">
+			<input type="hidden" id="hidden_form_id" value="{{form.id}}" name="formId">
 			{% endif %}
 		</form>
     </div>

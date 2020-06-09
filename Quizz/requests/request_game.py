@@ -3,6 +3,8 @@
 from Quizz.requests.request_user import *
 from Quizz.requests.request_game_status import get_game_status
 from Quizz.requests.request_form import *
+from django.utils.timezone import now
+from datetime import timedelta, date
 
 
 def get_games_invited_of_user(user):
@@ -56,12 +58,18 @@ def getGamesToJoinByForm(form):
     return Game.objects.filter(form=form, is_public=True, game_status__type="WAITING")
 
 
-def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, game_status_libelle=None):
+def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, is_limited_time, timer, game_status_libelle=None):
     game = get_game_by_uuid(game_uuid)
     game.name = game_name
     game.slot_max = slot_max
     game.is_public = is_public
     game.is_real_time = is_real_time
+    game.is_limited_time = is_limited_time
+    if is_limited_time:
+        minutes = int(timer.split(":")[0])
+        seconds = int(timer.split(":")[1])
+        game.timer = timedelta(minutes=minutes, seconds=seconds)
+    print
     game.save()
     if game_status_libelle is not None:
         game = change_game_status(game, game_status_libelle)
@@ -86,3 +94,9 @@ def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time,
     new_game.is_random_form = is_random_form
     new_game.save()
     return new_game
+
+
+def set_game_time_launch_to_now(game):
+    game = get_game_by_id(game.id)
+    game.time_launched = now()
+    return game.save()

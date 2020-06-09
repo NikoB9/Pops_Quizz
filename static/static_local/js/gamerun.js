@@ -54,3 +54,50 @@ $('input[type=text]').keypress(function(){
 	ajaxSaveForm(this);
 });
 
+
+$('#clock').ready(function(){
+    date_limit = $('#date_limit').val();
+    timer_int = $('#timer').val();
+    player_id = $('#player_id').val();
+    timer(timer_int, date_limit, player_id);
+});
+
+function timer(timer_int, date_limit, player_id) {
+    // Set the date we're counting down to
+    var countDownDate = new Date(date_limit).getTime();
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display the result in the element with id="clock"
+        document.getElementById("clock").innerHTML =
+            // days + "d " + hours + "h " +
+            minutes + "m " + seconds + "s ";
+        update_progress_bar((-distance / timer_int+1)*100)
+
+        // If the count down is finished, write some text
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("clock").innerHTML = "Fin du temps";
+            update_progress_bar(100)
+            window.location.pathname=$('#correction_url').val();
+        }
+    }, 1000);
+}
+
+function update_progress_bar(progress) {
+    $('#progress-bar').width(progress + "%").attr('aria-valuenow', progress)
+
+}

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import enum
 import uuid as uuid
+from datetime import timedelta, datetime
 
 from django.db import models
 from django.core import validators
@@ -121,7 +122,7 @@ class GameStatus(models.Model):
 
 
 class Game(models.Model):
-    uuid = models.CharField(max_length=255, default=str(uuid.uuid4())[:8].upper(), editable=False, unique=True)
+    uuid = models.CharField(max_length=255, default="48D67F91", editable=False, unique=True)
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game_status = models.ForeignKey(GameStatus, on_delete=models.SET_DEFAULT, default=1)
@@ -130,7 +131,10 @@ class Game(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_public = models.BooleanField(default=True)
     is_real_time = models.BooleanField(default=False)
+    is_limited_time = models.BooleanField(default=False)
     is_random_form = models.BooleanField(default=False)
+    timer = models.DurationField(default=timedelta())
+    time_launched = models.DateTimeField(default=None, null=True)
 
     def __str__(self):
         return "Game " + self.name

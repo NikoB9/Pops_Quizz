@@ -163,14 +163,14 @@ class Test_model(TestCase):
         self.assertEquals(False, game.is_public)
         self.assertEquals("WAITING", game.game_status.type)
 
-        game = edit_game(game.uuid, "new name", 10, True, True)
+        game = edit_game(game.uuid, "new name", 10, True, True, True, 0)
         self.assertEquals("new name", game.name)
         self.assertEquals(10, game.slot_max)
         self.assertEquals(True, game.is_real_time)
         self.assertEquals(True, game.is_public)
         self.assertEquals("WAITING", game.game_status.type)
 
-        game = edit_game(game.uuid, "new name", 10, True, True, "DONE")
+        game = edit_game(game.uuid, "new name", 10, True, True, False, 0, "DONE")
         self.assertEquals("DONE", game.game_status.type)
 
     def test_create_game(self):

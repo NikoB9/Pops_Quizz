@@ -52,11 +52,17 @@ def is_user_in_game(user, game):
 def get_players_by_game(game):
     return Player.objects.filter(game=game, is_invited=False)
 
+
 def get_players_waiting_by_game(game):
     return Player.objects.filter(game=game, is_invited=True, has_answered=False)
 
+
 def get_players_answered_by_game(game):
     return Player.objects.filter(game=game, is_invited=False, has_answered=True)
+
+
+def get_players_not_answered_by_game(game):
+    return Player.objects.filter(game=game, is_invited=False, has_answered=False)
 
 
 def get_players_number_of_game(players):
