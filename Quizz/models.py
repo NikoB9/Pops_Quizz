@@ -122,7 +122,7 @@ class GameStatus(models.Model):
 
 
 class Game(models.Model):
-    uuid = models.CharField(max_length=255, default="48D67F91", editable=False, unique=True)
+    uuid = models.CharField(max_length=255, default="344F4933", editable=False, unique=True)
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game_status = models.ForeignKey(GameStatus, on_delete=models.SET_DEFAULT, default=1)
