@@ -49,6 +49,7 @@ urlpatterns = [
     re_path(r'invite_friend$', views.invite_friend),
     re_path(r'kick_user$', views.kick_user),
     re_path(r'refuse_game_invitation$', views.refuse_game_invitation),
+    re_path(r'question_answer_by$', views.question_answer_by),
 
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root':settings.STATIC_ROOT}),

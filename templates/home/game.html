@@ -3,6 +3,26 @@
 {% load static %}
 
 {% block content %}
+<!-- Modal -->
+<div class="modal fade" id="nextquestionmodal" tabindex="-1" role="dialog" aria-labelledby="nextquestionmodalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="nextquestionmodalTitle">Question répondu</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <b><span id="userwin"></span></b> à remporté la question précédente.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale" onload="timer()">
 		<h1>{{ player.game.name }}</h1>
 	  	<h3>{{ form.name }}</h3>
@@ -25,6 +45,11 @@
 		</div>
 		{% endif %}
 
+        {{ game.id|json_script:"idgame" }}
+        <input type="hidden" id="pseudo" value="{{request.session.login}}">
+        <input type="hidden" id="totalquestions" value="{{ form.questions|length }}">
+        <input type="hidden" id="realtime" value="{{ game.is_real_time }}">
+
   		<form id="form_answers" action="{% url 'Quizz:correction' player.id %}" method="post">
 
 			<input type="hidden" name="idplayer" id="idplayer" value="{{ player.id }}">
@@ -32,7 +57,7 @@
 
 			{% for q in form.questions %}
 				
-				<fieldset class="fdst_border"><legend class="lgd_style" id="question">{{ q.question.label }}</legend>
+				<fieldset class="fdst_border" id="question-{{ forloop.counter }}" idq="{{ q.question.id }}"><legend class="lgd_style">{{ q.question.label }}</legend>
 					<div class="row">
 
 						{% if q.question.answer_type.type == "INPUT" %}
@@ -96,13 +121,34 @@
 			{% endfor %}
 
 			<br>
-			<div class="droite">
-				<button type="submit" id="subbtn" class="btn connectBtn">VALIDER</button>
-				<button type="reset" id="resbtn" class="btn connectBtn">ANNULER</button>
-			</div>
+            {% if game.is_real_time %}
+                <div class="droite">
+                    <button type="button" id="nextbtn" class="btn connectBtn">SUIVANT</button>
+                </div>
+            {% else %}
+                <div class="droite">
+                    <button type="submit" id="subbtn" class="btn connectBtn">VALIDER</button>
+                    <button type="reset" id="resbtn" class="btn connectBtn">ANNULER</button>
+                </div>
+            {% endif %}
 
 		</form>
 	</div>
+
+    <div id="chatbtn" class="visible">
+    <i class="fas fa-comments"></i>
+    </div>
+    <div id="chatdiv" class="hidden">
+        <div id="chat-title-min">
+            <h6>Chat</h6>
+            <span id="closechat"><i class="far fa-times-circle"></i></span>
+        </div>
+        <div id="chat-log-min"></div>
+        <div class="row" style="margin: 0">
+            <input id="chat-message-input-min" type="text" class="input-group" placeholder="Message..."><br>
+            <button id="chat-message-submit-min" type="button" class="btn connectBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 {% endblock %}
 
 {% block js_per_page %}
