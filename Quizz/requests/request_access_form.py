@@ -15,7 +15,19 @@ def is_user_editor_of_a_form(user, form):
 
 
 def return_highest_user_acces_to_form(user, form):
-    return AccessForm.objects.filter(user=user, form=form)[0].access_form_type.type
+    return AccessForm.objects.filter(user=user, form=form)[0]
+
+
+def user_form_right(user, form, exclude_author=True):
+    if not len(AccessForm.objects.filter(user=user, form=form)) > 0:
+        return "NONE"
+    return return_highest_user_acces_to_form(user, form)
+
+
+def remove_access_form_for_a_user(user, form):
+    access = user_form_right(user, form)
+    if access != "NONE":
+        access.delete()
 
 
 def set_access_form_for_a_user(user, form, access_form_type_libelle):

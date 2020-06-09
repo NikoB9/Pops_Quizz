@@ -27,7 +27,7 @@ def get_waiting_received_users_friend(user):
 def get_users_from_friends_list_not_user_param(friends, user_to_exclude):
     user_friends = []
     for relationship in friends:
-        if relationship.source.login != user_to_exclude.login:
+        if relationship.source.id != user_to_exclude.id:
             user_friends.append(relationship.source)
         else:
             user_friends.append(relationship.target)

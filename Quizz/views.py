@@ -319,18 +319,31 @@ def delete_quizz(request, id_quizz):
     return index(request)
 
 def edit_right(request, id_quizz):
-    f = getFormById(id_quizz)
+    form = getFormById(id_quizz)
     if request.method == 'POST':
-        print(request.POST)
         for key, value in request.POST.items():
             if "role" in key:
                 id_user = key.split("_")[1]
                 role = value
-                user = getUserByLogin(id_user)
-                set_access_form_for_a_user(user, f, role)
+                user = get_user_by_id(id_user)
+                if role == "NONE":
+                    remove_access_form_for_a_user(user, form)
+                else:
+                    set_access_form_for_a_user(user, form, role)
     user = getUserByLogin(request.session['login'])
-    users = get_users_access_form(user, f)
-    return render(request, "home/edit_right.html", {'form':f, 'users':users})
+    friends = get_users_friends(user)
+    for f in friends:
+        f.role_none = False
+        f.role_publisher = False
+        f.role_editor = False
+        if str(user_form_right(f, form, False)) == "NONE":
+            f.role_none = True
+        elif user_form_right(f, form, False).access_form_type.type == "PUBLISHER":
+            f.role_publisher = True
+        elif user_form_right(f, form, False).access_form_type.type == "EDITOR":
+            f.role_editor = True
+
+    return render(request, "home/edit_right.html", {'form':form, 'friends':friends})
 
 
 def resultats(request, game_uuid):
