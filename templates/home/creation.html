@@ -404,15 +404,6 @@
 		$categoryList = document.getElementById("hidden_category_list");
 		$questions = document.getElementById("questions");
 		$nbQuestions = document.getElementById("hidden_nb_questions");
-		$chkLimitedTime = document.getElementById("chk_limited_time");
-		$tmTimeLimit = document.getElementById("tm_time_limit");
-
-		$chkLimitedTime.onchange = function(e) {
-			if($chkLimitedTime.checked)
-				$tmTimeLimit.classList.remove("hidden");
-			else 
-				$tmTimeLimit.classList.add("hidden"); 
-		}
 
 		$selectCategory.onchange = function(e) {
 			if($selectCategory.value == undefined || $selectCategory.value == "")

@@ -99,3 +99,4 @@ def set_game_time_launch_to_now(game):
     game = get_game_by_id(game.id)
     game.time_launched = now()
     return game.save()
+
