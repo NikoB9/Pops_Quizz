@@ -86,6 +86,14 @@ ajaxChangeUserInvite = function(that)
 $('#user_target').keyup(function () {
     ajaxChangeUserInvite(this);
     document.getElementById("btn-add-friend").disabled = $(this).val().trim() === "";
+    if ($(this).val() == "") {
+      document.getElementById("btn-add-friend").classList.add('iconBtnSpe');
+      document.getElementById("btn-add-friend").classList.remove('iconBtn');
+    } else {
+      document.getElementById("btn-add-friend").classList.remove('iconBtnSpe');
+      document.getElementById("btn-add-friend").classList.add('iconBtn');
+    }
+    
 });
 
 $('#btn-add-friend').click(function(){
