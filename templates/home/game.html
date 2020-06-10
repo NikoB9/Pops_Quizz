@@ -23,7 +23,7 @@
   </div>
 </div>
 
-	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale" onload="timer()">
 		<h1>{{ player.game.name }}</h1>
 	  	<h3>{{ form.name }}</h3>
 
@@ -32,12 +32,23 @@
 	  	{% else %}
 	  		<h6>Créé par teampopsquizz</h6>
 	  	{% endif %}
+		{% if game.is_limited_time %}
+		<div class="sticky rounded bg-gradient-2 text-white shadow p-5 text-center mb-5">
+			<p class="mb-0 font-weight-bold text-uppercase">Temps restant</p>
+			<input type="hidden" id="timer" value="{{game.timer_sec}}">
+			<input type="hidden" id="date_limit" value="{{game.date_limite}}">
+			<input type="hidden" id="correction_url" value="{% url 'Quizz:correction' player.id %}">
+			<p id="clock" class="countdown pt-4"></p>
+			<div class="progress">
+				<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+			</div>
+		</div>
+		{% endif %}
 
         {{ game.id|json_script:"idgame" }}
         <input type="hidden" id="pseudo" value="{{request.session.login}}">
         <input type="hidden" id="totalquestions" value="{{ form.questions|length }}">
         <input type="hidden" id="realtime" value="{{ game.is_real_time }}">
-
 
   		<form id="form_answers" action="{% url 'Quizz:correction' player.id %}" method="post">
 

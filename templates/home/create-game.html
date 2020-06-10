@@ -14,21 +14,21 @@
 	  	<fieldset class="fdst_border"><legend class="lgd_style">Nouvelle partie</legend>
   			<form action="{% url 'Quizz:attente' game.uuid %}" method="post">
 		      	{% csrf_token %}
-		      	<!-- <div class="form-group row">
-						<label for="game_name">Nom de la partie : </label>
-					<div class="col-sm-9">
-				    	<input type="text" class="form-control" value="Partie de {{request.session.login}}" id="game_name" name="game_name">
-				    </div>
-				</div> -->
 		      	<label for="game_name">Nom de la partie : </label>
 				<input type="text" class="style_form" value="Partie de {{request.session.login}}" id="game_name" name="game_name">
 				<br>
-
 				<label for="slot_max">Nombre de joueur : </label>
 				<input type="number" class="style_form" id="slot_max" name="slot_max" value="1" min="1" onclick="privee()" >
+				<div id="pnl_time">
+					<label>Temps limité :</label>
+					<input type="checkbox" name="chk_limited_time" id="chk_limited_time">
+					<br>
+					<div id="block_timer" class="hidden">
+						<label>Format "minutes : secondes" : </label>
+						<input type="time" name="time_limit" value="05:00" id="tm_time_limit">
+					</div>
+				</div>
 				<br>
-
-
                 <div id="alertcheck" class="hidden" role="alert">
                    Information : Une partie en temps réel ne peut pas être publique.
                 </div>
@@ -72,6 +72,15 @@
 
 {% block js_per_page %}
     <script>
+		$('#chk_limited_time').click(function () {
+			if($(this).prop("checked") == true){
+				$('#block_timer').removeClass('hidden');
+				$('#block_timer').addClass('visible');
+			} else {
+				$('#block_timer').removeClass('visible');
+				$('#block_timer').addClass('hidden');
+			}
+		});
         //Verifier que publique et temps réel ne soient pas tous les deux check
         $('#is_public').click(function () {
             if($(this).prop("checked") == true && $('#is_real_time').prop("checked") == true){

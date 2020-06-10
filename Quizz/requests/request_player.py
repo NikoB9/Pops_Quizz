@@ -52,11 +52,17 @@ def is_user_in_game(user, game):
 def get_players_by_game(game):
     return Player.objects.filter(game=game, is_invited=False)
 
+
 def get_players_waiting_by_game(game):
     return Player.objects.filter(game=game, is_invited=True, has_answered=False)
 
+
 def get_players_answered_by_game(game):
     return Player.objects.filter(game=game, is_invited=False, has_answered=True)
+
+
+def get_players_not_answered_by_game(game):
+    return Player.objects.filter(game=game, is_invited=False, has_answered=False)
 
 
 def get_players_number_of_game(players):
@@ -168,6 +174,7 @@ def calculate_score(player):
 
     if all_player_have_answered_a_game(player.game):
         change_game_status(player.game, "DONE")
+
 
 def add_question_to_player(id_p, id_q):
     p = Player.objects.get(id=id_p)
