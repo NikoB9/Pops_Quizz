@@ -91,6 +91,7 @@ def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time,
     new_game.game_status = game_status
     new_game.uuid = str(uuid.uuid4())[:8].upper()
     new_game.is_random_form = is_random_form
+    new_game.is_older_version = False
     new_game.save()
     return new_game
 

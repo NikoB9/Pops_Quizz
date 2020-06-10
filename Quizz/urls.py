@@ -13,6 +13,7 @@ urlpatterns = [
     path('users/', views.users, name='users'),
     path('creation/', views.creation, name='creation'),
     path('create-game-<int:id_form>/', views.create_game, name='create-game'),
+    path('create-game-random/<int:cat_id>/', views.create_game_random, name='create-game-random'),
     path('salle-attente/<str:game_uuid>/', views.attente, name='attente'),
     path('joindre-partie/<str:game_uuid>/', views.joindre_partie, name='joindre-partie'),
     path('quitter-partie/<str:game_uuid>/', views.quitter_partie, name='quitter-partie'),

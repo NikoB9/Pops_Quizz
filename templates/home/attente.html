@@ -9,7 +9,7 @@
         {{ game.id|json_script:"idgame" }}
 
 		{% if game.is_random_form %}
-			<h6>Quizz aleatoire<i class="far fa-question-circle"></i></h6>
+			<h4><i class="far fa-question-circle"></i> Quizz aleatoire <i class="far fa-question-circle"></i></h4>
 		{% else %}
 			{% if game.author is not None %}
 			<h6>Quizz "{{ game.form.name }}" créé par <em>{{ game.form.author.login }}</em></h6>
@@ -17,8 +17,6 @@
 			<h6>Quizz {{ game.form.name }}</h6>
 			{% endif %}
 		{% endif %}
-<!-- 
-		{{ game.name }} en salle d'attente -->
 
         {% if not game.is_real_time %}
 		<p>Vous pouvez inviter des amis en partageant ce lien : <u>https://teampopsquizz.alwaysdata.net/joindre-partie/{{ game.uuid }}/</u></p>

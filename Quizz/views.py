@@ -75,6 +75,21 @@ def create_game(request, id_form):
     return render(request, "home/create-game.html", {'form': f, 'game':game})
 
 
+def create_game_random(request, cat_id):
+    if 'login' not in request.session:
+        return index(request)
+    user = getUserByLogin(request.session['login'])
+    cat = get_category_by_id(cat_id)
+    f = get_random_forms_by_cat(cat, user)
+    questions = getQuestionsByForm(f)
+    f.questions = getPossibleAnswersByQuestions(questions)
+    game = create_gameBD(f.id, user.login, "Partie de "+user.login, False, 1, False, True, "DRAFT")
+    if not is_user_in_game(user, game):
+        create_player(game, user)
+
+    return render(request, "home/create-game.html", {'form': f, 'game':game, 'cat':cat})
+
+
 def attente(request, game_uuid):
     if 'login' not in request.session:
         return index(request)

@@ -1,5 +1,7 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
+import random
+
 from Quizz.models import *
 from Quizz.requests.request_access_form import *
 from Quizz.requests.request_categories import *
@@ -41,6 +43,11 @@ def getQuizzByCat(cat, user):
     if user is None:
         return Form.objects.filter(is_public=True, categories=cat)
     return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
+
+
+def get_random_forms_by_cat(cat, user):
+    forms = list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
+    return random.choice(forms)
 
 
 def addQuizzForm(name, author, description, categories_ids):
