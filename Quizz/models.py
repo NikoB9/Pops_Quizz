@@ -64,6 +64,7 @@ class Form(models.Model):
     is_public = models.BooleanField(default=True)
     categories = models.ManyToManyField(Category)
     is_older_version = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
