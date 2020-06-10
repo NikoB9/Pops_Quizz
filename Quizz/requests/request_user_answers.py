@@ -23,6 +23,5 @@ def get_input_response_by_question_by_player(question, player):
 def recalculate_user_answers(player):
     ua = get_user_answers_of_a_player(player)
     for u in ua :
-        for q in player.questions_answered.all():
-             if q != u.possible_answer.question:
-                u.delete()
+        if u.possible_answer.question not in player.questions_answered.all():
+            u.delete()
