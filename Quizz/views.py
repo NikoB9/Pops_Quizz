@@ -361,9 +361,7 @@ def resultats(request, game_uuid):
     if 'login' not in request.session:
         return index(request)
     game = get_game_by_uuid(game_uuid)
-    if game.is_limited_time and (game.time_launched + game.timer) < now():
-        for p in get_players_not_answered_by_game(game):
-            calculate_score(p)
+    end_game_limited_time(game)
     players = get_players_by_game_order_by_score_desc(game)
     return render(request, "home/resultats.html", {'game': game, 'players': players})
 
@@ -373,6 +371,9 @@ def game_progress(request):
         return index(request)
     user = getUserByLogin(request.session['login'])
     invited_games = get_games_invited_of_user(user)
+    in_progress_game = get_games_in_progress_of_user(user)
+    for in_prog_g in in_progress_game:
+        end_game_limited_time(in_prog_g)
     in_progress_game = get_games_in_progress_of_user(user)
     waiting_games = get_waiting_games(user)
     return render(request, "dashboard/game_progress.html",
@@ -571,14 +572,12 @@ def user_history(request):
 
 def correction(request, player_id):
     player = get_player_by_id(player_id)
+    game = player.game
     if player.game.is_real_time :
         recalculate_user_answers(player)
-        change_game_status(player.game, "DONE")
+        change_game_status(game, "DONE")
     calculate_score(player)
-    if player.game.is_limited_time and (player.game.time_launched + player.game.timer) < now():
-        for p in get_players_not_answered_by_game(player.game):
-            calculate_score(p)
-    game = player.game
+    end_game_limited_time(game)
     questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
 
     return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})

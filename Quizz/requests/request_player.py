@@ -180,3 +180,9 @@ def add_question_to_player(id_p, id_q):
     p = Player.objects.get(id=id_p)
     p.questions_answered.add(Question.objects.get(id=id_q))
     return True
+
+
+def end_game_limited_time(game):
+    if game.is_limited_time and (game.time_launched + game.timer) < now():
+        for p in get_players_not_answered_by_game(game):
+            calculate_score(p)
