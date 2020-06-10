@@ -11,7 +11,8 @@
                 Quizz : {{ p.game.form.name }}
                 <br>Partie : {{ p.game.name }}
                 <br>Score : {{ p.score }}
-                <br><button class="connectBtn" onclick="window.location.pathname='{% url 'Quizz:correction' p.id %}'">CORRECTION</button>
+                <br>
+                <button class="btn connectBtn" onclick="window.location.pathname='{% url 'Quizz:correction' p.id %}'">CORRECTION</button>
             </div>
         {% empty %}
             <p>Vous n'avez pas encore de score.</p>

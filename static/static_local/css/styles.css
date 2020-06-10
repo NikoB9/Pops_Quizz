@@ -529,7 +529,6 @@ div.sticky {
     padding: 40px;
     counter-increment: section;
     position: relative;
-    color: #34435E;
 }
 
 .timeline_item:before {
@@ -541,7 +540,6 @@ div.sticky {
     background-color: #34435E;
     text-align: center;
     line-height: 1.25em;
-    color: #ffffff;
     font-size: 1em;
 }
 
@@ -597,7 +595,7 @@ div.sticky {
 }
 
 .iconBtn {
-	border: 1px rgb(72,59,107);
+	border: solid 1px rgb(72,59,107);
     margin: 1px;
 	color:rgb(223,213,250);
     border-radius: 5px;
@@ -605,7 +603,7 @@ div.sticky {
 
 
 .iconBtn:hover {
-	border: 1px rgb(72,59,107) !important;
+	border: solid 1px rgb(72,59,107) !important;
     margin: 1px;
 	color:rgb(72,59,107);
     border-radius: 5px;
@@ -618,4 +616,8 @@ div.sticky {
     margin: 1px;
     border-radius: 5px;
     
+}
+
+.padd{
+	padding-bottom: 40px;
 }
