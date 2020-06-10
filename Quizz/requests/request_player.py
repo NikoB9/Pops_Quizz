@@ -41,10 +41,6 @@ def get_users_friends_not_in_game(user, game):
     return list(filter(lambda u: not is_user_in_game(u, game), friends))
 
 
-def is_user_invited_in_game(user, game):
-    return len(Player.objects.filter(is_invited=True)) > 0
-
-
 def is_user_in_game(user, game):
     return len(get_players_by_game(game).filter(user=user)) > 0
 
@@ -176,8 +172,7 @@ def calculate_score(player):
         change_game_status(player.game, "DONE")
 
 
-def add_question_to_player(id_p, id_q):
-    p = Player.objects.get(id=id_p)
+def add_question_to_player(p, id_q):
     p.questions_answered.add(Question.objects.get(id=id_q))
     return True
 

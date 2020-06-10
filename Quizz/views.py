@@ -93,6 +93,7 @@ def create_game_random(request, cat_id):
 def attente(request, game_uuid):
     if 'login' not in request.session:
         return index(request)
+
     user = getUserByLogin(request.session['login'])
     game_name = request.POST.get('game_name', None)
     slot_max = request.POST.get('slot_max', None)
@@ -103,10 +104,17 @@ def attente(request, game_uuid):
     if is_limited_time:
         timer = request.POST.get('time_limit', None)
     game = get_game_by_uuid(game_uuid)
+
     if game.game_status.type=="DRAFT":
         game = edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, is_limited_time, timer, "WAITING")
 
+    if game.is_real_time and game.game_status.type=="IN_PROGRESS":
+        return openform(request, game.uuid)
+
     friends = get_users_friends_not_in_game(user, game)
+    for f in friends:
+        if is_user_in_waiting_room(game, f) or is_user_invited_in_game(f, game):
+            f.is_invited = True
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
     waiting_players = get_players_waiting_by_game(game)
@@ -135,7 +143,13 @@ def joindre_partie(request, game_uuid):
     if not is_user_in_game(user, game):
         create_player(game, user)
 
+    if game.is_real_time and game.game_status.type=="IN_PROGRESS":
+        return openform(request, game.uuid)
+
     friends = get_users_friends_not_in_game(user, game)
+    for f in friends:
+        if is_user_in_waiting_room(game, f) or is_user_invited_in_game(f, game):
+            f.is_invited = True
     players = get_players_number_of_game(get_players_by_game(game))
     is_author = game.author == user
     waiting_players = get_players_waiting_by_game(game)
@@ -167,8 +181,16 @@ def openform(request, game_uuid):
         return correction(request, player.id)
 
     f = getFormById(game.form.id)
-    questions = getQuestionsByForm(f)
-    f.questions = getPossibleAnswersByQuestions(questions)
+    nbQuestions = getNbQuestionsByForm(f)
+    if game.is_real_time:
+        question = getNextQuestion(game.form, game.actual_question)
+        if question != False:
+            f.questions = getPossibleAnswersByQuestion(question)
+        else:
+            f.questions = []
+    else:
+        questions = getQuestionsByForm(f)
+        f.questions = getPossibleAnswersByQuestions(questions)
     kick_invited_players(game)
     if game.game_status.type == "WAITING":
         change_game_status(game, "IN_PROGRESS")
@@ -179,7 +201,11 @@ def openform(request, game_uuid):
     game.timer_sec = str((game.date_limite - game.time_launched).total_seconds()*1000)
     game.date_limite = str(game.date_limite)
 
-    return render(request, "home/game.html", {'form': f, 'player': player, 'game': game})
+    return render(request, "home/game.html",
+                  {'form': f,
+                   'player': player,
+                   'game': game,
+                   'nbQuestions':nbQuestions})
 
 
 def users(request):
@@ -673,6 +699,17 @@ def room(request, room_name):
     })
 
 def question_answer_by(request):
-    add_question_to_player(request.POST.get('player'),request.POST.get('question'))
+    num_q = int(request.POST.get('num_row_question'))
+    player = Player.objects.get(id=request.POST.get('player'))
+    if player.game.actual_question == num_q:
+        add_question_to_player(player,request.POST.get('question'))
 
-    return JsonResponse({'is_valid':True})
+        game = player.game
+        game.actual_question = num_q+1
+        game.save()
+        data = {'is_valid': True}
+
+    else :
+        data = {'is_valid':False}
+
+    return JsonResponse(data)

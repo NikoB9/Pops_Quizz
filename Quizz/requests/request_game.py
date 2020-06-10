@@ -74,6 +74,9 @@ def edit_game(game_uuid, game_name, slot_max, is_public, is_real_time, is_limite
         game = change_game_status(game, game_status_libelle)
     return game
 
+def add_actual_question_game(game, question):
+    game.actual_question = question
+    return game
 
 def create_gameBD(form_id, user_name, name, is_public, max_player, is_real_time, is_random_form=False,
                   game_status="WAITING"):

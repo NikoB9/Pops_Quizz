@@ -64,13 +64,12 @@ userAnswerTheQuestion = function(idq,id_player,q)
   $.ajax({
   	type: 'POST',
     url: url_back,
-    data: {'player':id_player, 'question': idq},
+    data: {'player':id_player, 'question': idq, 'num_row_question': q},
     dataType: 'json',
     success: function (data) {
 
       if (data.is_valid) {
-          if (q > parseInt($('#totalquestions').val()))
-	        $('#form_answers').submit();
+          next_question(q);
       }
     }
   });
@@ -88,7 +87,9 @@ $('#clock').ready(function(){
     date_limit = $('#date_limit').val();
     timer_int = $('#timer').val();
     player_id = $('#player_id').val();
-    timer(timer_int, date_limit, player_id);
+    if ($('#limitedtime').val()=='True'){
+        timer(timer_int, date_limit, player_id);
+    }
 });
 
 function timer(timer_int, date_limit, player_id) {
@@ -131,13 +132,6 @@ function update_progress_bar(progress) {
 
 }
 
-$(document).ready(function () {
-    if ($('#realtime').val()=='True'){
-        $('fieldset[id^="question-"').addClass('hidden');
-        $("#question-1").removeClass('hidden');
-        $("#question-1").addClass('visible');
-    }
-});
 
 /*****Chat open/close*****/
 $('#chatbtn').click(function () {
@@ -193,18 +187,10 @@ chatSocket.onmessage = function(e) {
 	    $('#nextquestionmodal').modal('show');
         $('#userwin').text(data.user);
 
-	    mm = data.message.split('-')
-	    q = parseInt(mm[0])+1;
-	    idq = mm[1];
-	    idp = mm[2];
-	    userAnswerTheQuestion(idq,idp,q)
-        if (q <= parseInt($('#totalquestions').val())){
-            $('fieldset[id^="question-"').removeClass('visible');
-            $('fieldset[id^="question-"').addClass('hidden');
-
-            $('#question-'+q).removeClass('hidden');
-            $('#question-'+q).addClass('visible');
-        }
+        if(data.message == "submit")
+            $('#form_answers').submit();
+        else
+          window.location.reload();
 
     }
 	else if (data.type == 'connect_on')
@@ -216,9 +202,6 @@ chatSocket.onmessage = function(e) {
 
 chatSocket.onclose = function(e) {
 	console.error('Chat socket closed unexpectedly');
-	chatSocket = new WebSocket(
-		new_uri
-	);
 };
 
 document.querySelector('#chat-message-input-min').onkeyup = function(e) {
@@ -239,15 +222,29 @@ document.querySelector('#chat-message-submit-min').onclick = function(e) {
 };
 
 $('#nextbtn').click(function () {
-    $('fieldset[id^="question-"').each(function () {
-        if ($(this).hasClass('visible')){
-            numq = $(this).attr('id').split('-')[1];
-            idq = $(this).attr('idq');
-            chatSocket.send(JSON.stringify({
-                'type' : 'next_question',
-                'user' : document.getElementById('pseudo').value,
-                'message': numq+'-'+idq+'-'+$('#idplayer').val()
-            }));
-        }
+    $('fieldset').each(function () {
+
+        numq = $(this).attr('id').split('-')[2];
+        idq = $(this).attr('idq');
+        idp = $('#idplayer').val();
+
+        userAnswerTheQuestion(idq,idp,numq);
+
     })
 })
+
+
+function next_question(q) {
+
+    message = "reload";
+
+    if (q >= parseInt($('#totalquestions').val())-1)
+        message = "submit";
+
+
+    chatSocket.send(JSON.stringify({
+        'type' : 'next_question',
+        'user' : document.getElementById('pseudo').value,
+        'message': message
+    }));
+}

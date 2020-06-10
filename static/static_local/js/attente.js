@@ -41,7 +41,7 @@ ajaxInvitationGame = function (that){
 }
 
 
-$('.fa-envelope-square').click(function(){
+$('.inviteico').click(function(){
 	console.log("envelope click")
 	ajaxInvitationGame(this);
 });
@@ -127,21 +127,35 @@ var chatSocket = new WebSocket(
 	+ '/'
 );
 
-chatSocket.onopen = function(e) {
-  chatSocket.send(JSON.stringify({
-		'type' : 'connect_on',
-		'user' : document.getElementById('pseudo').value,
-		'message': " a rejoint le chat"
-	}));
-};
-
 function refreshForAll(){
 	chatSocket.send(JSON.stringify({
 		'type' : 'refresh',
 		'user' : '',
-		'message': ''
+		'message': 'here'
 	}));
 };
+
+function goGame(){
+	chatSocket.send(JSON.stringify({
+		'type' : 'refresh',
+		'user' : '',
+		'message': 'game'
+	}));
+};
+
+chatSocket.onopen = function(e) {
+	if (parseInt($('#playerslength').text()) >= parseInt($('#slotmax').text())){
+		goGame();
+	}
+	else {
+		chatSocket.send(JSON.stringify({
+		'type' : 'connect_on',
+		'user' : document.getElementById('pseudo').value,
+		'message': " a rejoint le chat"
+	}));
+	}
+};
+
 
 chatSocket.onmessage = function(e) {
 	const data = JSON.parse(e.data);
@@ -150,29 +164,20 @@ chatSocket.onmessage = function(e) {
 		document.querySelector('#chat-log-min').innerHTML += "<div class='connect_on'>"+data.user+data.message+"</div>";
 
 		if ($('#row-user_wait-'+data.user).length){
-			if (parseInt($('#playerslength').text()) >= parseInt($('#slotmax').text())){
-				window.location.pathname = '/game/'+$('#game_uuid').val()+'/';
-			}
-			else {
-				window.location.href = window.location.href;
-			}
-		}
-		else if (parseInt($('#playerslength').text()) >= parseInt($('#slotmax').text())){
-			window.location.pathname = '/game/'+$('#game_uuid').val()+'/';
+			window.location.href = window.location.href;
 		}
 
 	}
-	else if (data.type == 'refresh')
-		window.location.href = window.location.href;
+	else if (data.type == 'refresh'){
+	    if (data.message == 'here') window.location.href = window.location.href;
+        else if (data.message == 'game') window.location.pathname = '/game/'+$('#game_uuid').val()+'/';
+    }
 	else if (data.type == 'chat_message')
 		document.querySelector('#chat-log-min').innerHTML += "<div class='chat_message_title-min'>"+data.user+" : </div><div class='chat_message-min'>"+data.message+"</div>";
 };
 
 chatSocket.onclose = function(e) {
 	console.error('Chat socket closed unexpectedly');
-	chatSocket = new WebSocket(
-		new_uri
-	);
 };
 
 document.querySelector('#chat-message-input-min').onkeyup = function(e) {

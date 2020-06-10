@@ -7,6 +7,16 @@ from Quizz.requests.request_user_answers import *
 def getQuestionsByForm(form):
     return Question.objects.filter(form=form).order_by('order')
 
+def getNbQuestionsByForm(form):
+    return len(Question.objects.filter(form=form).order_by('order'))
+
+def getNextQuestion(form, actual_row):
+    try:
+        q = Question.objects.filter(form=form).order_by('order')[actual_row]
+    except IndexError:
+        q = False
+
+    return q
 
 def getPossibleAnswersByQuestions(questions):
     Tquestion = []
@@ -15,6 +25,11 @@ def getPossibleAnswersByQuestions(questions):
         Tquestion.append({'question': q, 'answers': pa})
     return Tquestion
 
+def getPossibleAnswersByQuestion(question):
+    Tquestion = []
+    pa = PossibleAnswer.objects.filter(question=question)
+    Tquestion.append({'question': question, 'answers': pa})
+    return Tquestion
 
 def addQuestion(form, at, label, order):
     q = Question()
