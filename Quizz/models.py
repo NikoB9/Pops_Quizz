@@ -136,6 +136,8 @@ class Game(models.Model):
     is_random_form = models.BooleanField(default=False)
     timer = models.DurationField(default=timedelta())
     time_launched = models.DateTimeField(default=None, null=True)
+    # for real time
+    actual_question = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return "Game " + self.name

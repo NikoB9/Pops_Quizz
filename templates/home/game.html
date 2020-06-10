@@ -47,8 +47,9 @@
 
         {{ game.id|json_script:"idgame" }}
         <input type="hidden" id="pseudo" value="{{request.session.login}}">
-        <input type="hidden" id="totalquestions" value="{{ form.questions|length }}">
-        <input type="hidden" id="realtime" value="{{ game.is_real_time }}">
+        <input type="hidden" id="totalquestions" value="{{ nbQuestions }}">
+        <input type="hidden" id="limitedtime" value="{{ game.is_limited_time }}">
+
 
   		<form id="form_answers" action="{% url 'Quizz:correction' player.id %}" method="post">
 
@@ -57,7 +58,7 @@
 
 			{% for q in form.questions %}
 				
-				<fieldset class="fdst_border" id="question-{{ forloop.counter }}" idq="{{ q.question.id }}"><legend class="lgd_style">{{ q.question.label }}</legend>
+				<fieldset class="fdst_border" id="question-{{ forloop.counter }}-{{ game.actual_question }}" idq="{{ q.question.id }}"><legend class="lgd_style">{{ q.question.label }}</legend>
 					<div class="row">
 
 						{% if q.question.answer_type.type == "INPUT" %}

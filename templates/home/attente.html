@@ -25,7 +25,11 @@
 		<fieldset class="fdst_border"><legend class="lgd_style">Inviter mes amis</legend>
 			<ul> 
 				{% for friend in friends %}
-					<li>{{ friend.login }} <i id="{{friend.id}}" class="fas fa-envelope-square"></i></li>
+                    {% if friend.is_invited %}
+                        <li>{{ friend.login }} <i id="{{friend.id}}" class="inviteico fas fa-check-square"></i></li>
+                    {% else %}
+                        <li>{{ friend.login }} <i id="{{friend.id}}" class="inviteico fas fa-envelope-square"></i></li>
+                    {% endif %}
 				{% empty %}
 					Aucun ami, n'hésitez pas à en ajouter dans la page ami
 				{% endfor %}
