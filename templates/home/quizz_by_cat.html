@@ -3,31 +3,13 @@
 {% load static %}
 {% load personnal_tags %}
 {% block content %}
-    <style>
-        .editbtn{
-            font-size: xx-small;
-            padding: 1px;
-            position: absolute;
-            top: 0px;
-            z-index: 1;
-        }
-        #btnRuleForm{
-            right: 32px;
-        }
-        #btnEditForm{
-            right: 15px;
-        }
-        #btnDelForm{
-            right: 0;
-        }
-    </style>
-	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
 
         <div class="row">
-            <div class="col" id="quizz_btn" style="border: 1px solid rgba(72,59,107, 0.9);text-align: center; cursor: pointer">
+            <div class="col btn bordures" id="quizz_btn"><!-- style="border: 1px solid rgba(72,59,107, 0.9);text-align: center; cursor: pointer" -->
                 <span>CRÉER UNE PARTIE</span>
             </div>
-            <div class="col connectBtn" id="running_quizz_btn" style="border: 1px solid rgba(72,59,107, 0.9);text-align: center; cursor: pointer">
+            <div class="col btn bordures connectBtn" id="running_quizz_btn">
                 <span>REJOINDRE UNE PARTIE</span>
             </div>
         </div>
@@ -43,12 +25,7 @@
 
                         <a href="{% url 'Quizz:create-game-random' cat.id%}" class="liens_bt_form">
                             <div class="embed-responsive-item boite_form" style="display: flex">
-                                <H5 style="position: absolute;
-    top: 45%;
-    text-align: center;
-    width: 100%;
-    left: -1px;
-    color: rgb(223,213,250);">Aléatoire</H5>
+                                <H5 class="titreCentre">Aléatoire</H5>
                                 <img src="{% static "img/plus-math.png" %}" class="img_form">
                             </div>
 
@@ -102,7 +79,10 @@
                     </div>
                 </div>
                 {% empty %}
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     Pas de partie en cours dans cette catégorie
+                </div>
                 {% endfor %}
             </div>
 

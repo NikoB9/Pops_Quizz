@@ -651,3 +651,9 @@ div.sticky {
 hr {
 	border-top: 1px solid rgba(72, 59, 107, 0.5) !important;
 }
+
+.bordures {
+	border: 1px solid rgba(72,59,107, 0.9);
+	text-align: center; 
+	cursor: pointer;
+}
