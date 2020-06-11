@@ -3,11 +3,20 @@
 {% block dashboard_content %}
     <h1>Invitation à rejoindre des parties</h1>
     {% for game in invited_games %}
-        <p id="row-invited-game-{{game.id}}">
-            {{ game.name }} créée par {{ game.author.login }}
-            <button onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'"><i class="fas fa-door-open"></i></button>
-            <button value="{{ game.id }}" class="refuse_invite"><i class="fas fa-door-closed"></i></button>
-        </p>
+        <fieldset class="fdst_border"><legend class="lgd_style">{{ game.name }}</legend>
+	        <!-- <p > -->
+	            Créée par {{ game.author.login }}.
+	            <i id="row-game-refused-{{game.id}}" class="inviteico hidden fas fa-times"></i>
+
+	            <button class="connectBtn iconBtn" id="row-join-game-{{game.id}}" onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'">
+	            	<i class="fas fa-door-open"></i>
+	            </button>
+
+	            <button id="row-decline-game-{{game.id}}" value="{{ game.id }}" class="connectBtn iconBtn refuse_invite">
+	            	<i class="fas fa-door-closed"></i>
+	            </button>
+	        <!-- </p> -->
+	    </fieldset>
     {% empty %}
         Aucune invitation de partie
     {% endfor %}
@@ -15,14 +24,16 @@
     <h1>Parties en cours</h1>
     {% for game in in_progress_game %}
         <fieldset class="fdst_border"><legend class="lgd_style">{{ game.name }}</legend>
-            Créée par {{ game.author.login }}.
-            <br>
-            {{game.player_playing}} ont répondu sur {{game.player_max}} invitées.
-            {% if game.not_answered %}
-                <br>
-                Vous n'avez pas encore répondu à ce quizz :
-                <button onclick="window.location.href = '{% url 'Quizz:openform' game.uuid %}'" class="btn connectBtn">REPONDRE AU QUIZZ</button>
-            {% endif %}
+        	<!-- <p> -->
+	            Créée par {{ game.author.login }}.
+	            <br>
+	            {{game.player_playing}} ont répondu sur {{game.player_max}} invitées.
+	            {% if game.not_answered %}
+	                <br>
+	                Vous n'avez pas encore répondu à ce quizz :
+	                <button onclick="window.location.href = '{% url 'Quizz:openform' game.uuid %}'" class="btn connectBtn">REPONDRE AU QUIZZ</button>
+	            {% endif %}
+        	<!-- </p> -->
         </fieldset>
     {% empty %}
         Aucune en cours
@@ -31,10 +42,10 @@
 
     <h1>Parties en attente</h1>
     {% for game in waiting_games %}
-    <p>
-        {{ game.name }} créé par {{ game.author.login }}
-        <button onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'"><i class="fas fa-door-open"></i></button>
-    </p>
+        <fieldset class="fdst_border"><legend class="lgd_style">{{ game.name }}</legend>
+	        Créé par {{ game.author.login }}.
+	        <button onclick="window.location.href = '{% url 'Quizz:joindre-partie' game.uuid %}'" class="connectBtn iconBtn"><i class="fas fa-door-open"></i></button>
+	    </fieldset>
     {% empty %}
     Aucune en cours
     {% endfor %}
