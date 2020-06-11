@@ -182,3 +182,108 @@ $(document).ready(function () {
 $('.dropdown-toggle').dropdown();
 
 $('.editbtn').tooltip();
+
+//Ajout d'ami
+ajaxAnswerFriendRequest = function(that,realtime)
+{
+    var url_back =  './answer_friend_request';
+    var request_answer = $(that).val().split("|")[0];
+    var user_source_login = $(that).val().split("|")[1];
+
+    /*Entrer le token csrf dans le header si la route est sécurisé*/
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !that.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    $.ajax({
+        type: 'POST',
+        url: url_back,
+        data: {'request_answer':request_answer, 'user_source_login':user_source_login},
+        dataType: 'json',
+        success: function (data) {
+            if (data.is_valid) {
+                if (realtime){
+                    generalSocket.send(JSON.stringify({
+                    'type' : 'friend_invite',
+                    'sender' : document.getElementById('user_co_login').value,
+                      'receiver' : user_source_login,
+                    'message': request_answer
+                }));
+                    $('#inviteUserModal').modal('hide');
+                }
+            }
+        }
+    });
+}
+
+$('.accept_friend_realtime').click(function () {
+    ajaxAnswerFriendRequest(this,true);
+});
+
+
+var loc = window.location, new_uri;
+if (loc.protocol === "https:") {
+	new_uri = "wss:";
+} else {
+	new_uri = "ws:";
+}
+
+var generalSocket = new WebSocket(
+	new_uri += '//'
+	+ window.location.host
+	+ '/ws/global/'
+);
+
+generalSocket.onopen = function(e) {
+  console.log('websocket running')
+};
+
+
+generalSocket.onmessage = function(e) {
+
+	const data = JSON.parse(e.data);
+	console.log(data);
+	if (data.type == 'friend_invite'){
+        if (document.getElementById('user_co_login').value == data.receiver){
+            $('#inviteUserModal').modal('show');
+            if (data.message == 'invite'){
+                $('#invite_receive').css('display','flex');
+                $('#invite_send').css('display','none');
+                $('#usersource1').text(data.sender);
+                $('#acceptinvitefr').val('accept|'+data.sender);
+                $('#denyinvitefr').val('deny|'+data.sender);
+            }
+            else if (data.message == 'accept'){
+                $('#invite_send').css('display','flex');
+                $('#invite_receive').css('display','none');
+                $('#usersource2').text(data.sender);
+                $('#answerinvite').text('accepté');
+            }
+            else if (data.message == 'deny'){
+                $('#invite_send').css('display','flex');
+                $('#invite_receive').css('display','none');
+                $('#usersource2').text(data.sender);
+                $('#answerinvite').text('refusé');
+            }
+        }
+
+    }
+	else if (data.type == 'game_invite'){
+        if (document.getElementById('user_co_login').value == data.receiver) {
+            $('#inviteGameModal').modal('show');
+            $('#usersourcegame').text(data.sender);
+            $('#generaljoingamebtn').click(function () {
+                window.location.pathname = 'joindre-partie/'+data.message+'/';
+            });
+        }
+    }
+
+};
+
+generalSocket.onclose = function(e) {
+	console.error('Chat socket closed unexpectedly');
+};

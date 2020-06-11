@@ -33,6 +33,8 @@ ajaxRefuseInvitation = function(that)
 
 $('.refuse_invite').click(function(){
     ajaxRefuseInvitation(this);
-    document.getElementById("row-invited-game-"+$(this).val()).style.display = "None";
+    document.getElementById("row-game-refused-"+$(this).val()).classList.remove("hidden");
+    document.getElementById("row-join-game-"+$(this).val()).classList.add("hidden");
+    document.getElementById("row-decline-game-"+$(this).val()).classList.add("hidden");
 });
 
