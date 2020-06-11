@@ -129,10 +129,13 @@ ajaxRemoveFriend = function(that)
     });
 }
 
-$('.remove_friend').click(function(){
-    ajaxRemoveFriend(this);
-    document.getElementById("row-friend-"+$(this).val()).style.display = "none";
-});
+$('.remove_friend').click(function(){removeFriend(this)});
+
+removeFriend = function(that)
+{
+    ajaxRemoveFriend(that);
+    document.getElementById("row-friend-"+$(that).val()).style.display = "none";
+}
 
 ajaxAnswerFriendRequest = function(that)
 {
@@ -164,6 +167,23 @@ ajaxAnswerFriendRequest = function(that)
 
 $('.accept_friend').click(function(){
     ajaxAnswerFriendRequest(this);
-    document.getElementById("row-accept-"+$(this).val().split("|")[1]).style.display = "none";
+    let val = $(this).val().split("|");
+    if(val[0] == "accept")
+    {
+        //Build element of the friends list
+        let $friend = document.createElement("li");
+        $friend.id = "row-friend-" + val[1];
+        $friend.innerText = val[1] + " ";
+        let $btnRemoveFriend = document.createElement("button");
+        $btnRemoveFriend.value = val[1];
+        $btnRemoveFriend.classList.add("remove_friend", "connectBtn", "iconBtn");
+        $btnRemoveFriend.onclick = function(e){removeFriend($($btnRemoveFriend))};
+        let $btnIcon = document.createElement("i");
+        $btnIcon.classList.add("fas", "fa-user-slash");
+        $btnRemoveFriend.appendChild($btnIcon);
+        $friend.appendChild($btnRemoveFriend);
+        document.getElementById("friends_list").appendChild($friend);
+    }
+    document.getElementById("row-accept-"+val[1]).remove();
 });
 

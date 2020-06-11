@@ -5,7 +5,7 @@
     <h1>Amis</h1>
 
     <fieldset class="fdst_border"><legend class="lgd_style">Mes amis</legend>
-        <ul>
+        <ul id="friends_list">
             {% for friend in friends %}
                 <li id="row-friend-{{ friend.login }}">{{ friend.login }} <button value="{{ friend.login }}" class="remove_friend connectBtn iconBtn"><i class="fas fa-user-slash"></i></button></li>
 
