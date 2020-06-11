@@ -9,9 +9,9 @@ from Quizz.requests.request_categories import *
 
 def getAllForms(user=None):
     if user is None:
-        return Form.objects.filter(is_public=True)
+        return Form.objects.filter(is_public=True, is_hidden=False)
     forms = []
-    for form in Form.objects.all():
+    for form in Form.objects.filter(is_hidden=False):
         if form.author == user or is_user_editor_of_a_form(user, form):
             forms.append(form)
             form.is_author = form.author == user
@@ -21,14 +21,16 @@ def getAllForms(user=None):
 
 def getAllFormsAccessUser(user):
     forms = []
-    for form in Form.objects.all():
+    for form in Form.objects.filter(is_hidden=False):
         if form.author == user or form.is_public or is_user_editor_of_a_form(user, form):
             forms.append(form)
     return forms
 
 
 def delete_form(form_id):
-    Form.objects.get(id=form_id).delete()
+    form = getFormById(form_id)
+    form.is_hidden=True
+    form.save()
 
 
 def getFormById(id):
@@ -41,13 +43,13 @@ def nbQuizzByCat(cat, user=None):
 
 def getQuizzByCat(cat, user):
     if user is None:
-        return Form.objects.filter(is_public=True, categories=cat)
-    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
+        return Form.objects.filter(is_public=True, categories=cat, is_hidden=False)
+    return list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form),
+                       Form.objects.filter(categories=cat, is_hidden=False)))
 
 
 def get_random_forms_by_cat(cat, user):
-    forms = list(filter(lambda form: is_a_user_allowed_to_access_a_form(user, form), Form.objects.filter(categories=cat)))
-    return random.choice(forms)
+    return random.choice(getQuizzByCat(cat, user))
 
 
 def set_form_old(form):
@@ -57,6 +59,11 @@ def set_form_old(form):
 
 def hide_form(form):
     form.is_hidden = True
+    form.save()
+
+
+def set_form_publicity(form, is_public):
+    form.is_public=is_public
     form.save()
 
 

@@ -7,8 +7,20 @@ from Quizz.requests.request_user_answers import *
 def getQuestionsByForm(form):
     return Question.objects.filter(form=form).order_by('order')
 
+
+def get_question_by_id(question_id):
+    print(question_id)
+    return Question.objects.get(id=question_id)
+
+
+def need_correction_for_question(question):
+    question.need_correction = True
+    question.save()
+
+
 def getNbQuestionsByForm(form):
     return len(Question.objects.filter(form=form).order_by('order'))
+
 
 def getNextQuestion(form, actual_row):
     try:
@@ -17,6 +29,7 @@ def getNextQuestion(form, actual_row):
         q = False
 
     return q
+
 
 def getPossibleAnswersByQuestions(questions):
     Tquestion = []

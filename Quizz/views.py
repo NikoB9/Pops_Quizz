@@ -303,14 +303,11 @@ def creation(request):
         categories = request.POST.get('category_list').split(';')
         if '' in categories: categories.remove('')
         form = addQuizzForm(title, author, description, categories)
-
-        if request.POST.get('hidden_form_id'):
-            old_form = getFormById(request.POST.get('hidden_form_id'))
+        if request.POST.get('formId') is not None:
+            old_form = getFormById(request.POST.get('formId'))
             set_form_old(old_form)
 
         nbQuestions = request.POST.get('nbQuestions')
-        print(nbQuestions)
-
         for i in range(int(nbQuestions)):
             numq = i + 1
             numq = str(numq)
@@ -377,6 +374,8 @@ def delete_quizz(request, id_quizz):
 def edit_right(request, id_quizz):
     form = getFormById(id_quizz)
     if request.method == 'POST':
+        is_public = True if request.POST.get('is_public', None) == "on" else False
+        set_form_publicity(form, is_public)
         for key, value in request.POST.items():
             if "role" in key:
                 id_user = key.split("_")[1]
@@ -568,6 +567,15 @@ def kick_user(request):
     return JsonResponse(data)
 
 
+def correction_question(request):
+    question = get_question_by_id(request.POST.get('question_id'))
+    need_correction_for_question(question)
+
+    data = {'is_valid': True}
+
+    return JsonResponse(data)
+
+
 def refuse_game_invitation(request):
     user = getUserByLogin(request.session['login'])
     game = get_game_by_id(request.POST.get('game_id'))
@@ -624,6 +632,7 @@ def correction(request, player_id):
     calculate_score(player)
     end_game_limited_time(game)
     questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
+    print(game.is_random_form)
 
     return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})
 

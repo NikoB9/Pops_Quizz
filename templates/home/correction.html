@@ -6,13 +6,17 @@
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
 		<h1>Votre correction de la partie : {{ game.name }}</h1>
 	  	<h3>{{ game.form.name }}</h3>
+		{% if game.form.is_older_version %}
+		<h2><i class="fas fa-exclamation-circle"></i> Vous consultez une ancienne version de ce formulaire il peut y avoir des erreurs <i class="fas fa-exclamation-circle"></i></h2>
+		{% endif %}
 
-	  	{% if game.form.author is not None %}
-	  		<h6>Créé par {{ game.form.author.login }}</h6>
-	  	{% else %}
-	  		<h6>Créé par teampopsquizz</h6>
-	  	{% endif %}
-
+		{% if not game.is_random_form %}
+			{% if game.form.author is not None %}
+				<h6>Créé par {{ game.form.author.login }}</h6>
+			{% else %}
+				<h6>Créé par teampopsquizz</h6>
+			{% endif %}
+		{% endif %}
 
   		<form id="form_answers" action="{% url 'Quizz:resultats' game.uuid %}" method="post">
 
@@ -22,7 +26,16 @@
 
 			{% for q in questions %}
 				
-				<fieldset class="fdst_border"><legend class="lgd_style">{{ q.question.label }}</legend>
+				<fieldset class="fdst_border">
+					<legend class="lgd_style">{{ q.question.label }}
+						{% if not game.form.is_older_version %}
+						<button type="button" id="need_correction{{ q.question.id }}" {% if q.question.need_correction %} disabled {% endif %}
+								class="btn connectBtn btn_correction" data-toggle="tooltip"
+								title="{% if q.question.need_correction %}Une demande de correction a déjà été faite{% else %}Notifier une erreur sur la question{% endif %}"
+								value="{{ q.question.id }}"><i class="fas fa-tools"></i>
+						</button>
+						{% endif %}
+					</legend>
 					<div class="row">
 
 						{% if q.question.answer_type.type == "INPUT" %}
@@ -135,4 +148,6 @@
 {% endblock %}
 
 {% block js_per_page %}
+<script type="text/javascript" src="{% static "js/correction.js"%}">
+</script>
 {% endblock %}
