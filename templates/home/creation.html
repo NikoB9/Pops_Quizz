@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale pad">
-		<form method="POST">
+		<form method="POST" action="{% url 'Quizz:creation' %}">
 			{% csrf_token %}
 			<div id="form_header">
 				<input type="text" name="form_title" class="style_form typo_generale" value="{% if form is not None %}{{form.name}}{% else %}Titre du Quizz{% endif %}">
