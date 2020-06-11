@@ -65,18 +65,18 @@
 
         {% else %}
 		<br>
+		<form onsubmit="return attention_quitter()" action="{% url 'Quizz:quitter-partie' game.uuid %}">
+			<div class="droite">
+				<button type="submit" class="btn connectBtn " {% if game.game_status.type is "WAITING" %} disabled {% endif %} >QUITTER</button>
+			</div>
+		</form>
 		<form onsubmit="return attention_commencer()" action="{% url 'Quizz:openform' game.uuid %}">
 			<div class="droite">
 				{% if is_author %}
-					<button type="submit" class="btn connectBtn">COMMENCER</button>
+					<button type="submit" class="btn connectBtn marges">COMMENCER</button>
 				{% else %}
-					<button type="submit" class="btn connectBtn" {% if game.slot_max > players|length %} disabled {% endif%}>COMMENCER</button>
+					<button type="submit" class="btn connectBtn marges" {% if game.slot_max > players|length %} disabled {% endif%}>COMMENCER</button>
 				{% endif %}
-			</div>
-		</form>
-		<form onsubmit="return attention_quitter()" action="{% url 'Quizz:quitter-partie' game.uuid %}">
-			<div class="droite">
-				<button type="submit" class="btn connectBtn marges" {% if game.game_status.type is "WAITING" %} disabled {% endif %} >QUITTER</button>
 			</div>
 		</form>
         {% endif %}
