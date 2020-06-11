@@ -40,6 +40,12 @@ ajaxAddUser = function(that)
                   }
               } else {
                   alert("invitation envoyée")
+                  generalSocket.send(JSON.stringify({
+                    'type' : 'friend_invite',
+                    'sender' : document.getElementById('user_co_login').value,
+                      'receiver' : user_target,
+                    'message': 'invite'
+                }));
               }
           }
       }
@@ -137,36 +143,11 @@ removeFriend = function(that)
     document.getElementById("row-friend-"+$(that).val()).style.display = "none";
 }
 
-ajaxAnswerFriendRequest = function(that)
-{
-    var url_back =  './answer_friend_request';
-    var request_answer = $(that).val().split("|")[0];
-    var user_source_login = $(that).val().split("|")[1];
+//ajaxAnswerFriendRequest déplacé dan connectuser.js pour access des web sockets
 
-    /*Entrer le token csrf dans le header si la route est sécurisé*/
-    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !that.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-    $.ajax({
-        type: 'POST',
-        url: url_back,
-        data: {'request_answer':request_answer, 'user_source_login':user_source_login},
-        dataType: 'json',
-        success: function (data) {
-            if (data.is_valid) {
-
-            }
-        }
-    });
-}
 
 $('.accept_friend').click(function(){
-    ajaxAnswerFriendRequest(this);
+    ajaxAnswerFriendRequest(this,false);
     let val = $(this).val().split("|");
     if(val[0] == "accept")
     {

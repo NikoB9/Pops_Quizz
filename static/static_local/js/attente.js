@@ -8,6 +8,7 @@ ajaxInvitationGame = function (that){
 
 	var game_uuid = $("#game_uuid").val();
 	var friend_id = $(that).attr('id');
+	var friend_login = $(that).attr('login');
 	var url_back = './invite_friend';
 
 	/*Entrer le token csrf dans le header si la route est sécurisé*/
@@ -32,6 +33,12 @@ ajaxInvitationGame = function (that){
     			document.getElementById(friend_id).classList.remove("fa-envelope-square");
     			document.getElementById(friend_id).classList.add("fa-check-square");
 				refreshForAll();
+                generalSocket.send(JSON.stringify({
+                'type' : 'game_invite',
+                'sender' : document.getElementById('user_co_login').value,
+                    'receiver' : friend_login,
+                'message': game_uuid
+                }));
     		} else {
     			document.getElementById(friend_id).classList.remove("fa-envelope-square");
     			document.getElementById(friend_id).classList.add("fa-times");
