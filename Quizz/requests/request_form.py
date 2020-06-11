@@ -66,7 +66,7 @@ def addQuizzForm(name, author, description, categories_ids):
     f.author = author
     f.description = description
     f.is_older_version = False
-    f.is_deleted = False
+    f.is_hidden = False
     f.save()
     for cat_id in categories_ids:
         f.categories.add(get_category_by_id(cat_id))
