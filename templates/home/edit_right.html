@@ -4,10 +4,35 @@
 
 {% block content %}
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale">
-        <h3>Liste des joueurs du formulaire: {{ form.name }}</h3>
+        <h1>Gestion des droits</h1>
+        <h5>Formulaire {{ form.name }}</h5>
+        <br>
         <form action="{% url 'Quizz:edit_right' form.id %}" method="post">
             {% csrf_token %}
-            <table class="table">
+            <div class="row">
+            	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            		Nom utilisateur
+            	</div>
+            	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            		Droit
+            	</div>
+            </div>
+            {% for u in friends %}
+            	<hr>
+	            <div class="row">
+	            	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+	            		{{u.login}}
+	            	</div>
+	            	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+	            		<select class="custom-select" name="role_{{u.id}}">
+                            <option value="EDITOR" {% if u.role_editor %} selected {% endif %}>Editeur</option>
+                            <option value="PUBLISHER" {% if u.role_publisher %} selected {% endif %}>Joueur</option>
+                            <option value="NONE" {% if u.role_none %} selected{% endif %}>Aucun droit</option>
+                        </select>
+	            	</div>
+	            </div>
+            {% endfor %}
+            <!-- <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">Nom utilisateur</th>
@@ -28,7 +53,8 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table> -->
+            <br>
             <div class="droite">
                 <button type="submit"  id="subbtn" class="btn connectBtn">ENREGISTRER</button>
                 <button type="reset"  id="resbtn" class="btn connectBtn">ANNULER</button>
