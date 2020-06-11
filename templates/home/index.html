@@ -3,36 +3,13 @@
 {% load static %}
 {% load personnal_tags %}
 {% block content %}
-    <style>
-    .editbtn{
-        font-size: xx-small;
-        padding: 1px;
-        position: absolute;
-        top: 0px;
-        z-index: 1;
-    }
-    #btnRuleForm{
-        right: 32px;
-    }
-    #btnEditForm{
-        right: 15px;
-    }
-    #btnDelForm{
-        right: 0;
-    }
-    </style>
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
 		<div class="row marg">
 			<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 marg">
 				<div class="embed-responsive embed-responsive-1by1">
 					<a href="{% url 'Quizz:creation' %}" class="liens_bt_form">
 						<div class="embed-responsive-item boite_form" style="display: flex">
-							<H5 style="position: absolute;
-    top: 45%;
-    text-align: center;
-    width: 100%;
-    left: -1px;
-    color: rgb(223,213,250);">Nouveau</H5>
+							<H5 class="titreCentre">Nouveau</H5>
 							<img src="{% static "img/plus-math.png" %}" class="img_form">
 						</div>
 					</a>

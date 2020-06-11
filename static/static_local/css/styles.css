@@ -621,3 +621,33 @@ div.sticky {
 .padd{
 	padding-bottom: 40px;
 }
+
+.editbtn{
+    font-size: xx-small;
+    padding: 1px;
+    position: absolute;
+    top: 0px;
+    z-index: 1;
+}
+#btnRuleForm{
+    right: 32px;
+}
+#btnEditForm{
+    right: 15px;
+}
+#btnDelForm{
+    right: 0;
+}
+
+.titreCentre{
+	position: absolute;
+    top: 45%;
+    text-align: center;
+    width: 100%;
+    left: -1px;
+    color: rgb(223,213,250);
+}
+
+hr {
+	border-top: 1px solid rgba(72, 59, 107, 0.5) !important;
+}
