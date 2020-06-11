@@ -196,10 +196,16 @@ def openform(request, game_uuid):
         change_game_status(game, "IN_PROGRESS")
     if game.time_launched is None:
         set_game_time_launch_to_now(game)
-    game = get_game_by_uuid(game_uuid)
-    game.date_limite = game.time_launched + game.timer
-    game.timer_sec = str((game.date_limite - game.time_launched).total_seconds()*1000)
-    game.date_limite = str(game.date_limite)
+        game = get_game_by_uuid(game_uuid)
+        game.date_limite = game.time_launched + game.timer
+        game.timer_sec = str((game.date_limite - game.time_launched).total_seconds()*1000)
+        game.date_limite = str(game.date_limite)
+    else:
+        game = get_game_by_uuid(game_uuid)
+        game.date_limite = game.time_launched + game.timer
+        game.timer_sec = str((game.date_limite - game.time_launched).total_seconds()*1000)
+        game.date_limite = str(game.date_limite)
+
 
     return render(request, "home/game.html",
                   {'form': f,
