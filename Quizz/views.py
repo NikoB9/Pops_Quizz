@@ -297,7 +297,6 @@ def creation(request):
     if 'login' not in request.session:
         return index(request)
     if request.method == 'POST':
-
         title = request.POST.get('form_title')
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
@@ -305,7 +304,12 @@ def creation(request):
         if '' in categories: categories.remove('')
         form = addQuizzForm(title, author, description, categories)
 
+        if request.POST.get('hidden_form_id'):
+            old_form = getFormById(request.POST.get('hidden_form_id'))
+            set_form_old(old_form)
+
         nbQuestions = request.POST.get('nbQuestions')
+        print(nbQuestions)
 
         for i in range(int(nbQuestions)):
             numq = i + 1

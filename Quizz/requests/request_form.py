@@ -50,6 +50,16 @@ def get_random_forms_by_cat(cat, user):
     return random.choice(forms)
 
 
+def set_form_old(form):
+    form.is_older_version = True
+    hide_form(form)
+
+
+def hide_form(form):
+    form.is_hidden = True
+    form.save()
+
+
 def addQuizzForm(name, author, description, categories_ids):
     f = Form()
     f.name = name
