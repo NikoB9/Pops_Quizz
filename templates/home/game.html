@@ -26,12 +26,13 @@
 	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body typo_generale" onload="timer()">
 		<h1>{{ player.game.name }}</h1>
 	  	<h3>{{ form.name }}</h3>
-
-	  	{% if form.author is not None %}
-	  		<h6>Créé par {{ form.author.login }}</h6>
-	  	{% else %}
-	  		<h6>Créé par teampopsquizz</h6>
-	  	{% endif %}
+		{% if not game.is_random_form %}
+			{% if form.author is not None %}
+				<h6>Créé par {{ form.author.login }}</h6>
+			{% else %}
+				<h6>Créé par teampopsquizz</h6>
+			{% endif %}
+		{% endif %}
 		{% if game.is_limited_time %}
 		<div class="sticky rounded bg-gradient-2 text-white shadow p-5 text-center mb-5">
 			<p class="mb-0 font-weight-bold text-uppercase">Temps restant</p>
