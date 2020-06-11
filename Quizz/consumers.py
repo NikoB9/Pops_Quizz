@@ -139,7 +139,7 @@ class WaitingRoom(AsyncWebsocketConsumer):
 class InGame(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['idgame']
-        self.room_group_name = 'waiting_room_%s' % self.room_name
+        self.room_group_name = 'game_room_%s' % self.room_name
 
         # Join room group
         await self.channel_layer.group_add(
@@ -206,5 +206,74 @@ class InGame(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'next_question',
             'user': user,
+            'message': message
+        }))
+
+
+class Global(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.room_name = 'theglobalroom'
+        self.room_group_name = 'global_room_%s' % self.room_name
+
+        # Join room group
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        type = text_data_json['type']
+        sender = text_data_json['sender']
+        receiver = text_data_json['receiver']
+
+        # Send message to room group
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': type,
+                'sender': sender,
+                'receiver': receiver,
+                'message': message
+            }
+        )
+
+
+    # Receive message from room group
+    async def friend_invite(self, event):
+        message = event['message']
+        sender = event['sender']
+        receiver = event['receiver']
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'friend_invite',
+            'sender': sender,
+            'receiver': receiver,
+            'message': message
+        }))
+
+    # Next question
+    async def game_invite(self, event):
+        message = event['message']
+        sender = event['sender']
+        receiver = event['receiver']
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'game_invite',
+            'sender': sender,
+            'receiver': receiver,
             'message': message
         }))
