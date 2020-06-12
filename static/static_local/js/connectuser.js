@@ -9,6 +9,7 @@ $('#connectBtn').click(function(){
 	$('#connectuserModal').modal('show');
 });
 
+
 displayConnect = function(){
 	$('#connectdiv').css('display','block');
 	$('#authdiv').css('display','none');
