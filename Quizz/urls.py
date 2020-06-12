@@ -40,6 +40,7 @@ urlpatterns = [
     #AJAX
     re_path(r'create_user$', views.create_user, name="create_user"),
     re_path(r'user_connection$', views.connectUser, name="connectUser"),
+    re_path(r'correction_question', views.correction_question, name="correction_question"),
     re_path(r'disconnect_user$', views.disconnect, name="disconnect"),
     re_path(r'save_user_answers$', views.saveUserAnswers, name="save_user_answers"),
     re_path(r'add_friend$', views.add_friend),

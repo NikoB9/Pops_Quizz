@@ -9,6 +9,9 @@
         <br>
         <form action="{% url 'Quizz:edit_right' form.id %}" method="post">
             {% csrf_token %}
+
+            <label>Rendre le formulaire public :</label>
+            <input type="checkbox" name="is_public" id="is_public" {% if form.is_public %}checked{% endif %}>
             <div class="row">
             	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             		Nom utilisateur
@@ -32,28 +35,6 @@
 	            	</div>
 	            </div>
             {% endfor %}
-            <!-- <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Nom utilisateur</th>
-                        <th scope="col">Droit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for u in friends %}
-                    <tr>
-                        <th>{{u.login}}</th>
-                        <th>
-                            <select class="custom-select" name="role_{{u.id}}">
-                                <option value="EDITOR" {% if u.role_editor %} selected {% endif %}>Editeur</option>
-                                <option value="PUBLISHER" {% if u.role_publisher %} selected {% endif %}>Joueur</option>
-                                <option value="NONE" {% if u.role_none %} selected{% endif %}>Aucun droit</option>
-                            </select>
-                        </th>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table> -->
             <br>
             <div class="droite">
                 <button type="submit"  id="subbtn" class="btn connectBtn">ENREGISTRER</button>

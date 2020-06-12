@@ -21,7 +21,7 @@
 				<input type="text" class="style_form" value="Partie de {{request.session.login}}" id="game_name" name="game_name">
 				<br>
 				<label for="slot_max">Nombre de joueur : </label>
-				<input type="number" class="style_form" id="slot_max" name="slot_max" value="1" min="1" onclick="privee()" >
+				<input type="number" class="style_form" id="slot_max" name="slot_max" value="1" min="1" max="100" onclick="privee()" >
 				<div id="pnl_time">
 					<label>Temps limité :</label>
 					<input type="checkbox" name="chk_limited_time" id="chk_limited_time">

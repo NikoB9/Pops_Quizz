@@ -95,7 +95,7 @@ ajaxKickUser = function (that){
 $('.exclude_user').click(function(){
 	ajaxKickUser(this);
 	console.log("row-user-"+$(this).val())
-	document.getElementById("row-user-"+$(this).val()).style.visibility = "hidden";
+	document.getElementById("row-user-"+$(this).val()).style.display = "None";
 });
 
 /*****Chat open/close*****/
