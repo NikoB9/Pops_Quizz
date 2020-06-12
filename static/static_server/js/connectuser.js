@@ -9,9 +9,6 @@ $('#connectBtn').click(function(){
 	$('#connectuserModal').modal('show');
 });
 
-openDivCo = function(){
-    $('#connectBtn').click();
-}
 
 displayConnect = function(){
 	$('#connectdiv').css('display','block');
