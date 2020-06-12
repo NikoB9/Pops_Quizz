@@ -657,3 +657,19 @@ hr {
 	text-align: center; 
 	cursor: pointer;
 }
+
+.liens_faux {
+	text-decoration: underline;
+}
+
+.liens_faux:hover {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.liens_faux:disabled {
+	text-decoration: line-through;
+}
+
+
+
