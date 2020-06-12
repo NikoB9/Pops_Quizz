@@ -638,7 +638,6 @@ def correction(request, player_id):
     calculate_score(player)
     end_game_limited_time(game)
     questions = getUserAnswersByQuestions(getQuestionsByForm(game.form), player)
-    print(game.is_random_form)
 
     return render(request, 'home/correction.html', {'game': game, 'player': player, 'questions':questions})
 
@@ -719,7 +718,7 @@ def room(request, room_name):
 
 def question_answer_by(request):
     num_q = int(request.POST.get('num_row_question'))
-    player = Player.objects.get(id=request.POST.get('player'))
+    player = get_player_by_id(id=request.POST.get('player'))
     if player.game.actual_question == num_q:
         add_question_to_player(player,request.POST.get('question'))
 

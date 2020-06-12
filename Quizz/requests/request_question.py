@@ -9,7 +9,6 @@ def getQuestionsByForm(form):
 
 
 def get_question_by_id(question_id):
-    print(question_id)
     return Question.objects.get(id=question_id)
 
 

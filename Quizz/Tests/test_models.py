@@ -25,6 +25,13 @@ class Test_model(TestCase):
         user = getUserByLogin("Warren")
         self.assertEquals("CREATOR", return_highest_user_acces_to_form(user, form_1).access_form_type.type)
 
+    def test_remove_access_form_for_a_user(self):
+        user=getUserByLogin("TimFake")
+        form_2 = getFormById(2)
+        self.assertEquals(True, is_a_user_allowed_to_access_a_form(user, form_2))
+        remove_access_form_for_a_user(user, form_2)
+        self.assertEquals(False, is_a_user_allowed_to_access_a_form(user, form_2))
+
     ## TEST CATEGORIES ##
 
     def test_get_categories(self):
@@ -86,6 +93,21 @@ class Test_model(TestCase):
         user = getUserByLogin("TimFake")
         self.assertEquals(1, nbQuizzByCat(cat))
         self.assertEquals(2, nbQuizzByCat(cat, user))
+
+    def test_set_form_old(self):
+        form_1 = getFormById(1)
+        self.assertEquals(form_1.name, "Premier formulaire")
+        self.assertEquals(form_1.is_older_version, False)
+        self.assertEquals(form_1.is_hidden, False)
+        set_form_old(form_1)
+        self.assertEquals(form_1.name, "Premier formulaire")
+        self.assertEquals(form_1.is_older_version, True)
+        self.assertEquals(form_1.is_hidden, True)
+
+    def test_get_random_forms_by_cat(self):
+        cat = get_category_by_id(1)
+        user = get_user_by_id(1)
+        form = get_random_forms_by_cat(cat, user)
 
     ## TEST FRIENDS ##
 
@@ -188,6 +210,12 @@ class Test_model(TestCase):
         self.assertEquals(True, new_game.is_public)
         self.assertEquals(3, new_game.slot_max)
 
+    def test_set_game_time_launch_to_now(self):
+        game = get_all_game()[0]
+        self.assertEquals(None, game.time_launched)
+        set_game_time_launch_to_now(game)
+        game = get_all_game()[0]
+        self.assertNotEquals(None, game.time_launched)
 
     ## TEST PLAYER ##
 
@@ -409,3 +437,8 @@ class Test_model(TestCase):
         self.assertEquals("SaloméFake", users[1].login)
         self.assertEquals("WiirioFake", users[2].login)
 
+    ## TEST USER_ANSWERS
+
+    def test_recalculate_user_answers(self):
+        player = get_player_by_id(1)
+        recalculate_user_answers(player)

@@ -17,16 +17,6 @@ class TimestampModel(models.Model):
     class Meta:
         abstract = True
 
-
-# classe exemple qui herite du timestamp pour un suivi des données
-class Functionnalities(TimestampModel):
-    name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-    description = models.TextField(null=True)
-
-    def __str__(self):
-        return self.name
-
-
 class User(models.Model):
     login = models.CharField(max_length=255, null=False, blank=False, unique=True)
     mail = models.EmailField(max_length=255, null=False, blank=False, unique=True)
@@ -37,7 +27,6 @@ class User(models.Model):
 
     def __str__(self):
         return self.login
-
 
 class Friends(TimestampModel):
     source = models.ForeignKey(User, on_delete=models.CASCADE, related_name='source')
@@ -165,17 +154,3 @@ class UserAnswers(models.Model):
     def __str__(self):
         return self.value
 
-# class Users(TimestampModel):
-# 	role = models.ForeignKey(UserRights, on_delete=models.PROTECT)
-# 	first_name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-# 	last_name = models.CharField(max_length=255, null=False, blank=False, unique=False)
-# 	email = models.EmailField(max_length=255, null=True, blank=True, unique=True)
-# 	phone_regex = validators.RegexValidator(regex=r'^\+?1?\d{8,18}$',
-# 	 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-# 	phone_number = models.CharField(validators=[phone_regex],
-# 		max_length=18, null=True, blank=True, unique=False)
-# 	login = models.CharField(max_length=255, null=False, blank=False, unique=False)
-# 	password = models.CharField(max_length=1000, null=False, blank=False, unique=False)
-#
-# 	def __str__(self):
-# 		return self.first_name+" "+self.last_name

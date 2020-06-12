@@ -179,10 +179,10 @@ def set_db():
         accessFormTypeCreator.type = "CREATOR"
         accessFormTypeCreator.save()
         accessFormTypeEditor = AccessFormType()
-        accessFormTypeCreator.type = "EDITOR"
+        accessFormTypeEditor.type = "EDITOR"
         accessFormTypeEditor.save()
         accessFormTypePublisher = AccessFormType()
-        accessFormTypeCreator.type = "PUBLISHER"
+        accessFormTypePublisher.type = "PUBLISHER"
         accessFormTypePublisher.save()
 
         cat = Category()
@@ -211,6 +211,7 @@ def set_db():
         game.form = f
         game.is_public = False
         game.is_real_time=False
+        game.uuid="ABCD0123"
         game.name = "Game of Wawa on form 1"
         game.uuid = str(uuid.uuid4())[:8]
         game.game_status = gameStatusWaiting
