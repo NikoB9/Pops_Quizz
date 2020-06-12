@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.conf.urls import handler404, handler500
 
 from django.views.static import serve
 from django.conf.urls.static import static
 from . import settings
+
+handler404 = "Quizz.views.handler404"
+handler500 = "Quizz.views.handler500"
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
