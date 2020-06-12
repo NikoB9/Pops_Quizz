@@ -28,16 +28,15 @@
 				
 				<fieldset class="fdst_border">
 					<legend class="lgd_style">{{ q.question.label }}
-						{% if not game.form.is_older_version %}
+						<!-- {% if not game.form.is_older_version %}
 						<button type="button" id="need_correction{{ q.question.id }}" {% if q.question.need_correction %} disabled {% endif %}
 								class="btn connectBtn btn_correction" data-toggle="tooltip"
 								title="{% if q.question.need_correction %}Une demande de correction a déjà été faite{% else %}Notifier une erreur sur la question{% endif %}"
 								value="{{ q.question.id }}"><i class="fas fa-tools"></i>
 						</button>
-						{% endif %}
+						{% endif %} -->
 					</legend>
 					<div class="row">
-
 						{% if q.question.answer_type.type == "INPUT" %}
 
 						  	{% if q.answers.size == 0 %}
@@ -130,6 +129,16 @@
 							
 						{% endif %}
 
+					</div>
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							{% if not game.form.is_older_version %}
+								<p id="need_correction{{ q.question.id }}" {% if q.question.need_correction %} disabled {% endif %}
+										class= "btn_correction liens_faux" data-toggle="tooltip"
+										title="{% if q.question.need_correction %}Une demande de correction a déjà été faite{% else %}Notifier une erreur sur la question{% endif %}"
+										value="{{ q.question.id }}">Signaler une erreur de correction.</p>	
+							{% endif %}
+						</div>
 					</div>
 				
 				
