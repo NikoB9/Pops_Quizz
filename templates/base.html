@@ -178,9 +178,11 @@
 
                 {% if request.session.login is None %}
 
-                    <div class="alert alert-warning" role="alert" style="width: 100%">
-                      Vous n'êtes pas connecté
-                    </div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 background_body">
+                            <fieldset class="fdst_border"><legend class="lgd_style">Vous n'êtes pas connecté</legend>
+                                <h6>Vous devez être connecté pour profiter des fonctionnalités de l'application.</h6>
+                            </fieldset>
+                        </div>
                     <script type="text/javascript" src="{% static "js/jquery-3.4.1.min.js" %}"></script>
 				    <script type="text/javascript" src="{% static "js/popper.min.js"%}"></script>
 				    <script type="text/javascript" src="{% static "js/bootstrap.bundle.js"%}"></script>
