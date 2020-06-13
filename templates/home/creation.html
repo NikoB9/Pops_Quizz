@@ -9,6 +9,8 @@
 				<br>
 				<textarea name="form_description" class="form-control style_form typo_generale">{% if form is not None %}{{form.description}}{% else %}Description du Quizz{% endif %}</textarea>
 				<br>
+				<label for="chk_is_public">Formulaire public :&#10240</label><input type=checkbox id="chk_is_public" name="is_public" {% if form is None or form.is_public %}checked{% endif %}>
+				<br>
 				<label for="select_category">Catégorie(s)</label>
 				<div id="pnl_category">
 					<select id="select_category">
@@ -45,7 +47,6 @@
 				this.title;
 				this.answerType;
 				this.answers = [];
-
 				this.$pnlQuestion = document.createElement("fieldset");
 				this.$pnlHeader = document.createElement("div");
 				this.$pnlBody = document.createElement("div");
@@ -94,19 +95,19 @@
 				orderE.appendChild(this.$btnUp);
 				orderE.appendChild(this.$btnDown);
 
-				let titleE = document.createElement("h3");
-				titleE.appendChild(this.$lblOrder);
-				titleE.appendChild(this.$txtTitle);
+				this.$titleE = document.createElement("h3");
+				this.$titleE.appendChild(this.$lblOrder);
+				this.$titleE.appendChild(this.$txtTitle);
 				this.$pnlHeader.appendChild(orderE);
-				this.$pnlHeader.appendChild(titleE);
+				this.$pnlHeader.appendChild(this.$titleE);
 				this.$pnlHeader.appendChild(this.$divBtnDelete);
 				this.$divBtnDelete.appendChild(this.$btnDelete);
 
 				//ANSWER TYPE
 				answerTypes.forEach(element => { 
 					let option = document.createElement("option");
-					option.value = element;
-					option.text = element;
+					option.value = element.type;
+					option.text = element.label;
 					this.$selectAnswerType.appendChild(option);
 				});
 				this.$selectAnswerType.onchange = function(){self.setAnswerType(self.$selectAnswerType.value)};
@@ -201,6 +202,13 @@
 				this.answers.forEach(element => { element.updateNames(); });
 				this.$hiddenOrder.name = prefixName + "_order";
 				this.$hiddenNbAnswer.name = prefixName + "_nbAnswers";
+			}
+			addNeedCorrectionIcon() {
+				let $icon = document.createElement("i");
+				$icon.classList.add("fa", "fa-exclamation-triangle");
+				$icon.title = "Un joueur a signalé que cette question contenait une erreur";
+				$icon.style = "margin-left: 5px;";
+				this.$titleE.appendChild($icon);
 			}
 		}
 
@@ -393,10 +401,20 @@
 					$selectCategory[i].disabled = false;
 		}
 
+		function htmlDecode(value) {
+			let textArea = document.createElement('textarea');
+			textArea.innerHTML = value;
+			return textArea.value;
+		}
+
 		//DATA
 		categories = [];
 		questions = [];
-		answerTypes = ["radio", "checkbox", "text"];
+		answerTypes = [
+			{type:"radio", label:"Réponse unique"},
+			{type:"checkbox", label:"Réponses multiples"},
+			{type:"text", label:"Entrée de texte"}
+		];
 		answerTypeControl = { "UNIQUE_ANSWER":"radio", "QCM":"checkbox", "INPUT":"text" };
 		//HTML ELEMENTS
 		$categories = document.getElementById("pnl_category");
@@ -418,11 +436,14 @@
 				addCategory(new Category({{c.id}}, "{{c.label}}"));
 			{% endfor %}
 			let answersQ = [];
+			let tempQuestion;
 			{% for q in form.questions %}
 				{% for a in q.answers %}
-					answersQ.push(new Answer(answerTypeControl["{{q.question.answer_type.type}}"], "{{a.value}}", "{{a.correct}}"=="True"?true:false));
+					answersQ.push(new Answer(answerTypeControl["{{q.question.answer_type.type}}"], htmlDecode("{{a.value}}"), "{{a.correct}}"=="True"?true:false));
 				{% endfor %}
-				addQuestion(new Question({{q.question.order}}, "{{q.question.label}}", answerTypeControl["{{q.question.answer_type.type}}"], answersQ));
+				tempQuestion = new Question({{q.question.order}}, htmlDecode("{{q.question.label}}"), answerTypeControl["{{q.question.answer_type.type}}"], answersQ);
+				{% if q.need_correction %} tempQuestion.addNeedCorrectionIcon(); {% endif %}
+				addQuestion(tempQuestion);
 				answersQ = [];
 			{% endfor %}
 		{% endif %}
