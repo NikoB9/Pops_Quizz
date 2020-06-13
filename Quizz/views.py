@@ -665,6 +665,8 @@ def stats(request):
         return index(request)
     user = getUserByLogin(request.session['login'])
     forms = getAllFormsAccessUser(user)
+    parties = get_player_number_of_game(user)
+    creator_forms = get_creator_form(user)
 
     for f in forms :
         #Results by quizz
@@ -676,6 +678,7 @@ def stats(request):
         #Results by cat
         c.avgScorePlayer = get_average_score_player_by_user_and_category(user, c)
         c.avgScore = get_average_score_player_by_category(c)
+        c.parties = get_number_of_parties_player_by_user_and_category(user, c)
 
     #total level
     avgScorePlayer = get_average_total_score_by_user(user)
@@ -688,6 +691,8 @@ def stats(request):
         'avgScorePlayer':avgScorePlayer,
         'avgScore':avgScore,
         'user':user,
+        'parties':parties,
+        'creator_forms':creator_forms
     }
 
     return render(request, 'dashboard/classement.html',data)
