@@ -39,5 +39,13 @@ def set_access_form_for_a_user(user, form, access_form_type_libelle):
     access_form.access_form_type = access_form_type
     access_form.save()
 
+
 def get_users_access_form(user, form):
     return AccessForm.objects.select_related('access_form_type').exclude(user=user).filter(form=form)
+
+
+def transfer_old_form_right_to_another(old_form, new_form):
+    old_access = AccessForm.objects.filter(form=old_form)
+    AccessForm.objects.filter(form=new_form).delete()
+    for access in old_access:
+        set_access_form_for_a_user(access.user, new_form, access.access_form_type.type)
