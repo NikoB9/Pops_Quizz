@@ -664,32 +664,17 @@ def stats(request):
     if 'login' not in request.session:
         return index(request)
     user = getUserByLogin(request.session['login'])
-    forms = getAllFormsAccessUser(user)
     parties = get_player_number_of_game(user)
     creator_forms = get_creator_form(user)
 
-    for f in forms :
-        #Results by quizz
-        f.avgScorePlayer = get_average_score_player_by_user_and_quizz(user, f)
-        f.avgScore = get_average_score_player_by_quizz(f)
-
     cats = get_categories()
     for c in cats :
-        #Results by cat
-        c.avgScorePlayer = get_average_score_player_by_user_and_category(user, c)
-        c.avgScore = get_average_score_player_by_category(c)
         c.parties = get_number_of_parties_player_by_user_and_category(user, c)
 
-    #total level
-    avgScorePlayer = get_average_total_score_by_user(user)
-    avgScore = get_average_total_score()
 
     data={
         'active': 2,
-        'forms':forms,
         'cats':cats,
-        'avgScorePlayer':avgScorePlayer,
-        'avgScore':avgScore,
         'user':user,
         'parties':parties,
         'creator_forms':creator_forms
