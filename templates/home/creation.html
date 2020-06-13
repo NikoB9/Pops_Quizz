@@ -13,7 +13,7 @@
 				<br>
 				<label for="select_category">Catégorie(s)</label>
 				<div id="pnl_category">
-					<select id="select_category">
+					<select id="select_category" class="custom-select">
 						<option value="">Ajouter une catégorie</option>
 						{% for c in categories %}
 							<option value={{c.id}}>{{c.label}}</option>
@@ -25,7 +25,7 @@
 			</div>
 			<br>
 			<div id="questions">
-				
+
 			</div>
 			<br>
 			<div class="droite">
@@ -70,11 +70,11 @@
 				this.$pnlQuestion.classList.add("fdst_border");
 				this.$pnlBody.classList.add("card-body", "body");
 				this.$pnlFooter.classList.add("card-footer", "footer");
-				this.$txtTitle.classList.add("style_form", "typo_generale");
+				this.$txtTitle.classList.add("style_form", "typo_generale", "titleQuestion");
 				this.$btnDelete.classList.add("btn","connectBtn");
 				this.$divBtnDelete.classList.add("droite");
 				this.$btnAddNewAnswer.classList.add("btn","connectBtn");
-				this.$selectAnswerType.classList.add("style_form", "typo_generale");
+				this.$selectAnswerType.classList.add("style_form", "typo_generale", "custom-select");
 
 				//TXT TITLE
 				this.$txtTitle.type = "text";
@@ -99,12 +99,14 @@
 				this.$titleE.appendChild(this.$lblOrder);
 				this.$titleE.appendChild(this.$txtTitle);
 				this.$pnlHeader.appendChild(orderE);
+				let hr = document.createElement("hr");
+				this.$pnlHeader.appendChild(hr);
 				this.$pnlHeader.appendChild(this.$titleE);
 				this.$pnlHeader.appendChild(this.$divBtnDelete);
 				this.$divBtnDelete.appendChild(this.$btnDelete);
 
 				//ANSWER TYPE
-				answerTypes.forEach(element => { 
+				answerTypes.forEach(element => {
 					let option = document.createElement("option");
 					option.value = element.type;
 					option.text = element.label;
@@ -135,7 +137,7 @@
 				this.$pnlQuestion.appendChild(this.$hiddenNbAnswer);
 
 				//SET CSS
-				this.$btnUp.classList.add("btn", "connectBtn");
+				this.$btnUp.classList.add("btn", "connectBtn", "btnUp");
 				this.$btnDown.classList.add("btn", "connectBtn");
 
 				//SET DATA
@@ -224,8 +226,8 @@
 
 				this.$pnlAnswer = document.createElement("div");
 				this.$btnUp = document.createElement("button");
-				this.$btnDown = document.createElement("button");	
-				this.$inputExample = document.createElement("input");	
+				this.$btnDown = document.createElement("button");
+				this.$inputExample = document.createElement("input");
 				this.$txtValue = document.createElement("input");
 				this.$chkCorrect = document.createElement("input");
 				this.$btnDelete = document.createElement("button", {type: "button"});
@@ -264,13 +266,14 @@
 				this.$pnlAnswer.appendChild(this.$hiddenType);
 				this.$pnlAnswer.appendChild(this.$hiddenOrder);
 
-				// SET CSS 
+				// SET CSS
 				// this.$inputExample.classList.add("style_form");
 				this.$txtValue.classList.add("style_form");
 				// this.$chkCorrect.classList.add("style_form");
-				this.$btnDelete.classList.add("btn", "connectBtn");
-				this.$btnUp.classList.add("btn", "connectBtn");
+				this.$btnDelete.classList.add("btn", "connectBtn", "btnSup");
+				this.$btnUp.classList.add("btn", "connectBtn", "btnUp");
 				this.$btnDown.classList.add("btn", "connectBtn");
+				this.$pnlAnswer.classList.add("pnlAnswer");
 
 				//SET DATAS
 				this.setType(_type);
@@ -364,7 +367,7 @@
 		class Category {
 			constructor(_id, _label) {
 				this.id = _id;
-				this.label = _label;		
+				this.label = _label;
 				this.$pnlCategory = document.createElement("div");
 				this.$label = document.createElement("label");
 				this.$btnDelete = document.createElement("button");
