@@ -67,13 +67,14 @@ def set_form_publicity(form, is_public):
     form.save()
 
 
-def addQuizzForm(name, author, description, categories_ids):
+def addQuizzForm(name, author, description, categories_ids, is_public):
     f = Form()
     f.name = name
     f.author = author
     f.description = description
     f.is_older_version = False
     f.is_hidden = False
+    f.is_public=is_public
     f.save()
     for cat_id in categories_ids:
         f.categories.add(get_category_by_id(cat_id))

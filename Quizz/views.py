@@ -307,13 +307,14 @@ def creation(request):
         description = request.POST.get('form_description')
         author = getUserByLogin(request.session['login'])
         is_public = request.POST.get('is_public') is not None
-
         categories = request.POST.get('category_list').split(';')
         if '' in categories: categories.remove('')
-        form = addQuizzForm(title, author, description, categories)
-        set_form_publicity(form, is_public)
+        form = addQuizzForm(title, author, description, categories, is_public)
         if request.POST.get('formId') is not None:
             old_form = getFormById(request.POST.get('formId'))
+            form.author = old_form.author
+            form.save()
+            transfer_old_form_right_to_another(old_form, form)
             set_form_old(old_form)
 
         nbQuestions = request.POST.get('nbQuestions')
