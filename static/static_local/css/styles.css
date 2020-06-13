@@ -660,6 +660,9 @@ hr {
 
 .liens_faux {
 	text-decoration: underline;
+	background: none;
+	border: none;
+	color: rgba(72,59,107);
 }
 
 .liens_faux:hover {
@@ -668,7 +671,8 @@ hr {
 }
 
 .liens_faux:disabled {
-	text-decoration: line-through;
+	text-decoration: none;
+	cursor: default;
 }
 
 
