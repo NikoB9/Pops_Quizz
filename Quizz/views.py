@@ -310,7 +310,7 @@ def creation(request):
 
         categories = request.POST.get('category_list').split(';')
         if '' in categories: categories.remove('')
-        form = addQuizzForm(title, author, description, categories)
+        form = addQuizzForm(title, author, description, categories, is_public)
         set_form_publicity(form, is_public)
         if request.POST.get('formId') is not None:
             old_form = getFormById(request.POST.get('formId'))
