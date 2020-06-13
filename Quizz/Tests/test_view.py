@@ -61,6 +61,11 @@ class Test_view(SessionEnabledTestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.context.get('game').name, "Partie de Warren")
 
+    def test_create_game_random(self):
+        response = self.client.get(reverse('Quizz:create-game-random', kwargs={'cat_id':1}))
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.context.get('game').name, "Partie de Warren")
+
     def test_attente(self):
         data = {
                 'game_name': self.game_warren.name,
@@ -156,6 +161,22 @@ class Test_view(SessionEnabledTestCase):
         response = self.client.get(reverse('Quizz:delete_quizz', kwargs={'id_quizz': 1}))
         self.assertEquals(response.status_code, 200)
 
+    def test_edit_right(self):
+        data = {
+                'is_public': "on",
+                'role_3': "EDITOR",
+                }
+        response = self.client.post(reverse('Quizz:edit_right', kwargs={'id_quizz':1}), data)
+        self.assertEquals(response.status_code, 200)
+
+    def test_resultat(self):
+        response = self.client.get(reverse('Quizz:resultats', kwargs={'game_uuid': self.game_warren.uuid}))
+        self.assertEquals(response.status_code, 200)
+
+    def test_game_progress(self):
+        response = self.client.get(reverse('Quizz:dashboard-game-progress'))
+        self.assertEquals(response.status_code, 200)
+
     def test_saveUserAnswers_QCM(self):
         data = {
                 'idplayer': "1",
@@ -186,7 +207,17 @@ class Test_view(SessionEnabledTestCase):
     def test_invite_friend(self):
         pass
 
-    def test_user_profil(self):
+    def test_kick_user(self):
+        pass
+
+    def test_correction_question(self):
+        data = {
+                'question_id': "1"
+                }
+        response = self.client.post(reverse('Quizz:correction_question'), data)
+        self.assertEquals(response.status_code, 200)
+
+    def test_refuse_game_invitation(self):
         pass
 
     def test_user_history(self):
@@ -208,3 +239,13 @@ class Test_view(SessionEnabledTestCase):
     def test_amis(self):
         response = self.client.get(reverse('Quizz:dashboard_friend'))
         self.assertEquals(response.status_code, 200)
+
+    def test_chat(self):
+        response = self.client.get(reverse('Quizz:chat'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_room(self):
+        pass
+
+    def test_question_answer_by(self):
+        pass

@@ -25,7 +25,6 @@ def two_users_have_relationship(user_1, user_2):
 
 
 def get_relationship_between_users(user_1, user_2):
-    relationship = Friends()
     if len(Friends.objects.filter(source=user_1, target=user_2)) > 0:
         relationship = Friends.objects.get(source=user_1, target=user_2)
     else:
