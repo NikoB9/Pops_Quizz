@@ -445,7 +445,7 @@
 					answersQ.push(new Answer(answerTypeControl["{{q.question.answer_type.type}}"], htmlDecode("{{a.value}}"), "{{a.correct}}"=="True"?true:false));
 				{% endfor %}
 				tempQuestion = new Question({{q.question.order}}, htmlDecode("{{q.question.label}}"), answerTypeControl["{{q.question.answer_type.type}}"], answersQ);
-				{% if q.need_correction %} tempQuestion.addNeedCorrectionIcon(); {% endif %}
+				{% if q.question.need_correction %} tempQuestion.addNeedCorrectionIcon(); {% endif %}
 				addQuestion(tempQuestion);
 				answersQ = [];
 			{% endfor %}
