@@ -1,10 +1,15 @@
 {% extends 'dashboard/base.html' %}
 
 {% block dashboard_content %}
+    <fieldset class="fdst_border"><legend class="lgd_style">Statistiques</legend>
+        <ul>
+            <li>Vous avez joué {{parties}} parties</li>
+            <li>Vous avez créé {{creator_forms|length}} formulaires</li>
+        </ul>
+    </fieldset>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--
     <h1 class="textcolor" style="text-align: center">Statistiques par quizz</h1>
-
-
     <script type="text/javascript">
 
         //https://developers.google.com/chart/interactive/docs/gallery/columnchart#configuration-options
@@ -41,46 +46,30 @@
       }
     </script>
     <div id="statsbyquizz"></div>
-
-    <h1 class="textcolor" style="text-align: center">Statistiques par catégorie</h1>
+    -->
+    <h1>Statistiques par catégorie</h1>
 
     <script type="text/javascript">
 
-
-      google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawChart_cats);
-
-      function drawChart_cats() {
-
-          mydata = [['Catégorie', 'Ma moyenne', 'Moyenne générale']]
-            {% for f in cats %}
-                avgPlayer = '{{ f.avgScorePlayer.average_user_score }}' == 'None' ? 0 : {{ f.avgScorePlayer.average_user_score }}
-                avgGen = '{{ f.avgScore.average_score }}' == 'None' ? 0 : {{ f.avgScore.average_score }}
-                mydata.push(['{{ f.label }}',avgPlayer, avgGen])
-            {% endfor %}
-
-        var data = google.visualization.arrayToDataTable(mydata);
-
-        var options = {
-          chart: {
-            /*title: '',
-            subtitle: '',*/
-              hAxis : {
-                  slantedText: true,
-                  slantedTextAngle: 90,
-                  direction: -1
-              }
-          }
-        };
-
-        var chart = new google.charts.Bar(document.getElementById('statsbycats'));
-
-        chart.draw(data, google.charts.Bar.convertOptions(options));
-      }
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(drawChart_cats);
+        function drawChart_cats() {
+            var data = google.visualization.arrayToDataTable([
+                ['Réponses', 'Nombres'],
+                {% for cat in cats %}
+                    ['{{cat.label}}', {{cat.parties}}],
+                {% endfor %}
+        ]);
+            var options = {
+                pieSliceText: 'label',
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('statsbycats'));;
+            chart.draw(data, options);
+        }
     </script>
     <div id="statsbycats"></div>
 
-
+    <!--
     <h1 class="textcolor" style="text-align: center">Comparaison général</h1>
 
 
@@ -116,10 +105,11 @@
       }
       </script>
         <div id="general_stats"></div>
+     -->
 
     {% if user.good_answer == 0 and user.bad_answer == 0 %}
     {% else %}
-    <h1 class="textcolor" style="text-align: center">Répartition des réponses</h1>
+    <h1>Répartition des réponses</h1>
 
 
     <script type="text/javascript">

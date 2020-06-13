@@ -37,4 +37,5 @@ $('.btn_correction').click(function(){
     ajaxCorrectionQuestion(this)
     document.getElementById("need_correction"+$(this).val()).disabled = 'True';
     document.getElementById("need_correction"+$(this).val()).title = 'Une demande de correction a déjà été faite';
+    document.getElementById("need_correction"+$(this).val()).textContent = 'Demande de correction envoyée.'
 });

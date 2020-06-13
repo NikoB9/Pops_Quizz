@@ -49,7 +49,6 @@ ajaxInvitationGame = function (that){
 
 
 $('.inviteico').click(function(){
-	console.log("envelope click")
 	ajaxInvitationGame(this);
 });
 
@@ -94,7 +93,6 @@ ajaxKickUser = function (that){
 
 $('.exclude_user').click(function(){
 	ajaxKickUser(this);
-	console.log("row-user-"+$(this).val())
 	document.getElementById("row-user-"+$(this).val()).style.display = "None";
 });
 

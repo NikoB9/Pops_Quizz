@@ -48,6 +48,10 @@ def getQuizzByCat(cat, user):
                        Form.objects.filter(categories=cat, is_hidden=False)))
 
 
+def get_creator_form(user):
+    return Form.objects.filter(author=user, is_older_version=False)
+
+
 def get_random_forms_by_cat(cat, user):
     return random.choice(getQuizzByCat(cat, user))
 

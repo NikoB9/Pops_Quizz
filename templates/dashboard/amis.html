@@ -8,7 +8,6 @@
         <ul id="friends_list">
             {% for friend in friends %}
                 <li id="row-friend-{{ friend.login }}">{{ friend.login }} <button value="{{ friend.login }}" class="remove_friend connectBtn iconBtn"><i class="fas fa-user-slash"></i></button></li>
-
             {% empty %}
                 Aucun ami
             {% endfor %}

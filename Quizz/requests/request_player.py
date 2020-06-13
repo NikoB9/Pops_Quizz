@@ -13,6 +13,10 @@ def get_player_by_id(id):
     return Player.objects.get(id=id)
 
 
+def get_all_players():
+    return Player.objects.all()
+
+
 def create_player(game, user, is_invited=False):
     player = Player()
     player.game = game
@@ -61,9 +65,13 @@ def get_players_not_answered_by_game(game):
     return Player.objects.filter(game=game, is_invited=False, has_answered=False)
 
 
+def get_player_number_of_game(user):
+    return len(Player.objects.filter(user=user, has_answered=True, is_invited=False))
+
+
 def get_players_number_of_game(players):
     for player in players:
-        player.parties = len(Player.objects.filter(user=player.user, has_answered=True, is_invited=False))
+        player.parties = get_player_number_of_game(player.user)
         player.is_author = player.user.login == player.game.author.login
     return players
 
@@ -107,6 +115,14 @@ def get_average_score_player_by_quizz(quizz):
 def get_average_score_player_by_user_and_category(user, cat):
     return Player.objects.filter(user=user, game__form__categories=cat, game__game_status__type="DONE").aggregate(
         average_user_score=Avg('score'))
+
+
+def get_number_of_parties_player_by_user_and_category(user, cat):
+    return len(Player.objects.filter(user=user, game__form__categories=cat, game__game_status__type="DONE"))
+
+
+def top_players_active(number_of_player):
+    return Player.objects.filter(user=user, game__game_status__type="DONE")
 
 
 def get_average_score_player_by_category(cat):
