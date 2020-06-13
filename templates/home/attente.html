@@ -41,7 +41,7 @@
 				<p id="row-user-{{ player.user.id }}">
 					{{ player.user.login }} a joué {{ player.parties }} parties
 					{% if is_author and not player.is_author %}
-						<button value="{{ player.user.id }}" class="exclude_user"><i class="fas fa-user-slash"></i></button>
+						<button value="{{ player.user.id }}" class="exclude_user btn connectBtn"><i class="fas fa-user-slash"></i></button>
 					{% endif %}
 					{% if player.is_author %}<i class="fas fa-crown"></i>{% endif %}
 				</p>
